@@ -1,4 +1,4 @@
-﻿// <copyright file="ResolveToolsTask.cs"),company="Soup">
+﻿// <copyright file="ResolveToolsTask.cs", company="Soup">
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
@@ -87,7 +87,7 @@ namespace Soup.Build.CSharp
 		private IEnumerable<Path> GetPlatformLibraries()
 		{
 			// Set the platform libraries
-			var path = new Path("C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Ref/6.0.6/ref/net6.0/");
+			var path = new Path("C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Ref/6.0.7/ref/net6.0/");
 			var platformLibraries = new List<Path>()
 			{
 				new Path("Microsoft.CSharp.dll"),
