@@ -40,12 +40,6 @@ namespace Soup.Build.CSharp.Compiler.Roslyn
 		public string DynamicLibraryFileExtension => "dll";
 
 		/// <summary>
-		/// Gets the module file extension for the compiler
-		/// TODO: This is platform specific
-		/// </summary>
-		public string ModuleFileExtension => "netmodule";
-
-		/// <summary>
 		/// Compile
 		/// </summary>
 		public IList<BuildOperation> CreateCompileOperations(
@@ -72,18 +66,11 @@ namespace Soup.Build.CSharp.Compiler.Roslyn
 			inputFiles.Add(targetResponseFile);
 			inputFiles.AddRange(arguments.SourceFiles);
 			inputFiles.AddRange(arguments.ReferenceLibraries);
-			inputFiles.AddRange(arguments.NetModules);
 			var outputFiles = new List<Path>()
 			{
 				arguments.TargetRootDirectory + arguments.Target,
 				arguments.TargetRootDirectory + symbolFile,
 			};
-
-			// NetModules do not produce a reference assembly
-			if (arguments.TargetType != LinkTarget.Module)
-			{
-				outputFiles.Add(arguments.TargetRootDirectory + arguments.ReferenceTarget);
-			}
 
 			// Generate the compile build operation
 			var uniqueCommandArguments = ArgumentBuilder.BuildUniqueCompilerArguments();

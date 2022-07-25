@@ -86,12 +86,6 @@ namespace Soup.Build.CSharp.Compiler.Roslyn
 				AddParameterWithQuotes(commandArguments, "reference", file.ToString());
 			}
 
-			// Add the net modules
-			foreach (var file in arguments.NetModules)
-			{
-				AddParameterWithQuotes(commandArguments, "addmodule", file.ToString());
-			}
-
 			// Emit debugging information
 			AddFlag(commandArguments, "debug+");
 			AddParameter(commandArguments, "debug", "portable");
@@ -110,12 +104,8 @@ namespace Soup.Build.CSharp.Compiler.Roslyn
 			AddParameterWithQuotes(commandArguments, "out", absoluteTarget.ToString());
 
 			// Reference assembly output to generate
-			// Note: Modules cannot use refout
-			if (arguments.TargetType != LinkTarget.Module)
-			{
-				var absoluteReferenceTarget = arguments.TargetRootDirectory + arguments.ReferenceTarget;
-				AddParameterWithQuotes(commandArguments, "refout", absoluteReferenceTarget.ToString());
-			}
+			var absoluteReferenceTarget = arguments.TargetRootDirectory + arguments.ReferenceTarget;
+			AddParameterWithQuotes(commandArguments, "refout", absoluteReferenceTarget.ToString());
 
 			switch (arguments.TargetType)
 			{
@@ -124,9 +114,6 @@ namespace Soup.Build.CSharp.Compiler.Roslyn
 					break;
 				case LinkTarget.Executable:
 					AddParameter(commandArguments, "target", "exe");
-					break;
-				case LinkTarget.Module:
-					AddParameter(commandArguments, "target", "module");
 					break;
 				default:
 					throw new InvalidOperationException($"Unknown Target Type {arguments.TargetType}");

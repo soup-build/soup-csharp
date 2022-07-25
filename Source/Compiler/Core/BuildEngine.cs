@@ -53,7 +53,7 @@ namespace Soup.Build.CSharp.Compiler
 		}
 
 		/// <summary>
-		/// Compile the module and source files
+		/// Compile the source files
 		/// </summary>
 		private void CoreCompile(
 			IBuildState buildState,
@@ -100,17 +100,6 @@ namespace Soup.Build.CSharp.Compiler
 						// All link dependencies stop here.
 
 						break;
-					case BuildTargetType.Module:
-						targetType = LinkTarget.Module;
-						targetFile =
-							arguments.BinaryDirectory +
-							new Path(arguments.TargetName + "." + _compiler.ModuleFileExtension);
-						referenceTargetFile = new Path();
-
-						// Add the net module reference
-						result.NetModuleDependencies.Add(arguments.TargetRootDirectory + targetFile);
-
-						break;
 					default:
 						throw new InvalidOperationException("Unknown build target type.");
 				}
@@ -153,7 +142,6 @@ namespace Soup.Build.CSharp.Compiler
 					NullableState = nullableState,
 					CustomProperties = arguments.CustomProperties,
 					ReferenceLibraries = arguments.LinkDependencies,
-					NetModules = arguments.NetModuleDependencies,
 				};
 
 				// Compile all source files as a single call

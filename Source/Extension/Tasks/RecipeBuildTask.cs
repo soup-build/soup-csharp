@@ -196,8 +196,6 @@ namespace Soup.Build.CSharp
 				return BuildTargetType.Executable;
 			else if (value == "Library")
 				return BuildTargetType.Library;
-			else if (value == "Module")
-				return BuildTargetType.Module;
 			else
 				throw new InvalidOperationException("Unknown target type value.");
 		}

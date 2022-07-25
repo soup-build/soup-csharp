@@ -42,11 +42,6 @@ namespace Soup.Build.CSharp.Compiler
 		/// Library
 		/// </summary>
 		Library,
-
-		/// <summary>
-		/// Module
-		/// </summary>
-		Module,
 	}
 
 	/// <summary>
@@ -117,8 +112,6 @@ namespace Soup.Build.CSharp.Compiler
 
 		/// <summary>
 		/// Gets or sets the list of source files
-		/// Note: These files can be plain old translation units 
-		/// or they can be module implementation units
 		/// </summary>
 		public IReadOnlyList<Path> SourceFiles { get; set; } = new List<Path>();
 
@@ -141,11 +134,6 @@ namespace Soup.Build.CSharp.Compiler
 		/// Gets or sets the list of runtime dependencies
 		/// </summary>
 		public IReadOnlyList<Path> RuntimeDependencies { get; set; } = new List<Path>();
-
-		/// <summary>
-		/// Gets or sets the list of net module dependencies
-		/// </summary>
-		public IReadOnlyList<Path> NetModuleDependencies { get; set; } = new List<Path>();
 
 		/// <summary>
 		/// Gets or sets the optimization level
