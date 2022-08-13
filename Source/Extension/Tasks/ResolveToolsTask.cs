@@ -67,9 +67,16 @@ namespace Soup.Build.CSharp
 
 			var cscToolPath = roslynFolder + new Path("csc.exe");
 
+			// Get the DotNet SDK
+			var dotnetSDKProperties = GetSDKProperties("DotNet", parameters);
+			var dotnetRuntimeVersion = SemanticVersion.Parse(dotnetSDKProperties["RuntimeVersion"].AsString());
+			var dotnetRootPath = new Path(dotnetSDKProperties["RootPath"].AsString());
+
 			// Save the build properties
 			state["Roslyn.BinRoot"] = this.factory.Create(roslynFolder.ToString());
 			state["Roslyn.CscToolPath"] = this.factory.Create(cscToolPath.ToString());
+			state["DotNet.RuntimeVersion"] = this.factory.Create(dotnetRuntimeVersion.ToString());
+			state["DotNet.RootPath"] = this.factory.Create(dotnetRootPath.ToString());
 
 			// Save the platform libraries
 			state["PlatformLibraries"] = this.factory.Create("");
@@ -79,15 +86,15 @@ namespace Soup.Build.CSharp
 				linkDependencies = linkLibrariesValue.AsList().Select(value => new Path(value.AsString())).ToList();
 			}
 
-			linkDependencies.AddRange(GetPlatformLibraries());
+			linkDependencies.AddRange(GetPlatformLibraries(dotnetRootPath, dotnetRuntimeVersion));
 			buildTable["LinkDependencies"] = this.factory.Create(
 				this.factory.CreateList().SetAll(this.factory, linkDependencies));
 		}
 
-		private IEnumerable<Path> GetPlatformLibraries()
+		private IEnumerable<Path> GetPlatformLibraries(Path dotnetRootPath, SemanticVersion dotnetRuntimeVersion)
 		{
 			// Set the platform libraries
-			var path = new Path("C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Ref/6.0.7/ref/net6.0/");
+			var path = dotnetRootPath + new Path($"/packs/Microsoft.NETCore.App.Ref/{dotnetRuntimeVersion}/ref/net6.0/");
 			var platformLibraries = new List<Path>()
 			{
 				new Path("Microsoft.CSharp.dll"),
