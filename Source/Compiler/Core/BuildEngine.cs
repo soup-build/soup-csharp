@@ -163,6 +163,8 @@ namespace Soup.Build.CSharp.Compiler
 			if (arguments.TargetType == BuildTargetType.Executable ||
 				arguments.TargetType == BuildTargetType.Library)
 			{
+				// TODO: Allow build libraries to copy dependencies with a flag
+				// for now we always copy the dlls so the folder is ready to load dependencies
 				foreach (var source in arguments.RuntimeDependencies)
 				{
 					var target = arguments.BinaryDirectory + new Path(source.GetFileName());
@@ -171,6 +173,15 @@ namespace Soup.Build.CSharp.Compiler
 						source,
 						target);
 					result.BuildOperations.Add(operation);
+				}
+			}
+
+			if (arguments.TargetType != BuildTargetType.Executable)
+			{
+				// Pass along all runtime dependencies in their original location
+				foreach (var source in arguments.RuntimeDependencies)
+				{
+					result.RuntimeDependencies.Add(source);
 				}
 			}
 		}
