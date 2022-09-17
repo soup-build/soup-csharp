@@ -9,17 +9,17 @@ Build: "Build0"
 }
 {
 Name: "Soup.Build"
-Version: "0.1.4"
-Build: "Build0"
-}
-{
-Name: "Soup.Build.Extensions"
 Version: "0.2.0"
 Build: "Build0"
 }
 {
+Name: "Soup.Build.Extensions"
+Version: "0.4.0"
+Build: "Build0"
+}
+{
 Name: "Soup.Build.Extensions.Utilities"
-Version: "0.2.1"
+Version: "0.4.0"
 Build: "Build0"
 }
 {
@@ -29,12 +29,12 @@ Build: "Build0"
 }
 {
 Name: "Soup.CSharp.Compiler"
-Version: "0.4.2"
+Version: "0.6.0"
 Build: "Build0"
 }
 {
 Name: "Soup.CSharp.Compiler.Roslyn"
-Version: "0.4.1"
+Version: "0.6.0"
 Build: "Build0"
 }
 ]
