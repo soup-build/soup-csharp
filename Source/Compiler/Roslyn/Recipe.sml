@@ -9,7 +9,7 @@ Source: [
 Dependencies: {
 	Runtime: [
 		"Opal@1.1.0"
-		"Soup.CSharp.Compiler@0.5.0"
+		"Soup.CSharp.Compiler@0.6.0"
 		"Soup.Build.Extensions@0.4.0"
 		"Soup.Build.Extensions.Utilities@0.4.0"
 	]

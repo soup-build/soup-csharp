@@ -1,6 +1,6 @@
 Name: "Soup.CSharp"
 Language: "C#|0.1"
-Version: "0.7.0"
+Version: "0.7.1"
 
 Source: [
 	"Tasks/BuildTask.cs"
