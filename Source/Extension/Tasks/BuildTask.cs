@@ -177,7 +177,8 @@ namespace Soup.Build.CSharp
 			{
 				sharedBuildTable["TargetFile"] = this.factory.Create(buildResult.TargetFile.ToString());
 				sharedBuildTable["RunExecutable"] = this.factory.Create("C:/Program Files/dotnet/dotnet.exe");
-				sharedBuildTable["RunArguments"] = this.factory.Create(buildResult.TargetFile.ToString());
+				
+				sharedBuildTable.EnsureValueList(this.factory, "RunArguments").SetAll(this.factory, new List<string>() { buildResult.TargetFile.ToString() });
 			}
 
 			// Register the build operations
