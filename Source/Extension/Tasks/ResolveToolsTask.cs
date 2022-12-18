@@ -94,7 +94,7 @@ namespace Soup.Build.CSharp
 		private IEnumerable<Path> GetPlatformLibraries(Path dotnetRootPath, SemanticVersion dotnetRuntimeVersion)
 		{
 			// Set the platform libraries
-			var path = dotnetRootPath + new Path($"/packs/Microsoft.NETCore.App.Ref/{dotnetRuntimeVersion}/ref/net6.0/");
+			var path = dotnetRootPath + new Path($"packs/Microsoft.NETCore.App.Ref/{dotnetRuntimeVersion}/ref/net6.0/");
 			var platformLibraries = new List<Path>()
 			{
 				new Path("Microsoft.CSharp.dll"),
