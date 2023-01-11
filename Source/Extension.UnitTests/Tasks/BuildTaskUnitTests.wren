@@ -2,79 +2,79 @@
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
-using Opal;
-using Opal.System;
-using Soup.Build.CSharp.Compiler;
-using Soup.Build.Runtime;
-using Soup.Build.Utilities;
-using System;
-using System.Collections.Generic;
-using Xunit;
+using Opal
+using Opal.System
+using Soup.Build.CSharp.Compiler
+using Soup.Build.Runtime
+using Soup.Build.Utilities
+using System
+using System.Collections.Generic
+using Xunit
 
 namespace Soup.Build.CSharp.UnitTests
 {
 	public class BuildTaskUnitTests
 	{
-		[Fact]
+		// [Fact]
 		public void Initialize_Success()
 		{
 			// Register the test process manager
-			var processManager = new MockProcessManager();
+			var processManager = new MockProcessManager()
 
 			using (var scopedProcesManager = new ScopedSingleton<IProcessManager>(processManager))
 			{
-				var buildState = new MockBuildState();
-				var factory = new ValueFactory();
-				var uut = new BuildTask(buildState, factory);
+				var buildState = new MockBuildState()
+				var factory = new ValueFactory()
+				var uut = new BuildTask(buildState, factory)
 			}
 		}
 
-		[Fact]
+		// [Fact]
 		public void Build_Executable()
 		{
 			// Register the test process manager
-			var processManager = new MockProcessManager();
+			var processManager = new MockProcessManager()
 
 			// Register the test listener
-			var testListener = new TestTraceListener();
+			var testListener = new TestTraceListener()
 			using (var scopedTraceListener = new ScopedTraceListenerRegister(testListener))
 			using (var scopedProcesManager = new ScopedSingleton<IProcessManager>(processManager))
 			{
 				// Setup the input build state
-				var buildState = new MockBuildState();
-				var state = buildState.ActiveState;
+				var buildState = new MockBuildState()
+				var state = buildState.ActiveState
 
 				// Setup build table
-				var buildTable = new ValueTable();
-				state.Add("Build", new Value(buildTable));
-				buildTable.Add("TargetName", new Value("Program"));
-				buildTable.Add("TargetType", new Value((long)BuildTargetType.Executable));
-				buildTable.Add("SourceRootDirectory", new Value("C:/source/"));
-				buildTable.Add("TargetRootDirectory", new Value("C:/target/"));
-				buildTable.Add("ObjectDirectory", new Value("obj/"));
-				buildTable.Add("BinaryDirectory", new Value("bin/"));
+				var buildTable = new ValueTable()
+				state.Add("Build", new Value(buildTable))
+				buildTable.Add("TargetName", new Value("Program"))
+				buildTable.Add("TargetType", new Value((long)BuildTargetType.Executable))
+				buildTable.Add("SourceRootDirectory", new Value("C:/source/"))
+				buildTable.Add("TargetRootDirectory", new Value("C:/target/"))
+				buildTable.Add("ObjectDirectory", new Value("obj/"))
+				buildTable.Add("BinaryDirectory", new Value("bin/"))
 				buildTable.Add(
 					"Source",
 					new Value(new ValueList()
 						{
 							new Value("TestFile.cs"),
-						}));
+						}))
 
 				// Setup parameters table
-				var parametersTable = new ValueTable();
-				state.Add("Parameters", new Value(parametersTable));
-				parametersTable.Add("Architecture", new Value("x64"));
-				parametersTable.Add("Compiler", new Value("MOCK"));
+				var parametersTable = new ValueTable()
+				state.Add("Parameters", new Value(parametersTable))
+				parametersTable.Add("Architecture", new Value("x64"))
+				parametersTable.Add("Compiler", new Value("MOCK"))
 
 				// Register the mock compiler
-				var compiler = new Compiler.Mock.Compiler();
-				var compilerFactory = new Dictionary<string, Func<IValueTable, ICompiler>>();
-				compilerFactory.Add("MOCK", (IValueTable state) => { return compiler; });
+				var compiler = new Compiler.Mock.Compiler()
+				var compilerFactory = new Dictionary<string, Func<IValueTable, ICompiler>>()
+				compilerFactory.Add("MOCK", (IValueTable state) => { return compiler })
 
-				var factory = new ValueFactory();
-				var uut = new BuildTask(buildState, factory, compilerFactory);
+				var factory = new ValueFactory()
+				var uut = new BuildTask(buildState, factory, compilerFactory)
 
-				uut.Execute();
+				uut.Execute()
 
 				// Verify expected process manager requests
 				Assert.Equal(
@@ -84,7 +84,7 @@ namespace Soup.Build.CSharp.UnitTests
 						"GetCurrentProcessFileName",
 						"GetCurrentProcessFileName",
 					},
-					processManager.GetRequests());
+					processManager.GetRequests())
 
 				// Verify expected logs
 				Assert.Equal(
@@ -92,7 +92,7 @@ namespace Soup.Build.CSharp.UnitTests
 					{
 						"INFO: Build Generate Done"
 					},
-					testListener.GetMessages());
+					testListener.GetMessages())
 
 				var expectedCompileArguments = new CompileArguments()
 				{
@@ -106,7 +106,7 @@ namespace Soup.Build.CSharp.UnitTests
 					{
 						new Path("TestFile.cs")
 					},
-				};
+				}
 
 				// Verify expected compiler calls
 				Assert.Equal(
@@ -114,7 +114,7 @@ namespace Soup.Build.CSharp.UnitTests
 					{
 						expectedCompileArguments,
 					},
-					compiler.GetCompileRequests());
+					compiler.GetCompileRequests())
 
 				// Verify build state
 				var expectedBuildOperations = new List<BuildOperation>()
@@ -183,71 +183,71 @@ namespace Soup.Build.CSharp.UnitTests
 						{
 							new Path("./bin/Program.runtimeconfig.json"),
 						}),
-				};
+				}
 
 				Assert.Equal(
 					expectedBuildOperations,
-					buildState.GetBuildOperations());
+					buildState.GetBuildOperations())
 			}
 		}
 
-		[Fact]
+		// [Fact]
 		public void Build_Library_MultipleFiles()
 		{
 			// Register the test process manager
-			var processManager = new MockProcessManager();
+			var processManager = new MockProcessManager()
 
 			// Register the test listener
-			var testListener = new TestTraceListener();
+			var testListener = new TestTraceListener()
 			using (var scopedTraceListener = new ScopedTraceListenerRegister(testListener))
 			using (var scopedProcesManager = new ScopedSingleton<IProcessManager>(processManager))
 			{
 				// Setup the input build state
-				var buildState = new MockBuildState();
-				var state = buildState.ActiveState;
+				var buildState = new MockBuildState()
+				var state = buildState.ActiveState
 
 				// Setup build table
-				var buildTable = new ValueTable();
-				state.Add("Build", new Value(buildTable));
-				buildTable.Add("TargetName", new Value("Library"));
-				buildTable.Add("TargetType", new Value((long)BuildTargetType.Library));
-				buildTable.Add("SourceRootDirectory", new Value("C:/source/"));
-				buildTable.Add("TargetRootDirectory", new Value("C:/target/"));
-				buildTable.Add("ObjectDirectory", new Value("obj/"));
-				buildTable.Add("BinaryDirectory", new Value("bin/"));
+				var buildTable = new ValueTable()
+				state.Add("Build", new Value(buildTable))
+				buildTable.Add("TargetName", new Value("Library"))
+				buildTable.Add("TargetType", new Value((long)BuildTargetType.Library))
+				buildTable.Add("SourceRootDirectory", new Value("C:/source/"))
+				buildTable.Add("TargetRootDirectory", new Value("C:/target/"))
+				buildTable.Add("ObjectDirectory", new Value("obj/"))
+				buildTable.Add("BinaryDirectory", new Value("bin/"))
 				buildTable.Add("Source", new Value(new ValueList()
 				{
 					new Value("TestFile1.cpp"),
 					new Value("TestFile2.cpp"),
 					new Value("TestFile3.cpp"),
-				}));
+				}))
 				buildTable.Add("IncludeDirectories", new Value(new ValueList()
 				{
 					new Value("Folder"),
 					new Value("AnotherFolder/Sub"),
-				}));
+				}))
 				buildTable.Add("ModuleDependencies", new Value(new ValueList()
 				{
 					new Value("../Other/bin/OtherModule1.mock.bmi"),
 					new Value("../OtherModule2.mock.bmi"),
-				}));
-				buildTable.Add("OptimizationLevel", new Value((long)BuildOptimizationLevel.None));
+				}))
+				buildTable.Add("OptimizationLevel", new Value((long)BuildOptimizationLevel.None))
 
 				// Setup parameters table
-				var parametersTable = new ValueTable();
-				state.Add("Parameters", new Value(parametersTable));
-				parametersTable.Add("Architecture", new Value("x64"));
-				parametersTable.Add("Compiler", new Value("MOCK"));
+				var parametersTable = new ValueTable()
+				state.Add("Parameters", new Value(parametersTable))
+				parametersTable.Add("Architecture", new Value("x64"))
+				parametersTable.Add("Compiler", new Value("MOCK"))
 
 				// Register the mock compiler
-				var compiler = new Compiler.Mock.Compiler();
-				var compilerFactory = new Dictionary<string, Func<IValueTable, ICompiler>>();
-				compilerFactory.Add("MOCK", (IValueTable state) => { return compiler; });
+				var compiler = new Compiler.Mock.Compiler()
+				var compilerFactory = new Dictionary<string, Func<IValueTable, ICompiler>>()
+				compilerFactory.Add("MOCK", (IValueTable state) => { return compiler })
 
-				var factory = new ValueFactory();
-				var uut = new BuildTask(buildState, factory, compilerFactory);
+				var factory = new ValueFactory()
+				var uut = new BuildTask(buildState, factory, compilerFactory)
 
-				uut.Execute();
+				uut.Execute()
 
 				// Verify expected process manager requests
 				Assert.Equal(
@@ -257,7 +257,7 @@ namespace Soup.Build.CSharp.UnitTests
 						"GetCurrentProcessFileName",
 						"GetCurrentProcessFileName",
 					},
-					processManager.GetRequests());
+					processManager.GetRequests())
 
 				// Verify expected logs
 				Assert.Equal(
@@ -265,7 +265,7 @@ namespace Soup.Build.CSharp.UnitTests
 					{
 						"INFO: Build Generate Done",
 					},
-					testListener.GetMessages());
+					testListener.GetMessages())
 
 				// Setup the shared arguments
 				var expectedCompileArguments = new CompileArguments()
@@ -281,7 +281,7 @@ namespace Soup.Build.CSharp.UnitTests
 						new Path("TestFile2.cpp"),
 						new Path("TestFile3.cpp"),
 					},
-				};
+				}
 
 				// Verify expected compiler calls
 				Assert.Equal(
@@ -289,7 +289,7 @@ namespace Soup.Build.CSharp.UnitTests
 					{
 						expectedCompileArguments,
 					},
-					compiler.GetCompileRequests());
+					compiler.GetCompileRequests())
 
 				// Verify build state
 				var expectedBuildOperations = new List<BuildOperation>()
@@ -337,11 +337,11 @@ namespace Soup.Build.CSharp.UnitTests
 						{
 							new Path("./OutputFile.out"),
 						}),
-				};
+				}
 
 				Assert.Equal(
 					expectedBuildOperations,
-					buildState.GetBuildOperations());
+					buildState.GetBuildOperations())
 			}
 		}
 	}

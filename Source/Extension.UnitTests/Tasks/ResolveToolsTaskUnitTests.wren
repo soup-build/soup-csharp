@@ -2,37 +2,37 @@
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
-using Opal;
-using Soup.Build.Runtime;
-using Soup.Build.Utilities;
-using System.Collections.Generic;
-using Xunit;
+using Opal
+using Soup.Build.Runtime
+using Soup.Build.Utilities
+using System.Collections.Generic
+using Xunit
 
 namespace Soup.Build.CSharp.UnitTests
 {
 	public class ResolveToolsTaskUnitTests
 	{
-		[Fact]
+		// [Fact]
 		public void Initialize_Success()
 		{
-			var buildState = new MockBuildState();
-			var factory = new ValueFactory();
-			var uut = new ResolveToolsTask(buildState, factory);
+			var buildState = new MockBuildState()
+			var factory = new ValueFactory()
+			var uut = new ResolveToolsTask(buildState, factory)
 		}
 
-		[Fact]
+		// [Fact]
 		public void Execute()
 		{
 			// Register the test systems
-			var testListener = new TestTraceListener();
+			var testListener = new TestTraceListener()
 			using (var scopedTraceListener = new ScopedTraceListenerRegister(testListener))
 			{
 				// Setup the input build state
-				var buildState = new MockBuildState();
-				var state = buildState.ActiveState;
+				var buildState = new MockBuildState()
+				var state = buildState.ActiveState
 
 				// Set the sdks
-				var sdks = new ValueList();
+				var sdks = new ValueList()
 				sdks.Add(new Value(new ValueTable()
 				{
 					{ "Name", new Value("Roslyn") },
@@ -43,37 +43,37 @@ namespace Soup.Build.CSharp.UnitTests
 							{ "ToolsRoot", new Value("C:/Roslyn/ToolsRoot/") }
 						})
 					},
-				}));
+				}))
 
 				// Setup parameters table
-				var parametersTable = new ValueTable();
-				state.Add("Parameters", new Value(parametersTable));
-				parametersTable.Add("SDKs", new Value(sdks));
-				parametersTable.Add("System", new Value("win32"));
-				parametersTable.Add("Architecture", new Value("x64"));
+				var parametersTable = new ValueTable()
+				state.Add("Parameters", new Value(parametersTable))
+				parametersTable.Add("SDKs", new Value(sdks))
+				parametersTable.Add("System", new Value("win32"))
+				parametersTable.Add("Architecture", new Value("x64"))
 
 				// Setup build table
-				var buildTable = new ValueTable();
-				state.Add("Build", new Value(buildTable));
+				var buildTable = new ValueTable()
+				state.Add("Build", new Value(buildTable))
 
-				var factory = new ValueFactory();
-				var uut = new ResolveToolsTask(buildState, factory);
+				var factory = new ValueFactory()
+				var uut = new ResolveToolsTask(buildState, factory)
 
-				uut.Execute();
+				uut.Execute()
 
 				// Verify expected logs
 				Assert.Equal(
 					new List<string>()
 					{
 					},
-					testListener.GetMessages());
+					testListener.GetMessages())
 
 				// Verify build state
-				var expectedBuildOperations = new List<BuildOperation>();
+				var expectedBuildOperations = new List<BuildOperation>()
 
 				Assert.Equal(
 					expectedBuildOperations,
-					buildState.GetBuildOperations());
+					buildState.GetBuildOperations())
 			}
 		}
 	}
