@@ -55,27 +55,21 @@ class ResolveDependenciesTask : IBuildTask
 					this.buildState.LogTrace(TraceLevel.Information, "Combine Runtime Dependency: " + dependencyName)
 					var dependencyTable = runtimeDependenciesTable[dependencyName].AsTable()
 
-					if (dependencyTable.TryGetValue("Build", out var buildValue))
-					{
+					if (dependencyTable.TryGetValue("Build", out var buildValue)) {
 						var dependencyBuildTable = buildValue.AsTable()
 						var dependencyReference = GetRuntimeDependencyParameterReference(parametersTable, dependencyName)
 						var dependencyRecipeReference = GetRuntimeDependencyReference(recipeTable, dependencyReference)
 
-						if (!dependencyRecipeReference.ExcludeRuntime)
-						{
-							if (dependencyBuildTable.TryGetValue("RuntimeDependencies", out var runtimeDependenciesValue))
-							{
+						if (!dependencyRecipeReference.ExcludeRuntime) {
+							if (dependencyBuildTable.TryGetValue("RuntimeDependencies", out var runtimeDependenciesValue)) {
 								var runtimeDependencies = runtimeDependenciesValue.AsList()
 								buildTable.EnsureValueList(this.factory, "RuntimeDependencies").Append(runtimeDependencies)
 							}
-						}
-						else
-						{
-							this.buildState.LogTrace(TraceLevel.Information, $"Excluding Runtime dependency content: {dependencyName}")
+						} else {
+							this.buildState.LogTrace(TraceLevel.Information, "Excluding Runtime dependency content: %(dependencyName)")
 						}
 
-						if (dependencyBuildTable.TryGetValue("LinkDependencies", out var linkDependenciesValue))
-						{
+						if (dependencyBuildTable.TryGetValue("LinkDependencies", out var linkDependenciesValue)) {
 							var linkDependencies = linkDependenciesValue.AsList()
 							buildTable.EnsureValueList(this.factory, "LinkDependencies").Append(linkDependencies)
 						}

@@ -47,7 +47,7 @@ class RoslynCompiler is ICompiler {
 			string.Join(" ", sharedCommandArguments))
 		operations.add(writeSharedArgumentsOperation)
 
-		var symbolFile = Path.new(arguments.Target.ToString())
+		var symbolFile = Path.new(arguments.Target.toString)
 		symbolFile.SetFileExtension("pdb")
 
 		var targetResponseFile = arguments.TargetRootDirectory + responseFile
@@ -64,9 +64,9 @@ class RoslynCompiler is ICompiler {
 
 		// Generate the compile build operation
 		var uniqueCommandArguments = ArgumentBuilder.BuildUniqueCompilerArguments()
-		var commandArguments = $"@{targetResponseFile} {string.Join(" ", uniqueCommandArguments)}"
+		var commandArguments = "@%(targetResponseFile) %(uniqueCommandArguments)"
 		var buildOperation = BuildOperation.new(
-			$"Compile - {arguments.Target}",
+			"Compile - %(arguments.Target)",
 			arguments.SourceRootDirectory,
 			_compilerExecutable,
 			commandArguments,

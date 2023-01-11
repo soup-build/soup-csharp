@@ -47,7 +47,7 @@ class BuildEngine {
 	/// </summary>
 	CoreCompile(arguments, referenceDirectory, result) {
 		// Ensure there are actually files to build
-		if (arguments.SourceFiles.Count != 0) {
+		if (arguments.SourceFiles.count != 0) {
 			Path targetFile
 			Path referenceTargetFile
 			LinkTarget targetType
@@ -167,7 +167,7 @@ class BuildEngine {
 	GenerateBuildRuntimeConfigurationFiles(arguments, result) {
 		if (arguments.TargetType == BuildTargetType.Executable) {
 			// Generate the runtime configuration files
-			var runtimeConfigFile = arguments.BinaryDirectory + Path.new($"{arguments.TargetName}.runtimeconfig.json")
+			var runtimeConfigFile = arguments.BinaryDirectory + Path.new("%(arguments.TargetName).runtimeconfig.json")
 			var content =
 "{
 	""runtimeOptions"": {

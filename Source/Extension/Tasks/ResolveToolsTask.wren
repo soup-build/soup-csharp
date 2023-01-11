@@ -66,10 +66,10 @@ class ResolveToolsTask : IBuildTask
 		var dotnetRootPath = Path.new(dotnetSDKProperties["RootPath"].AsString())
 
 		// Save the build properties
-		state["Roslyn.BinRoot"] = this.factory.Create(roslynFolder.ToString())
-		state["Roslyn.CscToolPath"] = this.factory.Create(cscToolPath.ToString())
-		state["DotNet.RuntimeVersion"] = this.factory.Create(dotnetRuntimeVersion.ToString())
-		state["DotNet.RootPath"] = this.factory.Create(dotnetRootPath.ToString())
+		state["Roslyn.BinRoot"] = this.factory.Create(roslynFolder.toString)
+		state["Roslyn.CscToolPath"] = this.factory.Create(cscToolPath.toString)
+		state["DotNet.RuntimeVersion"] = this.factory.Create(dotnetRuntimeVersion.toString)
+		state["DotNet.RootPath"] = this.factory.Create(dotnetRootPath.toString)
 
 		// Save the platform libraries
 		state["PlatformLibraries"] = this.factory.Create("")
@@ -87,9 +87,8 @@ class ResolveToolsTask : IBuildTask
 	IEnumerable<Path> GetPlatformLibraries(Path dotnetRootPath, SemanticVersion dotnetRuntimeVersion)
 	{
 		// Set the platform libraries
-		var path = dotnetRootPath + Path.new($"packs/Microsoft.NETCore.App.Ref/{dotnetRuntimeVersion}/ref/net6.0/")
+		var path = dotnetRootPath + Path.new("packs/Microsoft.NETCore.App.Ref/%(dotnetRuntimeVersion)/ref/net6.0/")
 		var platformLibraries = [
-		{
 			Path.new("Microsoft.CSharp.dll"),
 			Path.new("Microsoft.VisualBasic.Core.dll"),
 			Path.new("Microsoft.VisualBasic.dll"),
@@ -242,13 +241,12 @@ class ResolveToolsTask : IBuildTask
 			Path.new("System.Xml.XPath.dll"),
 			Path.new("System.Xml.XPath.XDocument.dll"),
 			Path.new("WindowsBase.dll"),
-		}
+		]
 
 		return platformLibraries.Select(value { path + value)
 	}
 
-	IValueTable GetSDKProperties(string name, IValueTable state)
-	{
+	IValueTable GetSDKProperties(string name, IValueTable state) {
 		foreach (var sdk in state["SDKs"].AsList())
 		{
 			var sdkTable = sdk.AsTable()
@@ -261,6 +259,6 @@ class ResolveToolsTask : IBuildTask
 			}
 		}
 
-		Fiber.abort($"Missing SDK {name}")
+		Fiber.abort("Missing SDK %(name)")
 	}
 }

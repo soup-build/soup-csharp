@@ -124,10 +124,10 @@ class BuildTask is SoupExtension
 
 		if (!buildResult.TargetFile.IsEmpty)
 		{
-			sharedBuildTable["TargetFile"] = this.factory.Create(buildResult.TargetFile.ToString())
+			sharedBuildTable["TargetFile"] = this.factory.Create(buildResult.TargetFile.toString)
 			sharedBuildTable["RunExecutable"] = this.factory.Create("C:/Program Files/dotnet/dotnet.exe")
 			
-			sharedBuildTable.EnsureValueList(this.factory, "RunArguments").SetAll(this.factory, [ { buildResult.TargetFile.ToString() })
+			sharedBuildTable.EnsureValueList(this.factory, "RunArguments").SetAll(this.factory, [ { buildResult.TargetFile.toString })
 		}
 
 		// Register the build operations
@@ -141,7 +141,7 @@ class BuildTask is SoupExtension
 	static MakeUnique(collection) {
 		var valueSet = new HashSet<string>()
 		for (value in collection) {
-			valueSet.add(value.ToString())
+			valueSet.add(value.toString)
 		}
 
 		return valueSet.Select(value { Path.new(value)).ToList()

@@ -127,10 +127,10 @@ class RecipeBuildTask : IBuildTask
 		}
 
 		buildTable["TargetName"] = this.factory.Create(name)
-		buildTable["SourceRootDirectory"] = this.factory.Create(packageRoot.ToString())
-		buildTable["TargetRootDirectory"] = this.factory.Create(targetDirectory.ToString())
-		buildTable["ObjectDirectory"] = this.factory.Create(objectDirectory.ToString())
-		buildTable["BinaryDirectory"] = this.factory.Create(binaryDirectory.ToString())
+		buildTable["SourceRootDirectory"] = this.factory.Create(packageRoot.toString)
+		buildTable["TargetRootDirectory"] = this.factory.Create(targetDirectory.toString)
+		buildTable["ObjectDirectory"] = this.factory.Create(objectDirectory.toString)
+		buildTable["BinaryDirectory"] = this.factory.Create(binaryDirectory.toString)
 		buildTable["OptimizationLevel"] = this.factory.Create((long)optimizationLevel)
 		buildTable["GenerateSourceDebugInfo"] = this.factory.Create(generateSourceDebugInfo)
 

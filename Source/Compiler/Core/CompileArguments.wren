@@ -2,6 +2,8 @@
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
+import "../../Utils/ListExtensions" for ListExtensions
+
 /// <summary>
 /// The enumeration of link targets
 /// </summary>
@@ -46,6 +48,25 @@ class NullableState {
 /// The set of compiler arguments
 /// </summary>
 class CompileArguments {
+	construct new() {
+		_sourceRootDirectory = null
+		_targetRootDirectory = null
+		_objectDirectory = null
+		_preprocessorDefinitions = []
+		_referenceLibraries = []
+		_sourceFiles = []
+		_enableOptimizations = false
+		_generateSourceDebugInfo = false
+		_targetType = null
+		_target = null
+		_referenceTarget = null
+		_enableWarningsAsErrors = false
+		_disabledWarnings = []
+		_enabledWarnings = []
+		_nullableState = null
+		_customProperties = {}
+	}
+
 	/// <summary>
 	/// Gets or sets the source directory
 	/// </summary>
@@ -143,34 +164,30 @@ class CompileArguments {
 	CustomProperties=(value) { _customProperties = value }
 
 	==(rhs) {
-	{
-		if (rhs is Null)
+		if (rhs is Null) {
 			return false
-
-		// Optimization for a common success case.
-		if (object.ReferenceEquals(this, rhs))
-			return true
+		}
 
 		// Return true if the fields match.
 		return this.SourceRootDirectory == rhs.SourceRootDirectory &&
 			this.TargetRootDirectory == rhs.TargetRootDirectory &&
 			this.ObjectDirectory == rhs.ObjectDirectory &&
-			Enumerable.SequenceEqual(this.PreprocessorDefinitions, rhs.PreprocessorDefinitions) &&
-			Enumerable.SequenceEqual(this.ReferenceLibraries, rhs.ReferenceLibraries) &&
-			Enumerable.SequenceEqual(this.SourceFiles, rhs.SourceFiles) &&
+			ListExtensions.SequenceEqual(this.PreprocessorDefinitions, rhs.PreprocessorDefinitions) &&
+			ListExtensions.SequenceEqual(this.ReferenceLibraries, rhs.ReferenceLibraries) &&
+			ListExtensions.SequenceEqual(this.SourceFiles, rhs.SourceFiles) &&
 			this.EnableOptimizations == rhs.EnableOptimizations &&
 			this.GenerateSourceDebugInfo == rhs.GenerateSourceDebugInfo &&
 			this.TargetType == rhs.TargetType &&
 			this.Target == rhs.Target &&
 			this.ReferenceTarget == rhs.ReferenceTarget &&
 			this.EnableWarningsAsErrors == rhs.EnableWarningsAsErrors &&
-			Enumerable.SequenceEqual(this.DisabledWarnings, rhs.DisabledWarnings) &&
-			Enumerable.SequenceEqual(this.EnabledWarnings, rhs.EnabledWarnings) &&
+			ListExtensions.SequenceEqual(this.DisabledWarnings, rhs.DisabledWarnings) &&
+			ListExtensions.SequenceEqual(this.EnabledWarnings, rhs.EnabledWarnings) &&
 			this.NullableState == rhs.NullableState &&
-			Enumerable.SequenceEqual(this.CustomProperties, rhs.CustomProperties)
+			ListExtensions.SequenceEqual(this.CustomProperties, rhs.CustomProperties)
 	}
 
 	toString {
-		return "SharedCompileArguments { SourceRootDirectory=\"%(SourceRootDirectory)\", TargetRootDirectory=\"%(TargetRootDirectory)\", ObjectDirectory=\"%(ObjectDirectory)\", PreprocessorDefinitions=%(PreprocessorDefinitions), ReferenceLibraries=%(ReferenceLibraries), SourceFiles=%(SourceFiles), EnableOptimizations=\"%(EnableOptimizations)\", GenerateSourceDebugInfo=\"%(GenerateSourceDebugInfo)\", TargetType=%(TargetType), Target=%(Target), ReferenceTarget=%(ReferenceTarget), EnableWarningsAsErrors=\"%(EnableWarningsAsErrors)\", DisabledWarnings=%(DisabledWarnings), EnabledWarnings=%(EnabledWarnings), NullableState=\"%(NullableState)\" CustomProperties=%(CustomProperties) }"
+		return "SharedCompileArguments { SourceRootDirectory=\"%(_sourceRootDirectory)\", TargetRootDirectory=\"%(_targetRootDirectory)\", ObjectDirectory=\"%(_objectDirectory)\", PreprocessorDefinitions=%(_preprocessorDefinitions), ReferenceLibraries=%(_referenceLibraries), SourceFiles=%(_sourceFiles), EnableOptimizations=\"%(_enableOptimizations)\", GenerateSourceDebugInfo=\"%(_generateSourceDebugInfo)\", TargetType=%(_targetType), Target=%(_target), ReferenceTarget=%(_referenceTarget), EnableWarningsAsErrors=\"%(_enableWarningsAsErrors)\", DisabledWarnings=%(_disabledWarnings), EnabledWarnings=%(_enabledWarnings), NullableState=\"%(_nullableState)\" CustomProperties=%(_customProperties) }"
 	}
 }

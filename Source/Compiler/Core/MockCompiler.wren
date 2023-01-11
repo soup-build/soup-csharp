@@ -52,7 +52,7 @@ class MockCompiler is ICompiler {
 		var result = []
 		result.add(
 			BuildOperation.new(
-				"MockCompile: %(_compileRequests.Count)",
+				"MockCompile: %(_compileRequests.count)",
 				Path.new("MockWorkingDirectory"),
 				Path.new("MockCompiler.exe"),
 				"Arguments",
