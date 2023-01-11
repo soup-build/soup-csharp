@@ -5,61 +5,61 @@
 /// <summary>
 /// The enumeration of build optimization levels
 /// </summary>
-enum BuildOptimizationLevel {
+class BuildOptimizationLevel {
 	/// <summary>
 	/// Debug
 	/// </summary>
-	None,
+	static None { "None" }
 
 	/// <summary>
 	/// Optimize for runtime speed, may sacrifice size
 	/// </summary>
-	Speed,
+	static Speed { "Speed" }
 
 	/// <summary>
 	/// Optimize for speed and size
 	/// </summary>
-	Size,
+	static Size { "Size" }
 }
 
 /// <summary>
 /// The enumeration of target types
 /// </summary>
-enum BuildTargetType {
+class BuildTargetType {
 	/// <summary>
 	/// Executable
 	/// </summary>
-	Executable,
+	static Executable { "Executable" }
 
 	/// <summary>
 	/// Library
 	/// </summary>
-	Library,
+	static Library { "Library" }
 }
 
 /// <summary>
 /// The enumeration of nullable state
 /// </summary>
-enum BuildNullableState {
+class BuildNullableState {
 	/// <summary>
 	/// Enabled
 	/// </summary>
-	Enabled,
+	static Enabled { "Enabled" }
 
 	/// <summary>
 	/// Disabled
 	/// </summary>
-	Disabled,
+	static Disabled { "Disabled" }
 
 	/// <summary>
 	/// Annotations
 	/// </summary>
-	Annotations,
+	static Annotations { "Annotations" }
 
 	/// <summary>
 	/// Warnings
 	/// </summary>
-	Warnings,
+	static Warnings { "Warnings" }
 }
 
 /// <summary>
@@ -69,95 +69,114 @@ class BuildArguments {
 	/// <summary>
 	/// Gets or sets the target name
 	/// </summary>
-	string TargetName { get set } = string.Empty
+	TargetName { _targetName }
+	TargetName=(value) { _targetName = value }
 
 	/// <summary>
 	/// Gets or sets the target architecture
 	/// </summary>
-	string TargetArchitecture { get set } = string.Empty
+	TargetArchitecture { _targetArchitecture }
+	TargetArchitecture=(value) { _targetArchitecture = value }
 
 	/// <summary>
 	/// Gets or sets the target type
 	/// </summary>
-	BuildTargetType TargetType { get set }
+	TargetType { _targetType }
+	TargetType=(value) { _targetType = value }
 
 	/// <summary>
 	/// Gets or sets the source directory
 	/// </summary>
-	Path SourceRootDirectory { get set } = new Path()
+	SourceRootDirectory { _sourceRootDirectory }
+	SourceRootDirectory=(value) { _sourceRootDirectory = value }
 
 	/// <summary>
 	/// Gets or sets the target directory
 	/// </summary>
-	Path TargetRootDirectory { get set } = new Path()
+	TargetRootDirectory { _targetRootDirectory }
+	TargetRootDirectory=(value) { _targetRootDirectory = value }
 
 	/// <summary>
 	/// Gets or sets the output object directory
 	/// </summary>
-	Path ObjectDirectory { get set } = new Path()
+	ObjectDirectory { _objectDirectory }
+	ObjectDirectory=(value) { _objectDirectory = value }
 
 	/// <summary>
 	/// Gets or sets the output binary directory
 	/// </summary>
-	Path BinaryDirectory { get set } = new Path()
+	BinaryDirectory { _binaryDirectory }
+	BinaryDirectory=(value) { _binaryDirectory = value }
 
 	/// <summary>
 	/// Gets or sets the list of source files
 	/// </summary>
-	IReadOnlyList<Path> SourceFiles { get set } = new List<Path>()
+	SourceFiles { _sourceFiles }
+	SourceFiles=(value) { _sourceFiles = value }
 
 	/// <summary>
 	/// Gets or sets the list of link libraries
 	/// </summary>
-	IReadOnlyList<Path> LinkDependencies { get set } = new List<Path>()
+	LinkDependencies { _linkDependencies }
+	LinkDependencies=(value) { _linkDependencies = value }
 
 	/// <summary>
 	/// Gets or sets the list of library paths
 	/// </summary>
-	IReadOnlyList<Path> LibraryPaths { get set } = new List<Path>()
+	LibraryPaths { _libraryPaths }
+	LibraryPaths=(value) { _libraryPaths = value }
 
 	/// <summary>
 	/// Gets or sets the list of preprocessor definitions
 	/// </summary>
-	IReadOnlyList<string> PreprocessorDefinitions { get set } = new List<string>()
+	PreprocessorDefinitions { _preprocessorDefinitions }
+	PreprocessorDefinitions=(value) { _preprocessorDefinitions = value }
 
 	/// <summary>
 	/// Gets or sets the list of runtime dependencies
 	/// </summary>
-	IReadOnlyList<Path> RuntimeDependencies { get set } = new List<Path>()
+	RuntimeDependencies { _runtimeDependencies }
+	RuntimeDependencies=(value) { _runtimeDependencies = value }
 
 	/// <summary>
 	/// Gets or sets the optimization level
 	/// </summary>
-	BuildOptimizationLevel OptimizationLevel { get set }
+	OptimizationLevel { _optimizationLevel }
+	OptimizationLevel=(value) { _optimizationLevel = value }
 
 	/// <summary>
 	/// Gets or sets a value indicating whether to generate source debug information
 	/// </summary>
-	bool GenerateSourceDebugInfo { get set }
+	GenerateSourceDebugInfo { _generateSourceDebugInfo }
+	GenerateSourceDebugInfo=(value) { _generateSourceDebugInfo = value }
 
 	/// <summary>
 	/// Gets or sets a value indicating whether to enable warnings as errors
 	/// </summary>
-	bool EnableWarningsAsErrors { get set }
+	EnableWarningsAsErrors { _enableWarningsAsErrors }
+	EnableWarningsAsErrors=(value) { _enableWarningsAsErrors = value }
 
 	/// <summary>
 	/// Gets or sets a the nullable state
 	/// </summary>
-	BuildNullableState NullableState { get set }
+	NullableState { _nullableState }
+	NullableState=(value) { _nullableState = value }
 
 	/// <summary>
 	/// Gets or sets the list of disabled warnings
 	/// </summary>
-	IReadOnlyList<string> DisabledWarnings { get set } = new List<string>()
+	DisabledWarnings { _disabledWarnings }
+	DisabledWarnings=(value) { _disabledWarnings = value }
 
 	/// <summary>
 	/// Gets or sets the list of enabled warnings
 	/// </summary>
-	IReadOnlyList<string> EnabledWarnings { get set } = new List<string>()
+	EnabledWarnings { _enabledWarnings }
+	EnabledWarnings=(value) { _enabledWarnings = value }
 
 	/// <summary>
 	/// Gets or sets the set of custom properties for the known compiler
 	/// </summary>
-	IReadOnlyList<string> CustomProperties { get set } = new List<string>()
+	CustomProperties { _customProperties }
+	CustomProperties=(value) { _customProperties = value }
 }

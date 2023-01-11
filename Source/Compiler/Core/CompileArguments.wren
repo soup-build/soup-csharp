@@ -5,41 +5,41 @@
 /// <summary>
 /// The enumeration of link targets
 /// </summary>
-enum LinkTarget {
+class LinkTarget {
 	/// <summary>
 	/// Dynamic Library
 	/// </summary>
-	Library,
+	static Library { "Library" }
 
 	/// <summary>
 	/// Executable
 	/// </summary>
-	Executable,
+	static Executable { "Executable" }
 }
 
 /// <summary>
 /// The enumeration of nullable state
 /// </summary>
-enum NullableState {
+class NullableState {
 	/// <summary>
 	/// Enabled
 	/// </summary>
-	Enabled,
+	static Enabled { "Enabled" }
 
 	/// <summary>
 	/// Disabled
 	/// </summary>
-	Disabled,
+	static Disabled { "Disabled" }
 
 	/// <summary>
 	/// Annotations
 	/// </summary>
-	Annotations,
+	static Annotations { "Annotations" }
 
 	/// <summary>
 	/// Warnings
 	/// </summary>
-	Warnings,
+	static Warnings { "Warnings" }
 }
 
 /// <summary>
@@ -49,88 +49,102 @@ class CompileArguments {
 	/// <summary>
 	/// Gets or sets the source directory
 	/// </summary>
-	Path SourceRootDirectory { get init } = new Path()
+	SourceRootDirectory { _sourceRootDirectory }
+	SourceRootDirectory=(value) { _sourceRootDirectory = value }
 
 	/// <summary>
 	/// Gets or sets the target directory
 	/// </summary>
-	Path TargetRootDirectory { get init } = new Path()
+	TargetRootDirectory { _targetRootDirectory }
+	TargetRootDirectory=(value) { _targetRootDirectory = value }
 
 	/// <summary>
 	/// Gets or sets the object directory
 	/// </summary>
-	Path ObjectDirectory { get init } = new Path()
+	ObjectDirectory { _objectDirectory }
+	ObjectDirectory=(value) { _objectDirectory = value }
 
 	/// <summary>
 	/// Gets or sets the list of preprocessor definitions
 	/// </summary>
-	IReadOnlyList<string> PreprocessorDefinitions { get init } = new List<string>()
+	PreprocessorDefinitions { _preprocessorDefinitions }
+	PreprocessorDefinitions=(value) { _preprocessorDefinitions = value }
 
 	/// <summary>
 	/// Gets or sets the list of reference libraries
 	/// </summary>
-	IReadOnlyList<Path> ReferenceLibraries { get init } = new List<Path>()
+	ReferenceLibraries { _referenceLibraries }
+	ReferenceLibraries=(value) { _referenceLibraries = value }
 
 	/// <summary>
 	/// Gets or sets the list of source files
 	/// </summary>
-	IReadOnlyList<Path> SourceFiles { get init } = new List<Path>()
+	SourceFiles { _sourceFiles }
+	SourceFiles=(value) { _sourceFiles = value }
 
 	/// <summary>
 	/// Gets or sets a value indicating whether to enable optimizations
 	/// </summary>
-	bool EnableOptimizations { get init }
+	EnableOptimizations { _enableOptimizations }
+	EnableOptimizations=(value) { _enableOptimizations = value }
 
 	/// <summary>
 	/// Gets or sets a value indicating whether to generate source debug information
 	/// </summary>
-	bool GenerateSourceDebugInfo { get init }
+	GenerateSourceDebugInfo { _generateSourceDebugInfo }
+	GenerateSourceDebugInfo=(value) { _generateSourceDebugInfo = value }
 
 	/// <summary>
 	/// Gets or sets the target type
 	/// </summary>
-	LinkTarget TargetType { get init } = LinkTarget.Library
+	TargetType { _targetType }
+	TargetType=(value) { _targetType = value }
 
 	/// <summary>
 	/// Gets or sets the target file
 	/// </summary>
-	Path Target { get set } = new Path()
+	Target { _target }
+	Target=(value) { _target = value }
 
 	/// <summary>
 	/// Gets or sets the reference target file
 	/// </summary>
-	Path ReferenceTarget { get set } = new Path()
+	ReferenceTarget { _referenceTarget }
+	ReferenceTarget=(value) { _referenceTarget = value }
 
 	/// <summary>
 	/// Gets or sets a value indicating whether to enable warnings as errors
 	/// </summary>
-	bool EnableWarningsAsErrors { get init }
+	EnableWarningsAsErrors { _enableWarningsAsErrors }
+	EnableWarningsAsErrors=(value) { _enableWarningsAsErrors = value }
 
 	/// <summary>
 	/// Gets or sets the list of disabled warnings
 	/// </summary>
-	IReadOnlyList<string> DisabledWarnings { get set } = new List<string>()
+	DisabledWarnings { _disabledWarnings }
+	DisabledWarnings=(value) { _disabledWarnings = value }
 
 	/// <summary>
 	/// Gets or sets the list of enabled warnings
 	/// </summary>
-	IReadOnlyList<string> EnabledWarnings { get init } = new List<string>()
+	EnabledWarnings { _enabledWarnings }
+	EnabledWarnings=(value) { _enabledWarnings = value }
 
 	/// <summary>
 	/// Gets or sets a value indicating whether nullable is enabled
 	/// </summary>
-	NullableState NullableState {get init } = NullableState.Enabled
+	NullableState { _nullableState }
+	NullableState=(value) { _nullableState = value }
 
 	/// <summary>
 	/// Gets or sets the set of custom properties for the known compiler
 	/// </summary>
-	IReadOnlyList<string> CustomProperties { get init } = new List<string>()
+	CustomProperties { _customProperties }
+	CustomProperties=(value) { _customProperties = value }
 
-	override bool Equals(object? obj) => this.Equals(obj as CompileArguments)
-
-	bool Equals(CompileArguments? rhs)
+	==(rhs) {
 	{
-		if (rhs is null)
+		if (rhs is Null)
 			return false
 
 		// Optimization for a common success case.
@@ -156,25 +170,7 @@ class CompileArguments {
 			Enumerable.SequenceEqual(this.CustomProperties, rhs.CustomProperties)
 	}
 
-	override int GetHashCode() => (SourceRootDirectory, TargetRootDirectory, ObjectDirectory, Target).GetHashCode()
-
-	static bool operator ==(CompileArguments? lhs, CompileArguments? rhs)
-	{
-		if (lhs is null)
-		{
-			if (rhs is null)
-				return true
-			else
-				return false
-		}
-
-		return lhs.Equals(rhs)
-	}
-
-	static bool operator !=(CompileArguments? lhs, CompileArguments? rhs) => !(lhs == rhs)
-
-	override string ToString()
-	{
-		return $"SharedCompileArguments {{ SourceRootDirectory=\"{SourceRootDirectory}\", TargetRootDirectory=\"{TargetRootDirectory}\", ObjectDirectory=\"{ObjectDirectory}\", PreprocessorDefinitions=[{string.Join(",", PreprocessorDefinitions)}], ReferenceLibraries=[{string.Join(",", ReferenceLibraries)}], SourceFiles=[{string.Join(",", SourceFiles)}], EnableOptimizations=\"{EnableOptimizations}\", GenerateSourceDebugInfo=\"{GenerateSourceDebugInfo}\", TargetType={TargetType}, Target={Target}, ReferenceTarget={ReferenceTarget}, EnableWarningsAsErrors=\"{EnableWarningsAsErrors}\", DisabledWarnings=[{string.Join(",", DisabledWarnings)}], EnabledWarnings=[{string.Join(",", EnabledWarnings)}], NullableState=\"{NullableState}\" CustomProperties=[{string.Join(",", CustomProperties)}]}}"
+	toString {
+		return "SharedCompileArguments { SourceRootDirectory=\"%(SourceRootDirectory)\", TargetRootDirectory=\"%(TargetRootDirectory)\", ObjectDirectory=\"%(ObjectDirectory)\", PreprocessorDefinitions=%(PreprocessorDefinitions), ReferenceLibraries=%(ReferenceLibraries), SourceFiles=%(SourceFiles), EnableOptimizations=\"%(EnableOptimizations)\", GenerateSourceDebugInfo=\"%(GenerateSourceDebugInfo)\", TargetType=%(TargetType), Target=%(Target), ReferenceTarget=%(ReferenceTarget), EnableWarningsAsErrors=\"%(EnableWarningsAsErrors)\", DisabledWarnings=%(DisabledWarnings), EnabledWarnings=%(EnabledWarnings), NullableState=\"%(NullableState)\" CustomProperties=%(CustomProperties) }"
 	}
 }

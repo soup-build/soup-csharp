@@ -9,25 +9,30 @@ class BuildResult {
 	/// <summary>
 	/// Gets or sets the resulting root build operations
 	/// </summary>
-	IList<BuildOperation> BuildOperations { get set } = new List<BuildOperation>()
+	BuildOperations { _buildOperations }
+	BuildOperations=(value) { _buildOperations = value }
 
 	/// <summary>
 	/// Gets or sets the list of link libraries that downstream builds should use when linking
 	/// </summary>
-	IList<Path> LinkDependencies { get set } = new List<Path>()
+	LinkDependencies { _linkDependencies }
+	LinkDependencies=(value) { _linkDependencies = value }
 
 	/// <summary>
 	/// Gets or sets the list of internal link libraries that were used to link the final result
 	/// </summary>
-	IList<Path> InternalLinkDependencies { get set } = new List<Path>()
+	InternalLinkDependencies { _internalLinkDependencies }
+	InternalLinkDependencies=(value) { _internalLinkDependencies = value }
 
 	/// <summary>
 	/// Gets or sets the list of runtime dependencies
 	/// </summary>
-	IList<Path> RuntimeDependencies { get set } = new List<Path>()
+	RuntimeDependencies { _runtimeDependencies }
+	RuntimeDependencies=(value) { _runtimeDependencies = value }
 
 	/// <summary>
 	/// Gets or sets the target file for the build
 	/// </summary>
-	Path TargetFile { get set } = new Path()
+	TargetFile { _targetFile }
+	TargetFile=(value) { _targetFile = value }
 }

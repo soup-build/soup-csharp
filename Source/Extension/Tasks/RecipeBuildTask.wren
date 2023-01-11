@@ -7,13 +7,10 @@
 /// </summary>
 class RecipeBuildTask : IBuildTask
 {
-	private IBuildState buildState
-	private IValueFactory factory
-
 	/// <summary>
 	/// Get the run before list
 	/// </summary>
-	static IReadOnlyList<string> RunBeforeList => new List<string>()
+	static runBefore { [
 	{
 		"BuildTask",
 	}
@@ -21,22 +18,15 @@ class RecipeBuildTask : IBuildTask
 	/// <summary>
 	/// Get the run after list
 	/// </summary>
-	static IReadOnlyList<string> RunAfterList => new List<string>()
+	static runAfter { [
 	{
 		"ResolveToolsTask",
-	}
-
-	RecipeBuildTask(IBuildState buildState, IValueFactory factory)
-	{
-		this.buildState = buildState
-		this.factory = factory
 	}
 
 	/// <summary>
 	/// The Core Execute task
 	/// </summary>
-	void Execute()
-	{
+	Execute() {
 		var rootTable = this.buildState.ActiveState
 		var parametersTable = rootTable["Parameters"].AsTable()
 		var recipeTable = rootTable["Recipe"].AsTable()
@@ -44,26 +34,21 @@ class RecipeBuildTask : IBuildTask
 
 		// Load the input properties
 		var compilerName = parametersTable["Compiler"].AsString()
-		var packageRoot = new Path(parametersTable["PackageDirectory"].AsString())
+		var packageRoot = Path.new(parametersTable["PackageDirectory"].AsString())
 		var buildFlavor = parametersTable["Flavor"].AsString()
 
 		// Load Recipe properties
 		var name = recipeTable["Name"].AsString()
 
 		// Add the dependency static library closure to link if targeting an executable or dynamic library
-		var linkLibraries = new List<Path>()
-		if (recipeTable.TryGetValue("LinkLibraries", out var linkLibrariesValue))
-		{
-			foreach (var value in linkLibrariesValue.AsList().Select(value => new Path(value.AsString())))
-			{
+		var linkLibraries = []
+		if (recipeTable.TryGetValue("LinkLibraries", out var linkLibrariesValue)) {
+			for (value in linkLibrariesValue.AsList().Select(value { Path.new(value.AsString()))) {
 				// If relative then resolve to working directory
-				if (value.HasRoot)
-				{
-					linkLibraries.Add(value)
-				}
-				else
-				{
-					linkLibraries.Add(packageRoot + value)
+				if (value.HasRoot) {
+					linkLibraries.add(value)
+				} else {
+					linkLibraries.add(packageRoot + value)
 				}
 			}
 		}
@@ -71,22 +56,17 @@ class RecipeBuildTask : IBuildTask
 		// Add the dependency runtime dependencies closure if present
 		if (recipeTable.TryGetValue("RuntimeDependencies", out var recipeRuntimeDependenciesValue))
 		{
-			var runtimeDependencies = new List<Path>()
-			if (buildTable.TryGetValue("RuntimeDependencies", out var buildRuntimeDependenciesValue))
-			{
-				runtimeDependencies = buildRuntimeDependenciesValue.AsList().Select(value => new Path(value.AsString())).ToList()
+			var runtimeDependencies = []
+			if (buildTable.TryGetValue("RuntimeDependencies", out var buildRuntimeDependenciesValue)) {
+				runtimeDependencies = buildRuntimeDependenciesValue.AsList().Select(value { Path.new(value.AsString())).ToList()
 			}
 
-			foreach (var value in recipeRuntimeDependenciesValue.AsList().Select(value => new Path(value.AsString())))
-			{
+			for (value in recipeRuntimeDependenciesValue.AsList().Select(value { Path.new(value.AsString()))) {
 				// If relative then resolve to working directory
-				if (value.HasRoot)
-				{
-					runtimeDependencies.Add(value)
-				}
-				else
-				{
-					runtimeDependencies.Add(packageRoot + value)
+				if (value.HasRoot) {
+					runtimeDependencies.add(value)
+				} else {
+					runtimeDependencies.add(packageRoot + value)
 				}
 			}
 
@@ -94,66 +74,56 @@ class RecipeBuildTask : IBuildTask
 		}
 
 		// Load the extra library paths provided to the build system
-		var libraryPaths = new List<Path>()
+		var libraryPaths = []
 
 		// Combine the defines with the default set and the platform
-		var preprocessorDefinitions = new List<string>()
-		if (recipeTable.TryGetValue("Defines", out var definesValue))
-		{
-			preprocessorDefinitions = definesValue.AsList().Select(value => value.AsString()).ToList()
+		var preprocessorDefinitions = []
+		if (recipeTable.TryGetValue("Defines", out var definesValue)) {
+			preprocessorDefinitions = definesValue.AsList().Select(value { value.AsString()).ToList()
 		}
 
-		preprocessorDefinitions.Add("SOUP_BUILD")
+		preprocessorDefinitions.add("SOUP_BUILD")
 
 		// Build up arguments to build this individual recipe
-		var targetDirectory = new Path(parametersTable["TargetDirectory"].AsString())
-		var binaryDirectory = new Path("bin/")
-		var objectDirectory = new Path("obj/")
+		var targetDirectory = Path.new(parametersTable["TargetDirectory"].AsString())
+		var binaryDirectory = Path.new("bin/")
+		var objectDirectory = Path.new("obj/")
 
 		// Load the source files if present
-		var sourceFiles = new List<string>()
-		if (recipeTable.TryGetValue("Source", out var sourceValue))
-		{
-			sourceFiles = sourceValue.AsList().Select(value => value.AsString()).ToList()
+		var sourceFiles = []
+		if (recipeTable.TryGetValue("Source", out var sourceValue)) {
+			sourceFiles = sourceValue.AsList().Select(value { value.AsString()).ToList()
 		}
 
 		// Check for warning settings
-		bool enableWarningsAsErrors = true
-		if (recipeTable.TryGetValue("EnableWarningsAsErrors", out var enableWarningsAsErrorsValue))
-		{
+		var enableWarningsAsErrors = true
+		if (recipeTable.TryGetValue("EnableWarningsAsErrors", out var enableWarningsAsErrorsValue)) {
 			enableWarningsAsErrors = enableWarningsAsErrorsValue.AsBoolean()
 		}
 
 		// Check for nullable settings, default to enabled
 		var nullableState = BuildNullableState.Enabled
-		if (recipeTable.TryGetValue("Nullable", out var nullableValue))
-		{
+		if (recipeTable.TryGetValue("Nullable", out var nullableValue)) {
 			nullableState = ParseNullable(nullableValue.AsString())
 		}
 
 		// Set the correct optimization level for the requested flavor
 		var optimizationLevel = BuildOptimizationLevel.None
-		bool generateSourceDebugInfo = false
+		var generateSourceDebugInfo = false
 		if (string.Compare(buildFlavor, "debug", StringComparison.OrdinalIgnoreCase) == 0)
 		{
 			// preprocessorDefinitions.pushthis.back("DEBUG")
 			generateSourceDebugInfo = true
-		}
-		else if (string.Compare(buildFlavor, "debugrelease", StringComparison.OrdinalIgnoreCase) == 0)
-		{
-			preprocessorDefinitions.Add("RELEASE")
+		} else if (string.Compare(buildFlavor, "debugrelease", StringComparison.OrdinalIgnoreCase) == 0) {
+			preprocessorDefinitions.add("RELEASE")
 			generateSourceDebugInfo = true
 			optimizationLevel = BuildOptimizationLevel.Speed
-		}
-		else if (string.Compare(buildFlavor, "release", StringComparison.OrdinalIgnoreCase) == 0)
-		{
-			preprocessorDefinitions.Add("RELEASE")
+		} else if (string.Compare(buildFlavor, "release", StringComparison.OrdinalIgnoreCase) == 0) {
+			preprocessorDefinitions.add("RELEASE")
 			optimizationLevel = BuildOptimizationLevel.Speed
-		}
-		else
-		{
+		} else {
 			this.buildState.LogTrace(TraceLevel.Error, "Unknown build flavor type.")
-			throw new InvalidOperationException("Unknown build flavors type.")
+			Fiber.abort("Unknown build flavors type.")
 		}
 
 		buildTable["TargetName"] = this.factory.Create(name)
@@ -182,18 +152,16 @@ class RecipeBuildTask : IBuildTask
 		buildTable["TargetType"] = this.factory.Create((long)targetType)
 	}
 
-	private static BuildTargetType ParseType(string value)
-	{
+	static ParseType(value) {
 		if (value == "Executable")
 			return BuildTargetType.Executable
 		else if (value == "Library")
 			return BuildTargetType.Library
 		else
-			throw new InvalidOperationException("Unknown target type value.")
+			Fiber.abort("Unknown target type value.")
 	}
 
-	private static BuildNullableState ParseNullable(string value)
-	{
+	static BuildNullableState ParseNullable(string value) {
 		if (value == "Enabled")
 			return BuildNullableState.Enabled
 		else if (value == "Disabled")
@@ -203,6 +171,6 @@ class RecipeBuildTask : IBuildTask
 		else if (value == "Annotations")
 			return BuildNullableState.Annotations
 		else
-			throw new InvalidOperationException("Unknown nullable state value.")
+			Fiber.abort("Unknown nullable state value.")
 	}
 }

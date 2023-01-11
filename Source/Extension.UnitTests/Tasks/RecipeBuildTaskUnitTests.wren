@@ -13,7 +13,7 @@ namespace Soup.Build.CSharp.UnitTests
     public class RecipeBuildTaskUnitTests
     {
         // [Fact]
-        public void Initialize_Success()
+        public Initialize_Success()
         {
             var buildState = new MockBuildState()
             var factory = new ValueFactory()
@@ -21,7 +21,7 @@ namespace Soup.Build.CSharp.UnitTests
         }
 
         // [Fact]
-        public void Build_Executable()
+        public Build_Executable()
         {
             // Register the test systems
             var testListener = new TestTraceListener()
@@ -30,23 +30,23 @@ namespace Soup.Build.CSharp.UnitTests
                 // Setup the input build state
                 var buildState = new MockBuildState()
                 var state = buildState.ActiveState
-                state.Add("PlatformLibraries", new Value(new ValueList()))
-                state.Add("PlatformIncludePaths", new Value(new ValueList()))
-                state.Add("PlatformLibraryPaths", new Value(new ValueList()))
-                state.Add("PlatformPreprocessorDefinitions", new Value(new ValueList()))
+                state.add("PlatformLibraries", new Value(new ValueList()))
+                state.add("PlatformIncludePaths", new Value(new ValueList()))
+                state.add("PlatformLibraryPaths", new Value(new ValueList()))
+                state.add("PlatformPreprocessorDefinitions", new Value(new ValueList()))
 
                 // Setup recipe table
                 var buildTable = new ValueTable()
-                state.Add("Recipe", new Value(buildTable))
-                buildTable.Add("Name", new Value("Program"))
+                state.add("Recipe", new Value(buildTable))
+                buildTable.add("Name", new Value("Program"))
 
                 // Setup parameters table
                 var parametersTable = new ValueTable()
-                state.Add("Parameters", new Value(parametersTable))
-                parametersTable.Add("TargetDirectory", new Value("C:/Target/"))
-                parametersTable.Add("PackageDirectory", new Value("C:/PackageRoot/"))
-                parametersTable.Add("Compiler", new Value("MOCK"))
-                parametersTable.Add("Flavor", new Value("debug"))
+                state.add("Parameters", new Value(parametersTable))
+                parametersTable.add("TargetDirectory", new Value("C:/Target/"))
+                parametersTable.add("PackageDirectory", new Value("C:/PackageRoot/"))
+                parametersTable.add("Compiler", new Value("MOCK"))
+                parametersTable.add("Flavor", new Value("debug"))
 
                 var factory = new ValueFactory()
                 var uut = new RecipeBuildTask(buildState, factory)
@@ -55,13 +55,13 @@ namespace Soup.Build.CSharp.UnitTests
  
                 // Verify expected logs
                 Assert.Equal(
-                    new List<string>()
+                    [
                     {
                     },
 				    testListener.GetMessages())
 
                 // Verify build state
-                var expectedBuildOperations = new List<BuildOperation>()
+                var expectedBuildOperations = [
 
                 Assert.Equal(
                     expectedBuildOperations,

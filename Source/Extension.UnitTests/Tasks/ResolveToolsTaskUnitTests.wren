@@ -13,7 +13,7 @@ namespace Soup.Build.CSharp.UnitTests
 	public class ResolveToolsTaskUnitTests
 	{
 		// [Fact]
-		public void Initialize_Success()
+		public Initialize_Success()
 		{
 			var buildState = new MockBuildState()
 			var factory = new ValueFactory()
@@ -21,7 +21,7 @@ namespace Soup.Build.CSharp.UnitTests
 		}
 
 		// [Fact]
-		public void Execute()
+		public Execute()
 		{
 			// Register the test systems
 			var testListener = new TestTraceListener()
@@ -33,7 +33,7 @@ namespace Soup.Build.CSharp.UnitTests
 
 				// Set the sdks
 				var sdks = new ValueList()
-				sdks.Add(new Value(new ValueTable()
+				sdks.add(new Value(new ValueTable()
 				{
 					{ "Name", new Value("Roslyn") },
 					{
@@ -47,14 +47,14 @@ namespace Soup.Build.CSharp.UnitTests
 
 				// Setup parameters table
 				var parametersTable = new ValueTable()
-				state.Add("Parameters", new Value(parametersTable))
-				parametersTable.Add("SDKs", new Value(sdks))
-				parametersTable.Add("System", new Value("win32"))
-				parametersTable.Add("Architecture", new Value("x64"))
+				state.add("Parameters", new Value(parametersTable))
+				parametersTable.add("SDKs", new Value(sdks))
+				parametersTable.add("System", new Value("win32"))
+				parametersTable.add("Architecture", new Value("x64"))
 
 				// Setup build table
 				var buildTable = new ValueTable()
-				state.Add("Build", new Value(buildTable))
+				state.add("Build", new Value(buildTable))
 
 				var factory = new ValueFactory()
 				var uut = new ResolveToolsTask(buildState, factory)
@@ -63,13 +63,13 @@ namespace Soup.Build.CSharp.UnitTests
 
 				// Verify expected logs
 				Assert.Equal(
-					new List<string>()
+					[
 					{
 					},
 					testListener.GetMessages())
 
 				// Verify build state
-				var expectedBuildOperations = new List<BuildOperation>()
+				var expectedBuildOperations = [
 
 				Assert.Equal(
 					expectedBuildOperations,

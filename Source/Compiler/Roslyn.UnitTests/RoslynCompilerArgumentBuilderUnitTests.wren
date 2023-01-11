@@ -1,21 +1,35 @@
-// <copyright file="CompilerArgumentBuilderUnitTests.wren" company="Soup">
+// <copyright file="RoslynCompilerArgumentBuilderUnitTests.wren" company="Soup">
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
-class CompilerArgumentBuilderTests {
+class RoslynCompilerArgumentBuilderTests {
+	RunTests() {
+		System.print("RoslynCompilerArgumentBuilderTests.BuildSharedCompilerArguments_DefaultParameters")
+		BuildSharedCompilerArguments_DefaultParameters()
+		System.print("RoslynCompilerArgumentBuilderTests.BuildSharedCompilerArguments_SingleArgument_Executable")
+		BuildSharedCompilerArguments_SingleArgument_Executable()
+		System.print("RoslynCompilerArgumentBuilderTests.BuildSharedCompilerArguments_SingleArgument_NetModule")
+		BuildSharedCompilerArguments_SingleArgument_NetModule()
+		System.print("RoslynCompilerArgumentBuilderTests.BuildSharedCompilerArguments_SingleArgument_EnableWarningsAsErrors")
+		BuildSharedCompilerArguments_SingleArgument_EnableWarningsAsErrors()
+		System.print("RoslynCompilerArgumentBuilderTests.BuildSharedCompilerArguments_SingleArgument_GenerateDebugInformation")
+		BuildSharedCompilerArguments_SingleArgument_GenerateDebugInformation()
+		System.print("RoslynCompilerArgumentBuilderTests.BuildSharedCompilerArguments_SingleArgument_PreprocessorDefinitions")
+		BuildSharedCompilerArguments_SingleArgument_PreprocessorDefinitions()
+		System.print("RoslynCompilerArgumentBuilderTests.BuildUniqueCompilerArguments")
+		BuildUniqueCompilerArguments()
+	}
+
 	// [Fact]
-	void BuildSharedCompilerArguments_DefaultParameters() {
-		var arguments = new CompileArguments()
-		{
-			Target = new Path("bin/Target.dll"),
-			ReferenceTarget = new Path("ref/Target.dll"),
-		}
+	BuildSharedCompilerArguments_DefaultParameters() {
+		var arguments = CompileArguments.new()
+		arguments.Target = Path.new("bin/Target.dll")
+		arguments.ReferenceTarget = Path.new("ref/Target.dll")
 
 		var actualArguments = ArgumentBuilder.BuildSharedCompilerArguments(
 			arguments)
 
-		var expectedArguments = new List<string>()
-		{
+		var expectedArguments = [
 			"/unsafe-",
 			"/checked-",
 			"/fullpaths",
@@ -37,26 +51,22 @@ class CompilerArgumentBuilderTests {
 			"/utf8output",
 			"/deterministic+",
 			"/langversion:9.0",
-		}
+		]
 
 		Assert.Equal(expectedArguments, actualArguments)
 	}
 
 	// [Fact]
-	void BuildSharedCompilerArguments_SingleArgument_Executable()
-	{
-		var arguments = new CompileArguments()
-		{
-			Target = new Path("bin/Target.dll"),
-			ReferenceTarget = new Path("ref/Target.dll"),
-			TargetType = LinkTarget.Executable,
-		}
+	BuildSharedCompilerArguments_SingleArgument_Executable() {
+		var arguments = CompileArguments.new()
+		arguments.Target = Path.new("bin/Target.dll")
+		arguments.ReferenceTarget = Path.new("ref/Target.dll")
+		arguments.TargetType = LinkTarget.Executable
 
 		var actualArguments = ArgumentBuilder.BuildSharedCompilerArguments(
 			arguments)
 
-		var expectedArguments = new List<string>()
-		{
+		var expectedArguments = [
 			"/unsafe-",
 			"/checked-",
 			"/fullpaths",
@@ -78,25 +88,21 @@ class CompilerArgumentBuilderTests {
 			"/utf8output",
 			"/deterministic+",
 			"/langversion:9.0",
-		}
+		]
 
 		Assert.Equal(expectedArguments, actualArguments)
 	}
 
 	// [Fact]
-	void BuildSharedCompilerArguments_SingleArgument_NetModule()
-	{
-		var arguments = new CompileArguments()
-		{
-			Target = new Path("bin/Target.netmodule"),
-			TargetType = LinkTarget.Module,
-		}
+	BuildSharedCompilerArguments_SingleArgument_NetModule() {
+		var arguments = CompileArguments.new()
+		arguments.Target = Path.new("bin/Target.netmodule")
+		arguments.TargetType = LinkTarget.Module
 
 		var actualArguments = ArgumentBuilder.BuildSharedCompilerArguments(
 			arguments)
 
-		var expectedArguments = new List<string>()
-		{
+		var expectedArguments = [
 			"/unsafe-",
 			"/checked-",
 			"/fullpaths",
@@ -117,26 +123,22 @@ class CompilerArgumentBuilderTests {
 			"/utf8output",
 			"/deterministic+",
 			"/langversion:9.0",
-		}
+		]
 
 		Assert.Equal(expectedArguments, actualArguments)
 	}
 
 	// [Fact]
-	void BuildSharedCompilerArguments_SingleArgument_EnableWarningsAsErrors()
-	{
-		var arguments = new CompileArguments()
-		{
-			Target = new Path("bin/Target.dll"),
-			ReferenceTarget = new Path("ref/Target.dll"),
-			EnableWarningsAsErrors = true,
-		}
+	BuildSharedCompilerArguments_SingleArgument_EnableWarningsAsErrors() {
+		var arguments = CompileArguments.new()
+		arguments.Target = Path.new("bin/Target.dll")
+		arguments.ReferenceTarget = Path.new("ref/Target.dll")
+		arguments.EnableWarningsAsErrors = true
 
 		var actualArguments = ArgumentBuilder.BuildSharedCompilerArguments(
 			arguments)
 
-		var expectedArguments = new List<string>()
-		{
+		var expectedArguments = [
 			"/unsafe-",
 			"/checked-",
 			"/fullpaths",
@@ -158,26 +160,22 @@ class CompilerArgumentBuilderTests {
 			"/utf8output",
 			"/deterministic+",
 			"/langversion:9.0",
-		}
+		]
 
 		Assert.Equal(expectedArguments, actualArguments)
 	}
 
 	// [Fact]
-	void BuildSharedCompilerArguments_SingleArgument_GenerateDebugInformation()
-	{
-		var arguments = new CompileArguments()
-		{
-			Target = new Path("bin/Target.dll"),
-			ReferenceTarget = new Path("ref/Target.dll"),
-			GenerateSourceDebugInfo = true,
-		}
+	BuildSharedCompilerArguments_SingleArgument_GenerateDebugInformation() {
+		var arguments = CompileArguments.new()
+		arguments.Target = Path.new("bin/Target.dll")
+		arguments.ReferenceTarget = Path.new("ref/Target.dll")
+		arguments.GenerateSourceDebugInfo = true
 
 		var actualArguments = ArgumentBuilder.BuildSharedCompilerArguments(
 			arguments)
 
-		var expectedArguments = new List<string>()
-		{
+		var expectedArguments = [
 			"/unsafe-",
 			"/checked-",
 			"/fullpaths",
@@ -199,30 +197,25 @@ class CompilerArgumentBuilderTests {
 			"/utf8output",
 			"/deterministic+",
 			"/langversion:9.0",
-		}
+		]
 
 		Assert.Equal(expectedArguments, actualArguments)
 	}
 
 	// [Fact]
-	void BuildSharedCompilerArguments_SingleArgument_PreprocessorDefinitions()
-	{
-		var arguments = new CompileArguments()
-		{
-			Target = new Path("bin/Target.dll"),
-			ReferenceTarget = new Path("ref/Target.dll"),
-			PreprocessorDefinitions = new List<string>()
-			{
-				"DEBUG",
-				"VERSION=1"
-			},
-		}
+	BuildSharedCompilerArguments_SingleArgument_PreprocessorDefinitions() {
+		var arguments = CompileArguments.new()
+		arguments.Target = Path.new("bin/Target.dll")
+		arguments.ReferenceTarget = Path.new("ref/Target.dll")
+		arguments.PreprocessorDefinitions = [
+			"DEBUG",
+			"VERSION=1"
+		]
 
 		var actualArguments = ArgumentBuilder.BuildSharedCompilerArguments(
 			arguments)
 
-		var expectedArguments = new List<string>()
-		{
+		var expectedArguments = [
 			"/unsafe-",
 			"/checked-",
 			"/fullpaths",
@@ -245,20 +238,18 @@ class CompilerArgumentBuilderTests {
 			"/utf8output",
 			"/deterministic+",
 			"/langversion:9.0",
-		}
+		]
 
 		Assert.Equal(expectedArguments, actualArguments)
 	}
 
 	// [Fact]
-	void BuildUniqueCompilerArguments()
-	{
+	BuildUniqueCompilerArguments() {
 		var actualArguments = ArgumentBuilder.BuildUniqueCompilerArguments()
 
-		var expectedArguments = new List<string>()
-		{
+		var expectedArguments = [
 			"/noconfig",
-		}
+		]
 
 		Assert.Equal(expectedArguments, actualArguments)
 	}

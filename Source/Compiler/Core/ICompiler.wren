@@ -5,32 +5,32 @@
 /// <summary>
 /// The compiler interface definition
 /// </summary>
-interface ICompiler
+class ICompiler
 {
 	/// <summary>
 	/// Gets the unique name for the compiler
 	/// </summary>
-	string Name { get }
+	Name { }
 
 	/// <summary>
 	/// Gets the object file extension for the compiler
 	/// </summary>
-	string ObjectFileExtension { get }
+	ObjectFileExtension { }
 
 	/// <summary>
 	/// Gets the static library file extension for the compiler
 	/// TODO: This is platform specific
 	/// </summary>
-	string StaticLibraryFileExtension { get }
+	StaticLibraryFileExtension { }
 
 	/// <summary>
 	/// Gets the dynamic library file extension for the compiler
 	/// TODO: This is platform specific
 	/// </summary>
-	string DynamicLibraryFileExtension { get }
+	DynamicLibraryFileExtension { }
 
 	/// <summary>
 	/// Compile
 	/// </summary>
-	IList<BuildOperation> CreateCompileOperations(CompileArguments arguments)
+	CreateCompileOperations(arguments)
 }

@@ -7,20 +7,20 @@
 /// </summary>
 class ResolveToolsTask : IBuildTask
 {
-	private IBuildState buildState
-	private IValueFactory factory
+	IBuildState buildState
+	IValueFactory factory
 
 	/// <summary>
 	/// Get the run before list
 	/// </summary>
-	static IReadOnlyList<string> RunBeforeList => new List<string>()
+	static runBefore { [
 	{
 	}
 
 	/// <summary>
 	/// Get the run after list
 	/// </summary>
-	static IReadOnlyList<string> RunAfterList => new List<string>()
+	static runAfter { [
 	{
 	}
 
@@ -33,7 +33,7 @@ class ResolveToolsTask : IBuildTask
 	/// <summary>
 	/// The Core Execute task
 	/// </summary>
-	void Execute()
+	Execute()
 	{
 		var state = this.buildState.ActiveState
 		var parameters = state["Parameters"].AsTable()
@@ -43,7 +43,7 @@ class ResolveToolsTask : IBuildTask
 		var architectureName = parameters["Architecture"].AsString()
 
 		if (systemName != "win32")
-			throw new InvalidOperationException("Win32 is the only supported system... so far.")
+			Fiber.abort("Win32 is the only supported system... so far.")
 
 		// Check if skip platform includes was specified
 		bool skipPlatform = false
@@ -56,14 +56,14 @@ class ResolveToolsTask : IBuildTask
 		var roslynSDKProperties = GetSDKProperties("Roslyn", parameters)
 
 		// Calculate the final Roslyn binaries folder
-		var roslynFolder = new Path(roslynSDKProperties["ToolsRoot"].AsString())
+		var roslynFolder = Path.new(roslynSDKProperties["ToolsRoot"].AsString())
 
-		var cscToolPath = roslynFolder + new Path("csc.exe")
+		var cscToolPath = roslynFolder + Path.new("csc.exe")
 
 		// Get the DotNet SDK
 		var dotnetSDKProperties = GetSDKProperties("DotNet", parameters)
 		var dotnetRuntimeVersion = SemanticVersion.Parse(dotnetSDKProperties["RuntimeVersion"].AsString())
-		var dotnetRootPath = new Path(dotnetSDKProperties["RootPath"].AsString())
+		var dotnetRootPath = Path.new(dotnetSDKProperties["RootPath"].AsString())
 
 		// Save the build properties
 		state["Roslyn.BinRoot"] = this.factory.Create(roslynFolder.ToString())
@@ -73,10 +73,10 @@ class ResolveToolsTask : IBuildTask
 
 		// Save the platform libraries
 		state["PlatformLibraries"] = this.factory.Create("")
-		var linkDependencies = new List<Path>()
+		var linkDependencies = [
 		if (buildTable.TryGetValue("LinkDependencies", out var linkLibrariesValue))
 		{
-			linkDependencies = linkLibrariesValue.AsList().Select(value => new Path(value.AsString())).ToList()
+			linkDependencies = linkLibrariesValue.AsList().Select(value { Path.new(value.AsString())).ToList()
 		}
 
 		linkDependencies.AddRange(GetPlatformLibraries(dotnetRootPath, dotnetRuntimeVersion))
@@ -84,170 +84,170 @@ class ResolveToolsTask : IBuildTask
 			this.factory.CreateList().SetAll(this.factory, linkDependencies))
 	}
 
-	private IEnumerable<Path> GetPlatformLibraries(Path dotnetRootPath, SemanticVersion dotnetRuntimeVersion)
+	IEnumerable<Path> GetPlatformLibraries(Path dotnetRootPath, SemanticVersion dotnetRuntimeVersion)
 	{
 		// Set the platform libraries
-		var path = dotnetRootPath + new Path($"packs/Microsoft.NETCore.App.Ref/{dotnetRuntimeVersion}/ref/net6.0/")
-		var platformLibraries = new List<Path>()
+		var path = dotnetRootPath + Path.new($"packs/Microsoft.NETCore.App.Ref/{dotnetRuntimeVersion}/ref/net6.0/")
+		var platformLibraries = [
 		{
-			new Path("Microsoft.CSharp.dll"),
-			new Path("Microsoft.VisualBasic.Core.dll"),
-			new Path("Microsoft.VisualBasic.dll"),
-			new Path("Microsoft.Win32.Primitives.dll"),
-			new Path("mscorlib.dll"),
-			new Path("netstandard.dll"),
-			new Path("System.AppContext.dll"),
-			new Path("System.Buffers.dll"),
-			new Path("System.Collections.Concurrent.dll"),
-			new Path("System.Collections.dll"),
-			new Path("System.Collections.Immutable.dll"),
-			new Path("System.Collections.NonGeneric.dll"),
-			new Path("System.Collections.Specialized.dll"),
-			new Path("System.ComponentModel.Annotations.dll"),
-			new Path("System.ComponentModel.DataAnnotations.dll"),
-			new Path("System.ComponentModel.dll"),
-			new Path("System.ComponentModel.EventBasedAsync.dll"),
-			new Path("System.ComponentModel.Primitives.dll"),
-			new Path("System.ComponentModel.TypeConverter.dll"),
-			new Path("System.Configuration.dll"),
-			new Path("System.Console.dll"),
-			new Path("System.Core.dll"),
-			new Path("System.Data.Common.dll"),
-			new Path("System.Data.DataSetExtensions.dll"),
-			new Path("System.Data.dll"),
-			new Path("System.Diagnostics.Contracts.dll"),
-			new Path("System.Diagnostics.Debug.dll"),
-			new Path("System.Diagnostics.DiagnosticSource.dll"),
-			new Path("System.Diagnostics.FileVersionInfo.dll"),
-			new Path("System.Diagnostics.Process.dll"),
-			new Path("System.Diagnostics.StackTrace.dll"),
-			new Path("System.Diagnostics.TextWriterTraceListener.dll"),
-			new Path("System.Diagnostics.Tools.dll"),
-			new Path("System.Diagnostics.TraceSource.dll"),
-			new Path("System.Diagnostics.Tracing.dll"),
-			new Path("System.dll"),
-			new Path("System.Drawing.dll"),
-			new Path("System.Drawing.Primitives.dll"),
-			new Path("System.Dynamic.Runtime.dll"),
-			new Path("System.Formats.Asn1.dll"),
-			new Path("System.Globalization.Calendars.dll"),
-			new Path("System.Globalization.dll"),
-			new Path("System.Globalization.Extensions.dll"),
-			new Path("System.IO.Compression.Brotli.dll"),
-			new Path("System.IO.Compression.dll"),
-			new Path("System.IO.Compression.FileSystem.dll"),
-			new Path("System.IO.Compression.ZipFile.dll"),
-			new Path("System.IO.dll"),
-			new Path("System.IO.FileSystem.dll"),
-			new Path("System.IO.FileSystem.DriveInfo.dll"),
-			new Path("System.IO.FileSystem.Primitives.dll"),
-			new Path("System.IO.FileSystem.Watcher.dll"),
-			new Path("System.IO.IsolatedStorage.dll"),
-			new Path("System.IO.MemoryMappedFiles.dll"),
-			new Path("System.IO.Pipes.dll"),
-			new Path("System.IO.UnmanagedMemoryStream.dll"),
-			new Path("System.Linq.dll"),
-			new Path("System.Linq.Expressions.dll"),
-			new Path("System.Linq.Parallel.dll"),
-			new Path("System.Linq.Queryable.dll"),
-			new Path("System.Memory.dll"),
-			new Path("System.Net.dll"),
-			new Path("System.Net.Http.dll"),
-			new Path("System.Net.Http.Json.dll"),
-			new Path("System.Net.HttpListener.dll"),
-			new Path("System.Net.Mail.dll"),
-			new Path("System.Net.NameResolution.dll"),
-			new Path("System.Net.NetworkInformation.dll"),
-			new Path("System.Net.Ping.dll"),
-			new Path("System.Net.Primitives.dll"),
-			new Path("System.Net.Requests.dll"),
-			new Path("System.Net.Security.dll"),
-			new Path("System.Net.ServicePoint.dll"),
-			new Path("System.Net.Sockets.dll"),
-			new Path("System.Net.WebClient.dll"),
-			new Path("System.Net.WebHeaderCollection.dll"),
-			new Path("System.Net.WebProxy.dll"),
-			new Path("System.Net.WebSockets.Client.dll"),
-			new Path("System.Net.WebSockets.dll"),
-			new Path("System.Numerics.dll"),
-			new Path("System.Numerics.Vectors.dll"),
-			new Path("System.ObjectModel.dll"),
-			new Path("System.Reflection.DispatchProxy.dll"),
-			new Path("System.Reflection.dll"),
-			new Path("System.Reflection.Emit.dll"),
-			new Path("System.Reflection.Emit.ILGeneration.dll"),
-			new Path("System.Reflection.Emit.Lightweight.dll"),
-			new Path("System.Reflection.Extensions.dll"),
-			new Path("System.Reflection.Metadata.dll"),
-			new Path("System.Reflection.Primitives.dll"),
-			new Path("System.Reflection.TypeExtensions.dll"),
-			new Path("System.Resources.Reader.dll"),
-			new Path("System.Resources.ResourceManager.dll"),
-			new Path("System.Resources.Writer.dll"),
-			new Path("System.Runtime.CompilerServices.Unsafe.dll"),
-			new Path("System.Runtime.CompilerServices.VisualC.dll"),
-			new Path("System.Runtime.dll"),
-			new Path("System.Runtime.Extensions.dll"),
-			new Path("System.Runtime.Handles.dll"),
-			new Path("System.Runtime.InteropServices.dll"),
-			new Path("System.Runtime.InteropServices.RuntimeInformation.dll"),
-			new Path("System.Runtime.Intrinsics.dll"),
-			new Path("System.Runtime.Loader.dll"),
-			new Path("System.Runtime.Numerics.dll"),
-			new Path("System.Runtime.Serialization.dll"),
-			new Path("System.Runtime.Serialization.Formatters.dll"),
-			new Path("System.Runtime.Serialization.Json.dll"),
-			new Path("System.Runtime.Serialization.Primitives.dll"),
-			new Path("System.Runtime.Serialization.Xml.dll"),
-			new Path("System.Security.Claims.dll"),
-			new Path("System.Security.Cryptography.Algorithms.dll"),
-			new Path("System.Security.Cryptography.Csp.dll"),
-			new Path("System.Security.Cryptography.Encoding.dll"),
-			new Path("System.Security.Cryptography.Primitives.dll"),
-			new Path("System.Security.Cryptography.X509Certificates.dll"),
-			new Path("System.Security.dll"),
-			new Path("System.Security.Principal.dll"),
-			new Path("System.Security.SecureString.dll"),
-			new Path("System.ServiceModel.Web.dll"),
-			new Path("System.ServiceProcess.dll"),
-			new Path("System.Text.Encoding.CodePages.dll"),
-			new Path("System.Text.Encoding.dll"),
-			new Path("System.Text.Encoding.Extensions.dll"),
-			new Path("System.Text.Encodings.Web.dll"),
-			new Path("System.Text.Json.dll"),
-			new Path("System.Text.RegularExpressions.dll"),
-			new Path("System.Threading.Channels.dll"),
-			new Path("System.Threading.dll"),
-			new Path("System.Threading.Overlapped.dll"),
-			new Path("System.Threading.Tasks.Dataflow.dll"),
-			new Path("System.Threading.Tasks.dll"),
-			new Path("System.Threading.Tasks.Extensions.dll"),
-			new Path("System.Threading.Tasks.Parallel.dll"),
-			new Path("System.Threading.Thread.dll"),
-			new Path("System.Threading.ThreadPool.dll"),
-			new Path("System.Threading.Timer.dll"),
-			new Path("System.Transactions.dll"),
-			new Path("System.Transactions.Local.dll"),
-			new Path("System.ValueTuple.dll"),
-			new Path("System.Web.dll"),
-			new Path("System.Web.HttpUtility.dll"),
-			new Path("System.Windows.dll"),
-			new Path("System.Xml.dll"),
-			new Path("System.Xml.Linq.dll"),
-			new Path("System.Xml.ReaderWriter.dll"),
-			new Path("System.Xml.Serialization.dll"),
-			new Path("System.Xml.XDocument.dll"),
-			new Path("System.Xml.XmlDocument.dll"),
-			new Path("System.Xml.XmlSerializer.dll"),
-			new Path("System.Xml.XPath.dll"),
-			new Path("System.Xml.XPath.XDocument.dll"),
-			new Path("WindowsBase.dll"),
+			Path.new("Microsoft.CSharp.dll"),
+			Path.new("Microsoft.VisualBasic.Core.dll"),
+			Path.new("Microsoft.VisualBasic.dll"),
+			Path.new("Microsoft.Win32.Primitives.dll"),
+			Path.new("mscorlib.dll"),
+			Path.new("netstandard.dll"),
+			Path.new("System.AppContext.dll"),
+			Path.new("System.Buffers.dll"),
+			Path.new("System.Collections.Concurrent.dll"),
+			Path.new("System.Collections.dll"),
+			Path.new("System.Collections.Immutable.dll"),
+			Path.new("System.Collections.NonGeneric.dll"),
+			Path.new("System.Collections.Specialized.dll"),
+			Path.new("System.ComponentModel.Annotations.dll"),
+			Path.new("System.ComponentModel.DataAnnotations.dll"),
+			Path.new("System.ComponentModel.dll"),
+			Path.new("System.ComponentModel.EventBasedAsync.dll"),
+			Path.new("System.ComponentModel.Primitives.dll"),
+			Path.new("System.ComponentModel.TypeConverter.dll"),
+			Path.new("System.Configuration.dll"),
+			Path.new("System.Console.dll"),
+			Path.new("System.Core.dll"),
+			Path.new("System.Data.Common.dll"),
+			Path.new("System.Data.DataSetExtensions.dll"),
+			Path.new("System.Data.dll"),
+			Path.new("System.Diagnostics.Contracts.dll"),
+			Path.new("System.Diagnostics.Debug.dll"),
+			Path.new("System.Diagnostics.DiagnosticSource.dll"),
+			Path.new("System.Diagnostics.FileVersionInfo.dll"),
+			Path.new("System.Diagnostics.Process.dll"),
+			Path.new("System.Diagnostics.StackTrace.dll"),
+			Path.new("System.Diagnostics.TextWriterTraceListener.dll"),
+			Path.new("System.Diagnostics.Tools.dll"),
+			Path.new("System.Diagnostics.TraceSource.dll"),
+			Path.new("System.Diagnostics.Tracing.dll"),
+			Path.new("System.dll"),
+			Path.new("System.Drawing.dll"),
+			Path.new("System.Drawing.Primitives.dll"),
+			Path.new("System.Dynamic.Runtime.dll"),
+			Path.new("System.Formats.Asn1.dll"),
+			Path.new("System.Globalization.Calendars.dll"),
+			Path.new("System.Globalization.dll"),
+			Path.new("System.Globalization.Extensions.dll"),
+			Path.new("System.IO.Compression.Brotli.dll"),
+			Path.new("System.IO.Compression.dll"),
+			Path.new("System.IO.Compression.FileSystem.dll"),
+			Path.new("System.IO.Compression.ZipFile.dll"),
+			Path.new("System.IO.dll"),
+			Path.new("System.IO.FileSystem.dll"),
+			Path.new("System.IO.FileSystem.DriveInfo.dll"),
+			Path.new("System.IO.FileSystem.Primitives.dll"),
+			Path.new("System.IO.FileSystem.Watcher.dll"),
+			Path.new("System.IO.IsolatedStorage.dll"),
+			Path.new("System.IO.MemoryMappedFiles.dll"),
+			Path.new("System.IO.Pipes.dll"),
+			Path.new("System.IO.UnmanagedMemoryStream.dll"),
+			Path.new("System.Linq.dll"),
+			Path.new("System.Linq.Expressions.dll"),
+			Path.new("System.Linq.Parallel.dll"),
+			Path.new("System.Linq.Queryable.dll"),
+			Path.new("System.Memory.dll"),
+			Path.new("System.Net.dll"),
+			Path.new("System.Net.Http.dll"),
+			Path.new("System.Net.Http.Json.dll"),
+			Path.new("System.Net.HttpListener.dll"),
+			Path.new("System.Net.Mail.dll"),
+			Path.new("System.Net.NameResolution.dll"),
+			Path.new("System.Net.NetworkInformation.dll"),
+			Path.new("System.Net.Ping.dll"),
+			Path.new("System.Net.Primitives.dll"),
+			Path.new("System.Net.Requests.dll"),
+			Path.new("System.Net.Security.dll"),
+			Path.new("System.Net.ServicePoint.dll"),
+			Path.new("System.Net.Sockets.dll"),
+			Path.new("System.Net.WebClient.dll"),
+			Path.new("System.Net.WebHeaderCollection.dll"),
+			Path.new("System.Net.WebProxy.dll"),
+			Path.new("System.Net.WebSockets.Client.dll"),
+			Path.new("System.Net.WebSockets.dll"),
+			Path.new("System.Numerics.dll"),
+			Path.new("System.Numerics.Vectors.dll"),
+			Path.new("System.ObjectModel.dll"),
+			Path.new("System.Reflection.DispatchProxy.dll"),
+			Path.new("System.Reflection.dll"),
+			Path.new("System.Reflection.Emit.dll"),
+			Path.new("System.Reflection.Emit.ILGeneration.dll"),
+			Path.new("System.Reflection.Emit.Lightweight.dll"),
+			Path.new("System.Reflection.Extensions.dll"),
+			Path.new("System.Reflection.Metadata.dll"),
+			Path.new("System.Reflection.Primitives.dll"),
+			Path.new("System.Reflection.TypeExtensions.dll"),
+			Path.new("System.Resources.Reader.dll"),
+			Path.new("System.Resources.ResourceManager.dll"),
+			Path.new("System.Resources.Writer.dll"),
+			Path.new("System.Runtime.CompilerServices.Unsafe.dll"),
+			Path.new("System.Runtime.CompilerServices.VisualC.dll"),
+			Path.new("System.Runtime.dll"),
+			Path.new("System.Runtime.Extensions.dll"),
+			Path.new("System.Runtime.Handles.dll"),
+			Path.new("System.Runtime.InteropServices.dll"),
+			Path.new("System.Runtime.InteropServices.RuntimeInformation.dll"),
+			Path.new("System.Runtime.Intrinsics.dll"),
+			Path.new("System.Runtime.Loader.dll"),
+			Path.new("System.Runtime.Numerics.dll"),
+			Path.new("System.Runtime.Serialization.dll"),
+			Path.new("System.Runtime.Serialization.Formatters.dll"),
+			Path.new("System.Runtime.Serialization.Json.dll"),
+			Path.new("System.Runtime.Serialization.Primitives.dll"),
+			Path.new("System.Runtime.Serialization.Xml.dll"),
+			Path.new("System.Security.Claims.dll"),
+			Path.new("System.Security.Cryptography.Algorithms.dll"),
+			Path.new("System.Security.Cryptography.Csp.dll"),
+			Path.new("System.Security.Cryptography.Encoding.dll"),
+			Path.new("System.Security.Cryptography.Primitives.dll"),
+			Path.new("System.Security.Cryptography.X509Certificates.dll"),
+			Path.new("System.Security.dll"),
+			Path.new("System.Security.Principal.dll"),
+			Path.new("System.Security.SecureString.dll"),
+			Path.new("System.ServiceModel.Web.dll"),
+			Path.new("System.ServiceProcess.dll"),
+			Path.new("System.Text.Encoding.CodePages.dll"),
+			Path.new("System.Text.Encoding.dll"),
+			Path.new("System.Text.Encoding.Extensions.dll"),
+			Path.new("System.Text.Encodings.Web.dll"),
+			Path.new("System.Text.Json.dll"),
+			Path.new("System.Text.RegularExpressions.dll"),
+			Path.new("System.Threading.Channels.dll"),
+			Path.new("System.Threading.dll"),
+			Path.new("System.Threading.Overlapped.dll"),
+			Path.new("System.Threading.Tasks.Dataflow.dll"),
+			Path.new("System.Threading.Tasks.dll"),
+			Path.new("System.Threading.Tasks.Extensions.dll"),
+			Path.new("System.Threading.Tasks.Parallel.dll"),
+			Path.new("System.Threading.Thread.dll"),
+			Path.new("System.Threading.ThreadPool.dll"),
+			Path.new("System.Threading.Timer.dll"),
+			Path.new("System.Transactions.dll"),
+			Path.new("System.Transactions.Local.dll"),
+			Path.new("System.ValueTuple.dll"),
+			Path.new("System.Web.dll"),
+			Path.new("System.Web.HttpUtility.dll"),
+			Path.new("System.Windows.dll"),
+			Path.new("System.Xml.dll"),
+			Path.new("System.Xml.Linq.dll"),
+			Path.new("System.Xml.ReaderWriter.dll"),
+			Path.new("System.Xml.Serialization.dll"),
+			Path.new("System.Xml.XDocument.dll"),
+			Path.new("System.Xml.XmlDocument.dll"),
+			Path.new("System.Xml.XmlSerializer.dll"),
+			Path.new("System.Xml.XPath.dll"),
+			Path.new("System.Xml.XPath.XDocument.dll"),
+			Path.new("WindowsBase.dll"),
 		}
 
-		return platformLibraries.Select(value => path + value)
+		return platformLibraries.Select(value { path + value)
 	}
 
-	private IValueTable GetSDKProperties(string name, IValueTable state)
+	IValueTable GetSDKProperties(string name, IValueTable state)
 	{
 		foreach (var sdk in state["SDKs"].AsList())
 		{
@@ -261,6 +261,6 @@ class ResolveToolsTask : IBuildTask
 			}
 		}
 
-		throw new InvalidOperationException($"Missing SDK {name}")
+		Fiber.abort($"Missing SDK {name}")
 	}
 }

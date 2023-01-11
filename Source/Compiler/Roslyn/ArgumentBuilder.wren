@@ -7,12 +7,12 @@
 /// set of options.
 /// </summary>
 class ArgumentBuilder {
-	static string ArgumentFlag_NoConfig => "noconfig"
+	static ArgumentFlag_NoConfig { "noconfig" }
 
-	static IList<string> BuildSharedCompilerArguments(CompileArguments arguments)
+	static BuildSharedCompilerArguments(CompileArguments arguments)
 	{
 		// Calculate object output file
-		var commandArguments = new List<string>()
+		var commandArguments = []
 
 		// Disable 'unsafe' code
 		AddFlag(commandArguments, "unsafe-")
@@ -21,8 +21,7 @@ class ArgumentBuilder {
 		AddFlag(commandArguments, "checked-")
 
 		// Disable warnings
-		if (arguments.DisabledWarnings.Count > 0)
-		{
+		if (arguments.DisabledWarnings.Count > 0) {
 			var noWarnList = string.Join(",", arguments.DisabledWarnings)
 			AddParameter(commandArguments, "nowarn", noWarnList)
 		}
@@ -40,8 +39,7 @@ class ArgumentBuilder {
 		AddParameter(commandArguments, "warn", "5")
 
 		// Define conditional compilation symbol(s)
-		if (arguments.PreprocessorDefinitions.Count > 0)
-		{
+		if (arguments.PreprocessorDefinitions.Count > 0) {
 			var definesList = string.Join("", arguments.PreprocessorDefinitions)
 			AddParameter(commandArguments, "define", definesList)
 		}
@@ -71,12 +69,11 @@ class ArgumentBuilder {
 				AddParameter(commandArguments, "nullable", "annotations")
 				break
 			default:
-				throw new InvalidOperationException("Unknown Nullable State")
+				Fiber.abort("Unknown Nullable State")
 		}
 
 		// Add the reference libraries
-		foreach (var file in arguments.ReferenceLibraries)
-		{
+		for (file in arguments.ReferenceLibraries) {
 			AddParameterWithQuotes(commandArguments, "reference", file.ToString())
 		}
 
@@ -88,10 +85,11 @@ class ArgumentBuilder {
 		AddParameter(commandArguments, "filealign", "512")
 
 		// Enable optimizations
-		if (arguments.EnableOptimizations)
+		if (arguments.EnableOptimizations) {
 			AddFlag(commandArguments, "optimize+")
-		else
+		} else {
 			AddFlag(commandArguments, "optimize-")
+		}
 
 		// Specify output file name
 		var absoluteTarget = arguments.TargetRootDirectory + arguments.Target
@@ -110,14 +108,15 @@ class ArgumentBuilder {
 				AddParameter(commandArguments, "target", "exe")
 				break
 			default:
-				throw new InvalidOperationException($"Unknown Target Type {arguments.TargetType}")
+				Fiber.abort($"Unknown Target Type {arguments.TargetType}")
 		}
 
 		// Report all warnings as errors
-		if (arguments.EnableWarningsAsErrors)
+		if (arguments.EnableWarningsAsErrors) {
 			AddFlag(commandArguments, "warnaserror+")
-		else
+		} else {
 			AddFlag(commandArguments, "warnaserror-")
+		}
 
 		// Output compiler messages in UTF-8 encoding
 		AddFlag(commandArguments, "utf8output")
@@ -129,18 +128,16 @@ class ArgumentBuilder {
 		AddParameter(commandArguments, "langversion", "9.0")
 
 		// Add the source files
-		foreach (var file in arguments.SourceFiles)
-		{
+		for (file in arguments.SourceFiles) {
 			AddValueWithQuotes(commandArguments, file.ToString())
 		}
 
 		return commandArguments
 	}
 
-	static IList<string> BuildUniqueCompilerArguments()
-	{
+	static BuildUniqueCompilerArguments() {
 		// Calculate object output file
-		var commandArguments = new List<string>()
+		var commandArguments = []
 
 		// Do not auto include CSC.RSP file
 		AddFlag(commandArguments, ArgumentFlag_NoConfig)
@@ -148,31 +145,19 @@ class ArgumentBuilder {
 		return commandArguments
 	}
 
-	private static void AddValueWithQuotes(
-		IList<string> arguments,
-		string value)
-	{
-		arguments.Add($"\"{value}\"")
+	static AddValueWithQuotes(arguments, value) {
+		arguments.add("\"%(value)\"")
 	}
 
-	private static void AddFlag(IList<string> arguments, string flag)
-	{
-		arguments.Add($"/{flag}")
+	static AddFlag(arguments, flag) {
+		arguments.add("/%(flag)")
 	}
 
-	private static void AddParameter(
-		IList<string> arguments,
-		string name,
-		string value)
-	{
-		arguments.Add($"/{name}:{value}")
+	static AddParameter(arguments, name, value) {
+		arguments.add("/%(name):%(value)")
 	}
 
-	private static void AddParameterWithQuotes(
-		IList<string> arguments,
-		string name,
-		string value)
-	{
-		arguments.Add($"/{name}:\"{value}\"")
+	static AddParameterWithQuotes(arguments, name, value) {
+		arguments.add("/%(name):\"%(value)\"")
 	}
 }

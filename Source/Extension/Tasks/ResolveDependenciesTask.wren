@@ -8,13 +8,13 @@
 /// </summary>
 class ResolveDependenciesTask : IBuildTask
 {
-	private IBuildState buildState
-	private IValueFactory factory
+	IBuildState buildState
+	IValueFactory factory
 
 	/// <summary>
 	/// Get the run before list
 	/// </summary>
-	static IReadOnlyList<string> RunBeforeList => new List<string>()
+	static runBefore { [
 	{
 		"BuildTask",
 	}
@@ -22,7 +22,7 @@ class ResolveDependenciesTask : IBuildTask
 	/// <summary>
 	/// Get the run after list
 	/// </summary>
-	static IReadOnlyList<string> RunAfterList => new List<string>()
+	static runAfter { [
 	{
 	}
 
@@ -35,7 +35,7 @@ class ResolveDependenciesTask : IBuildTask
 	/// <summary>
 	/// The Core Execute task
 	/// </summary>
-	void Execute()
+	Execute()
 	{
 		var activeState = this.buildState.ActiveState
 		var recipeTable = activeState["Recipe"].AsTable()
@@ -85,7 +85,7 @@ class ResolveDependenciesTask : IBuildTask
 		}
 	}
 
-	private (PackageReference Reference, bool ExcludeRuntime) GetRuntimeDependencyReference(IValueTable recipeTable, PackageReference dependencyReference)
+	(PackageReference Reference, bool ExcludeRuntime) GetRuntimeDependencyReference(IValueTable recipeTable, PackageReference dependencyReference)
 	{
 		if (recipeTable.TryGetValue("Dependencies", out var dependenciesValue))
 		{
@@ -100,21 +100,21 @@ class ResolveDependenciesTask : IBuildTask
 						return dependency
 				}
 
-				throw new InvalidOperationException("Could not find a Runtime Dependency.")
+				Fiber.abort("Could not find a Runtime Dependency.")
 			}
 			else
 			{
-				throw new InvalidOperationException("Missing Dependencies value in Recipe Table.")
+				Fiber.abort("Missing Dependencies value in Recipe Table.")
 			}
 		}
 		else
 		{
-			throw new InvalidOperationException("Missing Dependencies value in Recipe Table.")
+			Fiber.abort("Missing Dependencies value in Recipe Table.")
 		}
 
 	}
 
-	private (PackageReference Reference, bool ExcludeRuntime) ParseRecipeDependency(IValue dependency)
+	(PackageReference Reference, bool ExcludeRuntime) ParseRecipeDependency(IValue dependency)
 	{
 		// A dependency can either be a string or a table with reference key
 		if (dependency.IsString())
@@ -141,17 +141,17 @@ class ResolveDependenciesTask : IBuildTask
 				}
 				else
 				{
-					throw new InvalidOperationException("Recipe dependency Reference must be type String.")
+					Fiber.abort("Recipe dependency Reference must be type String.")
 				}
 			}
 			else
 			{
-				throw new InvalidOperationException("Recipe dependency table missing required Reference value.")
+				Fiber.abort("Recipe dependency table missing required Reference value.")
 			}
 		}
 		else
 		{
-			throw new InvalidOperationException("Unknown Recipe dependency type.")
+			Fiber.abort("Unknown Recipe dependency type.")
 		}
 	}
 
@@ -159,7 +159,7 @@ class ResolveDependenciesTask : IBuildTask
 	/// <summary>
 	/// Find the original reference for the given dependency package name
 	/// </summary>
-	private PackageReference GetRuntimeDependencyParameterReference(IValueTable parametersTable, string name)
+	PackageReference GetRuntimeDependencyParameterReference(IValueTable parametersTable, string name)
 	{
 		if (parametersTable.TryGetValue("Dependencies", out var dependenciesValue))
 		{
@@ -173,21 +173,21 @@ class ResolveDependenciesTask : IBuildTask
 						return ParseParametersDependency(dependencyValue.Value)
 				}
 
-				throw new InvalidOperationException("Could not find a Runtime Dependency.")
+				Fiber.abort("Could not find a Runtime Dependency.")
 			}
 			else
 			{
-				throw new InvalidOperationException("Missing Dependencies value in Recipe Table.")
+				Fiber.abort("Missing Dependencies value in Recipe Table.")
 			}
 		}
 		else
 		{
-			throw new InvalidOperationException("Missing Dependencies value in Recipe Table.")
+			Fiber.abort("Missing Dependencies value in Recipe Table.")
 		}
 
 	}
 
-	private PackageReference ParseParametersDependency(IValue dependency)
+	PackageReference ParseParametersDependency(IValue dependency)
 	{
 		if (dependency.IsTable())
 		{
@@ -202,17 +202,17 @@ class ResolveDependenciesTask : IBuildTask
 				}
 				else
 				{
-					throw new InvalidOperationException("Recipe dependency Reference must be type String.")
+					Fiber.abort("Recipe dependency Reference must be type String.")
 				}
 			}
 			else
 			{
-				throw new InvalidOperationException("Parameter dependency table missing required Reference value.")
+				Fiber.abort("Parameter dependency table missing required Reference value.")
 			}
 		}
 		else
 		{
-			throw new InvalidOperationException("Unknown Parameters dependency type.")
+			Fiber.abort("Unknown Parameters dependency type.")
 		}
 	}
 }
