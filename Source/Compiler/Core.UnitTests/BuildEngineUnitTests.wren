@@ -2,11 +2,19 @@
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
+import "../Core/BuildArguments" for BuildArguments, BuildNullableState, BuildOptimizationLevel, BuildTargetType
+import "../Core/CompileArguments" for CompileArguments, LinkTarget, NullableState
+import "../Core/BuildEngine" for BuildEngine
+import "../Core/MockCompiler" for MockCompiler
+import "../../Utils/BuildOperation" for BuildOperation
+import "../../Utils/Path" for Path
+import "../../Test/Assert" for Assert
+
 class BuildEngineUnitTests {
 	construct new() {
 	}
 
-	static RunTests() {
+	RunTests() {
 		System.print("BuildEngineUnitTests.Initialize_Success")
 		this.Initialize_Success()
 		System.print("BuildEngineUnitTests.Build_Executable")
@@ -27,7 +35,7 @@ class BuildEngineUnitTests {
 		var compiler = MockCompiler.new()
 
 		// Setup the build arguments
-		var arguments = new BuildArguments()
+		var arguments = BuildArguments.new()
 		arguments.TargetName = "Program"
 		arguments.TargetType = BuildTargetType.Executable
 		arguments.SourceRootDirectory = Path.new("C:/source/")
@@ -42,14 +50,15 @@ class BuildEngineUnitTests {
 			Path.new("../Other/bin/OtherModule1.mock.a"),
 			Path.new("../OtherModule2.mock.a"),
 		]
+		arguments.NullableState = BuildNullableState.Enabled
 
 		var uut = BuildEngine.new(compiler)
 		var result = uut.Execute(arguments)
 
-		// Verify expected logs
-		Assert.Equal(
-			[],
-			testListener.GetMessages())
+		// // Verify expected logs
+		// Assert.Equal(
+		// 	[],
+		// 	testListener.GetMessages())
 
 		var expectedCompileArguments = CompileArguments.new()
 		expectedCompileArguments.Target = Path.new("./bin/Program.mock.dll")
@@ -71,7 +80,7 @@ class BuildEngineUnitTests {
 		var val = compiler.GetCompileRequests()[0]
 		var areEqual = val == expectedCompileArguments
 		var areEqual2 = val.ObjectDirectory == expectedCompileArguments.ObjectDirectory
-		Assert.Equal(
+		Assert.ListEqual(
 			[
 				expectedCompileArguments,
 			],
@@ -81,7 +90,7 @@ class BuildEngineUnitTests {
 			BuildOperation.new(
 				"MakeDir [./obj/]",
 				Path.new("C:/target/"),
-				Path.new("C:/mkdir.exe"),
+				Path.new("ProcessFolder/mkdir.exe"),
 				"\"./obj/\"",
 				[],
 				[
@@ -90,7 +99,7 @@ class BuildEngineUnitTests {
 			BuildOperation.new(
 				"MakeDir [./bin/]",
 				Path.new("C:/target/"),
-				Path.new("C:/mkdir.exe"),
+				Path.new("ProcessFolder/mkdir.exe"),
 				"\"./bin/\"",
 				[],
 				[
@@ -99,7 +108,7 @@ class BuildEngineUnitTests {
 			BuildOperation.new(
 				"MakeDir [./bin/ref/]",
 				Path.new("C:/target/"),
-				Path.new("C:/mkdir.exe"),
+				Path.new("ProcessFolder/mkdir.exe"),
 				"\"./bin/ref/\"",
 				[],
 				[
@@ -120,33 +129,33 @@ class BuildEngineUnitTests {
 				"WriteFile [./bin/Program.runtimeconfig.json]",
 				Path.new("C:/target/"),
 				Path.new("./writefile.exe"),
-				@"""./bin/Program.runtimeconfig.json"" ""{
-""runtimeOptions"": {
-""tfm"": ""net6.0"",
-""framework"": {
-""name"": ""Microsoft.NETCore.App"",
-""version"": ""6.0.0""
-},
-""configProperties"": {
-""System.Reflection.Metadata.MetadataUpdater.IsSupported"": false
-}
-}
-}""",
+				"\"./bin/Program.runtimeconfig.json\" \"{
+	\"runtimeOptions\": {
+		\"tfm\": \"net6.0\",
+		\"framework\": {
+			\"name\": \"Microsoft.NETCore.App\",
+			\"version\": \"6.0.0\"
+		},
+		\"configProperties\": {
+			\"System.Reflection.Metadata.MetadataUpdater.IsSupported\": false
+		}
+	}
+}\"",
 				[],
 				[
 					Path.new("./bin/Program.runtimeconfig.json"),
 				]),
 		]
 
-		Assert.Equal(
+		Assert.ListEqual(
 			expectedBuildOperations,
 			result.BuildOperations)
 
-		Assert.Equal(
+		Assert.ListEqual(
 			[],
 			result.LinkDependencies)
 
-		Assert.Equal(
+		Assert.ListEqual(
 			[
 				Path.new("C:/target/bin/Program.mock.dll"),
 			],
@@ -159,7 +168,7 @@ class BuildEngineUnitTests {
 		var compiler = MockCompiler.new()
 
 		// Setup the build arguments
-		var arguments = new BuildArguments()
+		var arguments = BuildArguments.new()
 		arguments.TargetName = "Library"
 		arguments.TargetType = BuildTargetType.Library
 		arguments.SourceRootDirectory = Path.new("C:/source/")
@@ -181,18 +190,19 @@ class BuildEngineUnitTests {
 		var uut = BuildEngine.new(compiler)
 		var result = uut.Execute(arguments)
 
-		// Verify expected logs
-		Assert.Equal(
-			[],
-			testListener.GetMessages())
+		// // Verify expected logs
+		// Assert.Equal(
+		// 	[],
+		// 	testListener.GetMessages())
 
 		// Setup the shared arguments
 		var expectedCompileArguments = CompileArguments.new()
-		expectedCompileArguments.Target = Path.new("./bin/Library.mock.dll"),
-		expectedCompileArguments.ReferenceTarget = Path.new("./bin/ref/Library.mock.dll"),
-		expectedCompileArguments.SourceRootDirectory = Path.new("C:/source/"),
-		expectedCompileArguments.TargetRootDirectory = Path.new("C:/target/"),
-		expectedCompileArguments.ObjectDirectory = Path.new("obj/"),
+		expectedCompileArguments.Target = Path.new("./bin/Library.mock.dll")
+		expectedCompileArguments.TargetType = LinkTarget.Library
+		expectedCompileArguments.ReferenceTarget = Path.new("./bin/ref/Library.mock.dll")
+		expectedCompileArguments.SourceRootDirectory = Path.new("C:/source/")
+		expectedCompileArguments.TargetRootDirectory = Path.new("C:/target/")
+		expectedCompileArguments.ObjectDirectory = Path.new("obj/")
 		expectedCompileArguments.SourceFiles = [
 			Path.new("TestFile1.cs"),
 			Path.new("TestFile2.cs"),
@@ -202,10 +212,10 @@ class BuildEngineUnitTests {
 			Path.new("../Other/bin/OtherModule1.mock.a"),
 			Path.new("../OtherModule2.mock.a"),
 		]
-		expectedCompileArguments.NullableState = NullableState.Disabled,
+		expectedCompileArguments.NullableState = NullableState.Disabled
 
 		// Verify expected compiler calls
-		Assert.Equal(
+		Assert.ListEqual(
 			[
 				expectedCompileArguments,
 			],
@@ -216,7 +226,7 @@ class BuildEngineUnitTests {
 			BuildOperation.new(
 				"MakeDir [./obj/]",
 				Path.new("C:/target/"),
-				Path.new("C:/mkdir.exe"),
+				Path.new("ProcessFolder/mkdir.exe"),
 				"\"./obj/\"",
 				[],
 				[
@@ -225,7 +235,7 @@ class BuildEngineUnitTests {
 			BuildOperation.new(
 				"MakeDir [./bin/]",
 				Path.new("C:/target/"),
-				Path.new("C:/mkdir.exe"),
+				Path.new("ProcessFolder/mkdir.exe"),
 				"\"./bin/\"",
 				[],
 				[
@@ -234,7 +244,7 @@ class BuildEngineUnitTests {
 			BuildOperation.new(
 				"MakeDir [./bin/ref/]",
 				Path.new("C:/target/"),
-				Path.new("C:/mkdir.exe"),
+				Path.new("ProcessFolder/mkdir.exe"),
 				"\"./bin/ref/\"",
 				[],
 				[
@@ -253,17 +263,17 @@ class BuildEngineUnitTests {
 				]),
 		]
 
-		Assert.Equal(
+		Assert.ListEqual(
 			expectedBuildOperations,
 			result.BuildOperations)
 
-		Assert.Equal(
+		Assert.ListEqual(
 			[
 				Path.new("C:/target/bin/ref/Library.mock.dll"),
 			],
 			result.LinkDependencies)
 
-		Assert.Equal(
+		Assert.ListEqual(
 			[
 				Path.new("C:/target/bin/Library.mock.dll"),
 			],

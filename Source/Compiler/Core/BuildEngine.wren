@@ -2,11 +2,17 @@
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
+import "./BuildResult" for BuildResult
+import "./BuildArguments" for BuildTargetType, BuildNullableState
+import "./CompileArguments" for CompileArguments, LinkTarget, NullableState
+import "../../Utils/SharedOperations" for SharedOperations
+import "../../Utils/Path" for Path
+
 /// <summary>
 /// The build engine
 /// </summary>
 class BuildEngine {
-	construct new(ICompiler compiler) {
+	construct new(compiler) {
 		_compiler = compiler
 	}
 
@@ -32,12 +38,12 @@ class BuildEngine {
 				referenceDirectory))
 
 		// Perform the core compilation of the source files
-		CoreCompile(arguments, referenceDirectory, result)
+		this.CoreCompile(arguments, referenceDirectory, result)
 
 		// Copy previous runtime dependencies after linking has completed
-		CopyRuntimeDependencies(arguments, result)
+		this.CopyRuntimeDependencies(arguments, result)
 
-		GenerateBuildRuntimeConfigurationFiles(arguments, result)
+		this.GenerateBuildRuntimeConfigurationFiles(arguments, result)
 
 		return result
 	}
@@ -48,63 +54,48 @@ class BuildEngine {
 	CoreCompile(arguments, referenceDirectory, result) {
 		// Ensure there are actually files to build
 		if (arguments.SourceFiles.count != 0) {
-			Path targetFile
-			Path referenceTargetFile
-			LinkTarget targetType
-			switch (arguments.TargetType)
-			{
-				case BuildTargetType.Library:
-					targetType = LinkTarget.Library
-					targetFile =
-						arguments.BinaryDirectory +
-						Path.new(arguments.TargetName + "." + _compiler.DynamicLibraryFileExtension)
-					referenceTargetFile =
-						referenceDirectory +
-						Path.new(arguments.TargetName + "." + _compiler.DynamicLibraryFileExtension)
+			var targetFile
+			var referenceTargetFile
+			var targetType
+			if (arguments.TargetType == BuildTargetType.Library) {
+				targetType = LinkTarget.Library
+				targetFile = arguments.BinaryDirectory +
+					Path.new(arguments.TargetName + "." + _compiler.DynamicLibraryFileExtension)
+				referenceTargetFile = referenceDirectory +
+					Path.new(arguments.TargetName + "." + _compiler.DynamicLibraryFileExtension)
 
-					// Add the DLL as a runtime dependency
-					result.RuntimeDependencies.add(arguments.TargetRootDirectory + targetFile)
+				// Add the DLL as a runtime dependency
+				result.RuntimeDependencies.add(arguments.TargetRootDirectory + targetFile)
 
-					// Link against the reference target
-					result.LinkDependencies.add(arguments.TargetRootDirectory + referenceTargetFile)
+				// Link against the reference target
+				result.LinkDependencies.add(arguments.TargetRootDirectory + referenceTargetFile)
+			} else if (arguments.TargetType == BuildTargetType.Executable) {
+				targetType = LinkTarget.Executable
+				targetFile = arguments.BinaryDirectory +
+					Path.new(arguments.TargetName + "." + _compiler.DynamicLibraryFileExtension)
+				referenceTargetFile = referenceDirectory +
+					Path.new(arguments.TargetName + "." + _compiler.DynamicLibraryFileExtension)
 
-					break
-				case BuildTargetType.Executable:
-					targetType = LinkTarget.Executable
-					targetFile =
-						arguments.BinaryDirectory +
-						Path.new(arguments.TargetName + "." + _compiler.DynamicLibraryFileExtension)
-					referenceTargetFile =
-						referenceDirectory +
-						Path.new(arguments.TargetName + "." + _compiler.DynamicLibraryFileExtension)
+				// Add the Executable as a runtime dependency
+				result.RuntimeDependencies.add(arguments.TargetRootDirectory + targetFile)
 
-					// Add the Executable as a runtime dependency
-					result.RuntimeDependencies.add(arguments.TargetRootDirectory + targetFile)
-
-					// All link dependencies stop here.
-
-					break
-				default:
-					Fiber.abort("Unknown build target type.")
+				// All link dependencies stop here.
+			} else {
+				Fiber.abort("Unknown build target type.")
 			}
 
 			// Convert the nullable state
-			NullableState nullableState
-			switch (arguments.NullableState) {
-				case BuildNullableState.Disabled:
-					nullableState = NullableState.Disabled
-					break
-				case BuildNullableState.Enabled:
-					nullableState = NullableState.Enabled
-					break
-				case BuildNullableState.Warnings:
-					nullableState = NullableState.Warnings
-					break
-				case BuildNullableState.Annotations:
-					nullableState = NullableState.Annotations
-					break
-				default:
-					Fiber.abort("Unknown Nullable State")
+			var nullableState
+			if (arguments.NullableState == BuildNullableState.Disabled) {
+				nullableState = NullableState.Disabled
+			} else if (arguments.NullableState == BuildNullableState.Enabled) {
+				nullableState = NullableState.Enabled
+			} else if (arguments.NullableState == BuildNullableState.Warnings) {
+				nullableState = NullableState.Warnings
+			} else if (arguments.NullableState == BuildNullableState.Annotations) {
+				nullableState = NullableState.Annotations
+			} else {
+				Fiber.abort("Unknown Nullable State")
 			}
 
 			// Setup the shared properties
@@ -168,16 +159,15 @@ class BuildEngine {
 		if (arguments.TargetType == BuildTargetType.Executable) {
 			// Generate the runtime configuration files
 			var runtimeConfigFile = arguments.BinaryDirectory + Path.new("%(arguments.TargetName).runtimeconfig.json")
-			var content =
-"{
-	""runtimeOptions"": {
-		""tfm"": ""net6.0"",
-		""framework"": {
-			""name"": ""Microsoft.NETCore.App"",
-			""version"": ""6.0.0""
+			var content = "{
+	\"runtimeOptions\": {
+		\"tfm\": \"net6.0\",
+		\"framework\": {
+			\"name\": \"Microsoft.NETCore.App\",
+			\"version\": \"6.0.0\"
 		},
-		""configProperties"": {
-			""System.Reflection.Metadata.MetadataUpdater.IsSupported"": false
+		\"configProperties\": {
+			\"System.Reflection.Metadata.MetadataUpdater.IsSupported\": false
 		}
 	}
 }"

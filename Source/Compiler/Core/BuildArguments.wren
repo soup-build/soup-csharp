@@ -66,6 +66,28 @@ class BuildNullableState {
 /// The set of build arguments
 /// </summary>
 class BuildArguments {
+	construct new() {
+		_targetName = null
+		_targetArchitecture = null
+		_targetType = null
+		_sourceRootDirectory = null
+		_targetRootDirectory = null
+		_objectDirectory = null
+		_binaryDirectory = null
+		_sourceFiles = []
+		_linkDependencies = []
+		_libraryPaths = []
+		_preprocessorDefinitions = []
+		_runtimeDependencies = []
+		_optimizationLevel = null
+		_generateSourceDebugInfo = false
+		_enableWarningsAsErrors = false
+		_nullableState = null
+		_disabledWarnings = []
+		_enabledWarnings = []
+		_customProperties = {}
+	}
+
 	/// <summary>
 	/// Gets or sets the target name
 	/// </summary>

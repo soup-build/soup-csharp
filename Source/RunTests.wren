@@ -1,5 +1,5 @@
 import "./Utils.UnitTests/PathUnitTests" for PathUnitTests
-// import "./Compiler/Core.UnitTests/BuildEngineUnitTests" for BuildEngineUnitTests
+import "./Compiler/Core.UnitTests/BuildEngineUnitTests" for BuildEngineUnitTests
 import "./Compiler/Roslyn.UnitTests/RoslynArgumentBuilderUnitTests" for RoslynArgumentBuilderUnitTests
 import "./Compiler/Roslyn.UnitTests/RoslynCompilerUnitTests" for RoslynCompilerUnitTests
 // import "./Extension.UnitTests/Tasks/BuildTaskUnitTests" for BuildTaskUnitTests
@@ -13,8 +13,8 @@ uut = PathUnitTests.new()
 uut.RunTests()
 
 // Compiler.Core.UnitTests
-// uut = BuildEngineUnitTests.new()
-// uut.RunTests()
+uut = BuildEngineUnitTests.new()
+uut.RunTests()
 
 // Compiler.Roslyn.UnitTests
 uut = RoslynArgumentBuilderUnitTests.new()

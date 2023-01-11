@@ -2,6 +2,10 @@
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
+import "./ICompiler" for ICompiler
+import "../../Utils/BuildOperation" for BuildOperation
+import "../../Utils/Path" for Path
+
 /// <summary>
 /// A mock compiler interface implementation
 /// TODO: Move into test projects

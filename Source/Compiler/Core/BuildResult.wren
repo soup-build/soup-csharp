@@ -6,6 +6,14 @@
 /// The build result
 /// </summary>
 class BuildResult {
+	construct new() {
+		_buildOperations = []
+		_linkDependencies = []
+		_internalLinkDependencies = []
+		_runtimeDependencies = []
+		_targetFile = null
+	}
+
 	/// <summary>
 	/// Gets or sets the resulting root build operations
 	/// </summary>
