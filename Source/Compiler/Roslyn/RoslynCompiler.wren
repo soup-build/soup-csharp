@@ -2,11 +2,17 @@
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
+import "./RoslynArgumentBuilder" for RoslynArgumentBuilder
+import "../Core/ICompiler" for ICompiler
+import "../../Utils/BuildOperation" for BuildOperation
+import "../../Utils/SharedOperations" for SharedOperations
+import "../../Utils/Path" for Path
+
 /// <summary>
 /// The Clang compiler implementation
 /// </summary>
 class RoslynCompiler is ICompiler {
-	Compiler(compilerExecutable) {
+	construct new(compilerExecutable) {
 		_compilerExecutable = compilerExecutable
 	}
 
@@ -40,11 +46,11 @@ class RoslynCompiler is ICompiler {
 
 		// Write the shared arguments to the response file
 		var responseFile = arguments.ObjectDirectory + Path.new("CompileArguments.rsp")
-		var sharedCommandArguments = ArgumentBuilder.BuildSharedCompilerArguments(arguments)
+		var sharedCommandArguments = RoslynArgumentBuilder.BuildSharedCompilerArguments(arguments)
 		var writeSharedArgumentsOperation = SharedOperations.CreateWriteFileOperation(
 			arguments.TargetRootDirectory,
 			responseFile,
-			string.Join(" ", sharedCommandArguments))
+			sharedCommandArguments.join(" "))
 		operations.add(writeSharedArgumentsOperation)
 
 		var symbolFile = Path.new(arguments.Target.toString)
@@ -55,16 +61,16 @@ class RoslynCompiler is ICompiler {
 		// Build up the input/output sets
 		var inputFiles = []
 		inputFiles.add(targetResponseFile)
-		inputFiles.AddRange(arguments.SourceFiles)
-		inputFiles.AddRange(arguments.ReferenceLibraries)
+		inputFiles = inputFiles + arguments.SourceFiles
+		inputFiles = inputFiles + arguments.ReferenceLibraries
 		var outputFiles = [
 			arguments.TargetRootDirectory + arguments.Target,
 			arguments.TargetRootDirectory + symbolFile,
 		]
 
 		// Generate the compile build operation
-		var uniqueCommandArguments = ArgumentBuilder.BuildUniqueCompilerArguments()
-		var commandArguments = "@%(targetResponseFile) %(uniqueCommandArguments)"
+		var uniqueCommandArguments = RoslynArgumentBuilder.BuildUniqueCompilerArguments()
+		var commandArguments = "@%(targetResponseFile) %(uniqueCommandArguments.join(" "))"
 		var buildOperation = BuildOperation.new(
 			"Compile - %(arguments.Target)",
 			arguments.SourceRootDirectory,

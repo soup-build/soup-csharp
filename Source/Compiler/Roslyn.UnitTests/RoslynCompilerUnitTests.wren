@@ -2,7 +2,16 @@
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
+import "../Core/CompileArguments" for CompileArguments, LinkTarget, NullableState
+import "../Roslyn/RoslynCompiler" for RoslynCompiler
+import "../../Utils/BuildOperation" for BuildOperation
+import "../../Utils/Path" for Path
+import "../../Test/Assert" for Assert
+
 class RoslynCompilerUnitTests {
+	construct new() {
+	}
+
 	RunTests() {
 		System.print("RoslynCompilerUnitTests.Initialize")
 		this.Initialize()
@@ -12,7 +21,7 @@ class RoslynCompilerUnitTests {
 
 	// [Fact]
 	Initialize() {
-		var uut = new Compiler(
+		var uut = RoslynCompiler.new(
 			Path.new("C:/bin/mock.csc.exe"))
 		Assert.Equal("Roslyn", uut.Name)
 		Assert.Equal("obj", uut.ObjectFileExtension)
@@ -22,11 +31,12 @@ class RoslynCompilerUnitTests {
 
 	// [Fact]
 	Compile_Simple() {
-		var uut = new Compiler(
+		var uut = RoslynCompiler.new(
 			Path.new("C:/bin/mock.csc.exe"))
 
 		var arguments = CompileArguments.new()
 		arguments.Target = Path.new("bin/Target.dll")
+		arguments.TargetType = LinkTarget.Library
 		arguments.ReferenceTarget = Path.new("ref/Target.dll")
 		arguments.SourceRootDirectory = Path.new("C:/source/")
 		arguments.TargetRootDirectory = Path.new("C:/target/")
@@ -34,6 +44,7 @@ class RoslynCompilerUnitTests {
 		arguments.SourceFiles = [
 			Path.new("File.cs"),
 		]
+		arguments.NullableState =  NullableState.Enabled
 
 		var result = uut.CreateCompileOperations(arguments)
 
@@ -60,10 +71,9 @@ class RoslynCompilerUnitTests {
 				[
 					Path.new("C:/target/bin/Target.dll"),
 					Path.new("C:/target/bin/Target.pdb"),
-					Path.new("C:/target/ref/Target.dll"),
 				]),
 		]
 
-		Assert.Equal(expected, result)
+		Assert.ListEqual(expected, result)
 	}
 }
