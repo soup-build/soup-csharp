@@ -3,17 +3,27 @@
 // </copyright>
 
 class BuildTaskUnitTests {
+	construct new() {
+	}
+
+	RunTests() {
+		System.print("BuildTaskUnitTests.Initialize_Success")
+		this.Initialize_Success()
+		System.print("BuildTaskUnitTests.Build_Executable")
+		this.Build_Executable()
+		System.print("BuildTaskUnitTests.Build_Library_MultipleFiles")
+		this.Build_Library_MultipleFiles()
+	}
+
 	// [Fact]
-	public Initialize_Success()
-	{
+	Initialize_Success() {
 		var buildState = new MockBuildState()
 		var factory = new ValueFactory()
 		var uut = new BuildTask(buildState, factory)
 	}
 
 	// [Fact]
-	public Build_Executable()
-	{
+	Build_Executable() {
 		// Setup the input build state
 		var buildState = new MockBuildState()
 		var state = buildState.ActiveState
@@ -145,7 +155,7 @@ class BuildTaskUnitTests {
 	}
 
 	// [Fact]
-	public Build_Library_MultipleFiles() {
+	Build_Library_MultipleFiles() {
 		// Setup the input build state
 		var buildState = new MockBuildState()
 		var state = buildState.ActiveState
