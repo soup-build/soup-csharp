@@ -2,7 +2,20 @@
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
+import "soup-test" for SoupTest
+import "../../Extension/Tasks/RecipeBuildTask" for RecipeBuildTask
+import "../../Utils/Path" for Path
+import "../../Test/Assert" for Assert
+
 class RecipeBuildTaskUnitTests {
+	construct new() {
+	}
+
+	RunTests() {
+		System.print("RecipeBuildTaskUnitTests.Build_Executable")
+		this.Build_Executable()
+	}
+
 	// [Fact]
 	Build_Executable() {
 		// Setup the input build state
@@ -10,23 +23,23 @@ class RecipeBuildTaskUnitTests {
 		var activeState = SoupTest.activeState
 		var globalState = SoupTest.globalState
 
-		activeState.add("PlatformLibraries", new Value([))
-		activeState.add("PlatformIncludePaths", new Value([))
-		activeState.add("PlatformLibraryPaths", new Value([))
-		activeState.add("PlatformPreprocessorDefinitions", new Value([))
+		activeState["PlatformLibraries"] = []
+		activeState["PlatformIncludePaths"] = []
+		activeState["PlatformLibraryPaths"] = []
+		activeState["PlatformPreprocessorDefinitions"] = []
 
 		// Setup recipe table
 		var buildTable = {}
-		globalState.add("Recipe", new Value(buildTable))
-		buildTable.add("Name", new Value("Program"))
+		globalState["Recipe"] = buildTable
+		buildTable["Name"] = "Program"
 
 		// Setup parameters table
 		var parametersTable = {}
-		globalState.add("Parameters", new Value(parametersTable))
-		parametersTable.add("TargetDirectory", new Value("C:/Target/"))
-		parametersTable.add("PackageDirectory", new Value("C:/PackageRoot/"))
-		parametersTable.add("Compiler", new Value("MOCK"))
-		parametersTable.add("Flavor", new Value("debug"))
+		globalState["Parameters"] = parametersTable
+		parametersTable["TargetDirectory"] = "C:/Target/"
+		parametersTable["PackageDirectory"] = "C:/PackageRoot/"
+		parametersTable["Compiler"] = "MOCK"
+		parametersTable["Flavor"] = "debug"
 
 		RecipeBuildTask.evaluate()
 

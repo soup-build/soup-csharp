@@ -2,7 +2,19 @@
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
+import "soup-test" for SoupTest
+import "../../Extension/Tasks/ResolveToolsTask" for ResolveToolsTask
+import "../../Utils/Path" for Path
+import "../../Test/Assert" for Assert
+
 class ResolveToolsTaskUnitTests {
+	construct new() {
+	}
+
+	RunTests() {
+		System.print("ResolveToolsTaskUnitTests.Execute")
+		this.Execute()
+	}
 
 	// [Fact]
 	Execute() {
@@ -12,29 +24,28 @@ class ResolveToolsTaskUnitTests {
 		var globalState = SoupTest.globalState
 
 		// Set the sdks
-		var sdks = [
-		sdks.add(new Value({}
-		{
-			{ "Name", new Value("Roslyn") },
+		var sdks = []
+		sdks.add(
 			{
-				"Properties",
-				new Value({}
-				{
-					{ "ToolsRoot", new Value("C:/Roslyn/ToolsRoot/") }
-				})
-			},
-		}))
+				"Name": "Roslyn",
+				"Properties": { "ToolsRoot": "C:/Roslyn/ToolsRoot/", },
+			})
+		sdks.add(
+			{
+				"Name": "DotNet",
+				"Properties": { "RuntimeVersion": "6.0.12", "RootPath": "C:/dotnet/", },
+			})
 
 		// Setup parameters table
 		var parametersTable = {}
-		state.add("Parameters", new Value(parametersTable))
-		parametersTable.add("SDKs", new Value(sdks))
-		parametersTable.add("System", new Value("win32"))
-		parametersTable.add("Architecture", new Value("x64"))
+		globalState["Parameters"] = parametersTable
+		parametersTable["SDKs"] = sdks
+		parametersTable["System"] = "win32"
+		parametersTable["Architecture"] = "x64"
 
 		// Setup build table
 		var buildTable = {}
-		state.add("Build", new Value(buildTable))
+		activeState["Build"] = buildTable
 
 		ResolveToolsTask.evaluate()
 

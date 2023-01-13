@@ -2,6 +2,12 @@
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
+import "soup" for Soup, SoupTask
+import "../../Utils/ListExtensions" for ListExtensions
+import "../../Utils/MapExtensions" for MapExtensions
+import "../../Utils/Path" for Path
+import "../../Utils/SemanticVersion" for SemanticVersion
+
 /// <summary>
 /// The recipe build task that knows how to build a single recipe
 /// </summary>
@@ -23,56 +29,53 @@ class ResolveToolsTask is SoupTask {
 		var activeState = Soup.activeState
 		var globalState = Soup.globalState
 
-		var parameters = globalState["Parameters"].AsTable()
-		var buildTable = activeState.EnsureValueTable(this.factory, "Build")
+		var parameters = globalState["Parameters"]
+		var buildTable = MapExtensions.EnsureTable(activeState, "Build")
 
-		var systemName = parameters["System"].AsString()
-		var architectureName = parameters["Architecture"].AsString()
+		var systemName = parameters["System"]
+		var architectureName = parameters["Architecture"]
 
-		if (systemName != "win32")
+		if (systemName != "win32") {
 			Fiber.abort("Win32 is the only supported system... so far.")
+		}
 
 		// Check if skip platform includes was specified
-		bool skipPlatform = false
-		if (state.TryGetValue("SkipPlatform", out var skipPlatformValue))
-		{
-			skipPlatform = skipPlatformValue.AsBoolean()
+		var skipPlatform = false
+		if (activeState.containsKey("SkipPlatform")) {
+			skipPlatform = activeState["SkipPlatform"]
 		}
 
 		// Find the Roslyn SDK
-		var roslynSDKProperties = GetSDKProperties("Roslyn", parameters)
+		var roslynSDKProperties = ResolveToolsTask.GetSDKProperties("Roslyn", parameters)
 
 		// Calculate the final Roslyn binaries folder
-		var roslynFolder = Path.new(roslynSDKProperties["ToolsRoot"].AsString())
+		var roslynFolder = Path.new(roslynSDKProperties["ToolsRoot"])
 
 		var cscToolPath = roslynFolder + Path.new("csc.exe")
 
 		// Get the DotNet SDK
-		var dotnetSDKProperties = GetSDKProperties("DotNet", parameters)
-		var dotnetRuntimeVersion = SemanticVersion.Parse(dotnetSDKProperties["RuntimeVersion"].AsString())
-		var dotnetRootPath = Path.new(dotnetSDKProperties["RootPath"].AsString())
+		var dotnetSDKProperties = ResolveToolsTask.GetSDKProperties("DotNet", parameters)
+		var dotnetRuntimeVersion = SemanticVersion.Parse(dotnetSDKProperties["RuntimeVersion"])
+		var dotnetRootPath = Path.new(dotnetSDKProperties["RootPath"])
 
 		// Save the build properties
-		state["Roslyn.BinRoot"] = this.factory.Create(roslynFolder.toString)
-		state["Roslyn.CscToolPath"] = this.factory.Create(cscToolPath.toString)
-		state["DotNet.RuntimeVersion"] = this.factory.Create(dotnetRuntimeVersion.toString)
-		state["DotNet.RootPath"] = this.factory.Create(dotnetRootPath.toString)
+		activeState["Roslyn.BinRoot"] = roslynFolder.toString
+		activeState["Roslyn.CscToolPath"] = cscToolPath.toString
+		activeState["DotNet.RuntimeVersion"] = dotnetRuntimeVersion.toString
+		activeState["DotNet.RootPath"] = dotnetRootPath.toString
 
 		// Save the platform libraries
-		state["PlatformLibraries"] = this.factory.Create("")
-		var linkDependencies = [
-		if (buildTable.TryGetValue("LinkDependencies", out var linkLibrariesValue))
-		{
-			linkDependencies = linkLibrariesValue.AsList().Select(value { Path.new(value.AsString())).ToList()
+		activeState["PlatformLibraries"] = ""
+		var linkDependencies = []
+		if (buildTable.containsKey("LinkDependencies")) {
+			linkDependencies = ListExtensions.ConvertToPathList(buildTable["LinkDependencies"])
 		}
 
-		linkDependencies.AddRange(GetPlatformLibraries(dotnetRootPath, dotnetRuntimeVersion))
-		buildTable["LinkDependencies"] = this.factory.Create(
-			this.factory.CreateList().SetAll(this.factory, linkDependencies))
+		linkDependencies = linkDependencies + ResolveToolsTask.GetPlatformLibraries(dotnetRootPath, dotnetRuntimeVersion)
+		buildTable["LinkDependencies"] = linkDependencies
 	}
 
-	IEnumerable<Path> GetPlatformLibraries(Path dotnetRootPath, SemanticVersion dotnetRuntimeVersion)
-	{
+	static GetPlatformLibraries(dotnetRootPath, dotnetRuntimeVersion) {
 		// Set the platform libraries
 		var path = dotnetRootPath + Path.new("packs/Microsoft.NETCore.App.Ref/%(dotnetRuntimeVersion)/ref/net6.0/")
 		var platformLibraries = [
@@ -230,18 +233,20 @@ class ResolveToolsTask is SoupTask {
 			Path.new("WindowsBase.dll"),
 		]
 
-		return platformLibraries.Select(value { path + value)
+		var result = []
+		for (value in platformLibraries) {
+			result.add(path + value)
+		}
+
+		return result
 	}
 
-	IValueTable GetSDKProperties(string name, IValueTable state) {
-		foreach (var sdk in state["SDKs"].AsList())
-		{
-			var sdkTable = sdk.AsTable()
-			if (sdkTable.TryGetValue("Name", out var nameValue))
-			{
-				if (nameValue.AsString() == name)
-				{
-					return sdkTable["Properties"].AsTable()
+	static GetSDKProperties(name, state) {
+		for (sdk in state["SDKs"]) {
+			var sdkTable = sdk
+			if (sdkTable.containsKey("Name")) {
+				if (sdkTable["Name"] == name) {
+					return sdkTable["Properties"]
 				}
 			}
 		}
