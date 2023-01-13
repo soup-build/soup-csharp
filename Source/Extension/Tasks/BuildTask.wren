@@ -2,8 +2,16 @@
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
-class BuildTask is SoupExtension
-{
+import "soup" for Soup, SoupTask
+import "../../Compiler/Core/BuildArguments" for BuildArguments, BuildOptimizationLevel, BuildNullableState
+import "../../Compiler/Core/BuildEngine" for BuildEngine
+import "../../Compiler/Roslyn/RoslynCompiler" for RoslynCompiler
+import "../../Utils/ListExtensions" for ListExtensions
+import "../../Utils/MapExtensions" for MapExtensions
+import "../../Utils/Path" for Path
+import "../../Utils/Set" for Set
+
+class BuildTask is SoupTask {
 	/// <summary>
 	/// Get the run before list
 	/// </summary>
@@ -14,136 +22,143 @@ class BuildTask is SoupExtension
 	/// </summary>
 	static runAfter { [] }
 
-	BuildTask() :
-		this(new Dictionary<string, Func<IValueTable, ICompiler>>())
-	{
-		// Register default compilers
-		// TODO: Fix up compiler names for different languages
-		this.compilerFactory.add("MSVC", (IValueTable activeState) {
-		{
-			var clToolPath = Path.new(activeState["Roslyn.CscToolPath"].AsString())
-			return new Compiler.Roslyn.Compiler(clToolPath)
-		})
+	static registerCompiler(name, factory) {
+		if (__compilerFactory is Null) __compilerFactory = {}
+		__compilerFactory[name] = factory
 	}
 
 	static evaluate() {
-		var activeState = Soup.ActiveState
-		var sharedState = Soup.SharedState
+		// Register default compilers
+		BuildTask.registerCompiler("MSVC", BuildTask.createRoslynCompiler)
 
-		var buildTable = activeState["Build"].AsTable()
-		var parametersTable = activeState["Parameters"].AsTable()
+		var globalState = Soup.globalState
+		var activeState = Soup.activeState
+		var sharedState = Soup.sharedState
 
-		var arguments = new BuildArguments()
-		arguments.TargetArchitecture = parametersTable["Architecture"].AsString()
-		arguments.TargetName = buildTable["TargetName"].AsString()
-		arguments.TargetType = (BuildTargetType)buildTable["TargetType"].AsInteger()
-		arguments.SourceRootDirectory = Path.new(buildTable["SourceRootDirectory"].AsString())
-		arguments.TargetRootDirectory = Path.new(buildTable["TargetRootDirectory"].AsString())
-		arguments.ObjectDirectory = Path.new(buildTable["ObjectDirectory"].AsString())
-		arguments.BinaryDirectory = Path.new(buildTable["BinaryDirectory"].AsString())
+		var buildTable = activeState["Build"]
+		var parametersTable = globalState["Parameters"]
 
-		if (buildTable.TryGetValue("Source", out var sourceValue)) {
-			arguments.SourceFiles = sourceValue.AsList().Select(value { Path.new(value.AsString())).ToList()
+		var arguments = BuildArguments.new()
+		arguments.TargetArchitecture = parametersTable["Architecture"]
+		arguments.TargetName = buildTable["TargetName"]
+		arguments.TargetType = buildTable["TargetType"]
+		arguments.SourceRootDirectory = Path.new(buildTable["SourceRootDirectory"])
+		arguments.TargetRootDirectory = Path.new(buildTable["TargetRootDirectory"])
+		arguments.ObjectDirectory = Path.new(buildTable["ObjectDirectory"])
+		arguments.BinaryDirectory = Path.new(buildTable["BinaryDirectory"])
+
+		if (buildTable.containsKey("Source")) {
+			arguments.SourceFiles = ListExtensions.ConvertToPathList(buildTable["Source"])
 		}
 
-		if (buildTable.TryGetValue("LibraryPaths", out var libraryPathsValue)) {
-			arguments.LibraryPaths = libraryPathsValue.AsList().Select(value { Path.new(value.AsString())).ToList()
+		if (buildTable.containsKey("LibraryPaths")) {
+			arguments.LibraryPaths = ListExtensions.ConvertToPathList(buildTable["LibraryPaths"])
 		}
 
-		if (buildTable.TryGetValue("PreprocessorDefinitions", out var preprocessorDefinitionsValue)) {
-			arguments.PreprocessorDefinitions = preprocessorDefinitionsValue.AsList().Select(value { value.AsString()).ToList()
+		if (buildTable.containsKey("PreprocessorDefinitions")) {
+			arguments.PreprocessorDefinitions = buildTable["PreprocessorDefinitions"]
 		}
 
-		if (buildTable.TryGetValue("OptimizationLevel", out var optimizationLevelValue)) {
-			arguments.OptimizationLevel = (BuildOptimizationLevel)
-				optimizationLevelValue.AsInteger()
+		if (buildTable.containsKey("OptimizationLevel")) {
+			arguments.OptimizationLevel = buildTable["OptimizationLevel"]
 		} else {
 			arguments.OptimizationLevel = BuildOptimizationLevel.None
 		}
 
-		if (buildTable.TryGetValue("GenerateSourceDebugInfo", out var generateSourceDebugInfoValue)) {
-			arguments.GenerateSourceDebugInfo = generateSourceDebugInfoValue.AsBoolean()
+		if (buildTable.containsKey("GenerateSourceDebugInfo")) {
+			arguments.GenerateSourceDebugInfo = buildTable["GenerateSourceDebugInfo"]
 		} else {
 			arguments.GenerateSourceDebugInfo = false
 		}
 
-		if (buildTable.TryGetValue("NullableState", out var nullableValue)) {
-			arguments.NullableState = (BuildNullableState)nullableValue.AsInteger()
+		if (buildTable.containsKey("NullableState")) {
+			arguments.NullableState = buildTable["NullableState"]
 		} else {
 			arguments.NullableState = BuildNullableState.Enabled
 		}
 
 		// Load the runtime dependencies
-		if (buildTable.TryGetValue("RuntimeDependencies", out var runtimeDependenciesValue)) {
-			arguments.RuntimeDependencies = MakeUnique(
-				runtimeDependenciesValue.AsList().Select(value { Path.new(value.AsString())))
+		if (buildTable.containsKey("RuntimeDependencies")) {
+			arguments.RuntimeDependencies = BuildTask.MakeUnique(
+				ListExtensions.ConvertToPathList(buildTable["RuntimeDependencies"]))
 		}
 
 		// Load the link dependencies
-		if (buildTable.TryGetValue("LinkDependencies", out var linkDependenciesValue)) {
-			arguments.LinkDependencies = MakeUnique(
-				linkDependenciesValue.AsList().Select(value { Path.new(value.AsString())))
+		if (buildTable.containsKey("LinkDependencies")) {
+			arguments.LinkDependencies = BuildTask.MakeUnique(
+				ListExtensions.ConvertToPathList(buildTable["LinkDependencies"]))
 		}
 
 		// Load the list of disabled warnings
-		if (buildTable.TryGetValue("EnableWarningsAsErrors", out var enableWarningsAsErrorsValue)) {
-			arguments.EnableWarningsAsErrors = enableWarningsAsErrorsValue.AsBoolean()
+		if (buildTable.containsKey("EnableWarningsAsErrors")) {
+			arguments.EnableWarningsAsErrors = buildTable["EnableWarningsAsErrors"]
 		} else {
 			arguments.GenerateSourceDebugInfo = false
 		}
 
 		// Load the list of disabled warnings
-		if (buildTable.TryGetValue("DisabledWarnings", out var disabledWarningsValue)) {
-			arguments.DisabledWarnings = disabledWarningsValue.AsList().Select(value { value.AsString()).ToList()
+		if (buildTable.containsKey("DisabledWarnings")) {
+			arguments.DisabledWarnings = buildTable["DisabledWarnings"]
 		}
 
 		// Check for any custom compiler flags
-		if (buildTable.TryGetValue("CustomCompilerProperties", out var customCompilerPropertiesValue)) {
-			arguments.CustomProperties = customCompilerPropertiesValue.AsList().Select(value { value.AsString()).ToList()
+		if (buildTable.containsKey("CustomCompilerProperties")) {
+			arguments.CustomProperties = buildTable["CustomCompilerProperties"]
 		}
 
 		// Initialize the compiler to use
-		var compilerName = parametersTable["Compiler"].AsString()
-		if (!this.compilerFactory.TryGetValue(compilerName, out var compileFactory)) {
-			this.buildState.LogTrace(TraceLevel.Error, "Unknown compiler: " + compilerName)
-			Fiber.abort()
+		var compilerName = parametersTable["Compiler"]
+		if (!__compilerFactory.containsKey(compilerName)) {
+			Fiber.abort("Unknown compiler: %(compilerName)")
 		}
 
-		var compiler = compileFactory(activeState)
+		var compiler = __compilerFactory[compilerName].call(activeState)
 
 		var buildEngine = BuildEngine.new(compiler)
-		var buildResult = buildEngine.Execute(this.buildState, arguments)
+		var buildResult = buildEngine.Execute(arguments)
 
 		// Pass along internal state for other stages to gain access
-		buildTable.EnsureValueList(this.factory, "InternalLinkDependencies").SetAll(this.factory, buildResult.InternalLinkDependencies)
+		buildTable["InternalLinkDependencies"] = buildResult.InternalLinkDependencies
 
 		// Always pass along required input to shared build tasks
-		var sharedBuildTable = sharedState.EnsureValueTable(this.factory, "Build")
-		sharedBuildTable.EnsureValueList(this.factory, "RuntimeDependencies").SetAll(this.factory, buildResult.RuntimeDependencies)
-		sharedBuildTable.EnsureValueList(this.factory, "LinkDependencies").SetAll(this.factory, buildResult.LinkDependencies)
+		var sharedBuildTable = MapExtensions.EnsureTable(sharedState, "Build")
+		sharedBuildTable["RuntimeDependencies"] = buildResult.RuntimeDependencies
+		sharedBuildTable["LinkDependencies"] = buildResult.LinkDependencies
 
-		if (!buildResult.TargetFile.IsEmpty)
-		{
-			sharedBuildTable["TargetFile"] = this.factory.Create(buildResult.TargetFile.toString)
-			sharedBuildTable["RunExecutable"] = this.factory.Create("C:/Program Files/dotnet/dotnet.exe")
-			
-			sharedBuildTable.EnsureValueList(this.factory, "RunArguments").SetAll(this.factory, [ { buildResult.TargetFile.toString })
+		if (!buildResult.TargetFile is Null) {
+			sharedBuildTable["TargetFile"] = buildResult.TargetFile.toString
+			sharedBuildTable["RunExecutable"] = "C:/Program Files/dotnet/dotnet.exe"
+
+			sharedBuildTable["RunArguments"] = [ buildResult.TargetFile.toString ]
 		}
 
 		// Register the build operations
 		for (operation in buildResult.BuildOperations) {
-			this.buildState.CreateOperation(operation)
+			Soup.createOperation(
+				operation.Title,
+				operation.Executable.toString,
+				operation.Arguments,
+				operation.WorkingDirectory.toString,
+				ListExtensions.ConvertFromPathList(operation.DeclaredInput),
+				ListExtensions.ConvertFromPathList(operation.DeclaredOutput))
 		}
 
-		this.buildState.LogTrace(TraceLevel.Information, "Build Generate Done")
+		Soup.info("Build Generate Done")
+	}
+
+	static createRoslynCompiler {
+		return Fn.new { |activeState|
+			var clToolPath = Path.new(activeState["Roslyn.CscToolPath"])
+			return RoslynCompiler.new(clToolPath)
+		}
 	}
 
 	static MakeUnique(collection) {
-		var valueSet = new HashSet<string>()
+		var valueSet = Set.new()
 		for (value in collection) {
 			valueSet.add(value.toString)
 		}
 
-		return valueSet.Select(value { Path.new(value)).ToList()
+		return ListExtensions.ConvertToPathList(valueSet.list)
 	}
 }

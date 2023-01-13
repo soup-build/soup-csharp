@@ -6,40 +6,28 @@
 /// The resolve dependencies build task that knows how to combine all previous state
 /// into the active state.
 /// </summary>
-class ResolveDependenciesTask : IBuildTask
-{
-	IBuildState buildState
-	IValueFactory factory
-
+class ResolveDependenciesTask is SoupTask {
 	/// <summary>
 	/// Get the run before list
 	/// </summary>
 	static runBefore { [
-	{
 		"BuildTask",
-	}
+	]}
 
 	/// <summary>
 	/// Get the run after list
 	/// </summary>
-	static runAfter { [
-	{
-	}
-
-	ResolveDependenciesTask(IBuildState buildState, IValueFactory factory)
-	{
-		this.buildState = buildState
-		this.factory = factory
-	}
+	static runAfter { [] }
 
 	/// <summary>
 	/// The Core Execute task
 	/// </summary>
-	Execute()
-	{
-		var activeState = this.buildState.ActiveState
-		var recipeTable = activeState["Recipe"].AsTable()
-		var parametersTable = activeState["Parameters"].AsTable()
+	evaluate() {
+		var activeState = Soup.activeState
+		var globalState = Soup.globalState
+
+		var recipeTable = globalState["Recipe"].AsTable()
+		var parametersTable = globalState["Parameters"].AsTable()
 		var buildTable = activeState.EnsureValueTable(this.factory, "Build")
 
 		if (activeState.TryGetValue("Dependencies", out var dependenciesValue))
@@ -52,7 +40,7 @@ class ResolveDependenciesTask : IBuildTask
 				foreach (var dependencyName in runtimeDependenciesTable.Keys)
 				{
 					// Combine the core dependency build inputs for the core build task
-					this.buildState.LogTrace(TraceLevel.Information, "Combine Runtime Dependency: " + dependencyName)
+					Soup.info("Combine Runtime Dependency: %(dependencyName)")
 					var dependencyTable = runtimeDependenciesTable[dependencyName].AsTable()
 
 					if (dependencyTable.TryGetValue("Build", out var buildValue)) {
@@ -66,7 +54,7 @@ class ResolveDependenciesTask : IBuildTask
 								buildTable.EnsureValueList(this.factory, "RuntimeDependencies").Append(runtimeDependencies)
 							}
 						} else {
-							this.buildState.LogTrace(TraceLevel.Information, "Excluding Runtime dependency content: %(dependencyName)")
+							Soup.info("Excluding Runtime dependency content: %(dependencyName)")
 						}
 
 						if (dependencyBuildTable.TryGetValue("LinkDependencies", out var linkDependenciesValue)) {

@@ -2,6 +2,7 @@
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
+import "soup-test" for SoupTest
 import "../Core/BuildArguments" for BuildArguments, BuildNullableState, BuildOptimizationLevel, BuildTargetType
 import "../Core/CompileArguments" for CompileArguments, LinkTarget, NullableState
 import "../Core/BuildEngine" for BuildEngine
@@ -31,6 +32,8 @@ class BuildEngineUnitTests {
 
 	// [Fact]
 	Build_Executable() {
+		SoupTest.initialize()
+
 		// Register the mock compiler
 		var compiler = MockCompiler.new()
 
@@ -56,9 +59,9 @@ class BuildEngineUnitTests {
 		var result = uut.Execute(arguments)
 
 		// // Verify expected logs
-		// Assert.Equal(
-		// 	[],
-		// 	testListener.GetMessages())
+		Assert.ListEqual(
+			[],
+			SoupTest.logs)
 
 		var expectedCompileArguments = CompileArguments.new()
 		expectedCompileArguments.Target = Path.new("./bin/Program.mock.dll")
@@ -90,7 +93,7 @@ class BuildEngineUnitTests {
 			BuildOperation.new(
 				"MakeDir [./obj/]",
 				Path.new("C:/target/"),
-				Path.new("ProcessFolder/mkdir.exe"),
+				Path.new("C:/Program Files/SoupBuild/Soup/Soup/mkdir.exe"),
 				"\"./obj/\"",
 				[],
 				[
@@ -99,7 +102,7 @@ class BuildEngineUnitTests {
 			BuildOperation.new(
 				"MakeDir [./bin/]",
 				Path.new("C:/target/"),
-				Path.new("ProcessFolder/mkdir.exe"),
+				Path.new("C:/Program Files/SoupBuild/Soup/Soup/mkdir.exe"),
 				"\"./bin/\"",
 				[],
 				[
@@ -108,7 +111,7 @@ class BuildEngineUnitTests {
 			BuildOperation.new(
 				"MakeDir [./bin/ref/]",
 				Path.new("C:/target/"),
-				Path.new("ProcessFolder/mkdir.exe"),
+				Path.new("C:/Program Files/SoupBuild/Soup/Soup/mkdir.exe"),
 				"\"./bin/ref/\"",
 				[],
 				[
@@ -191,9 +194,9 @@ class BuildEngineUnitTests {
 		var result = uut.Execute(arguments)
 
 		// // Verify expected logs
-		// Assert.Equal(
-		// 	[],
-		// 	testListener.GetMessages())
+		Assert.ListEqual(
+			[],
+			SoupTest.logs)
 
 		// Setup the shared arguments
 		var expectedCompileArguments = CompileArguments.new()
@@ -226,7 +229,7 @@ class BuildEngineUnitTests {
 			BuildOperation.new(
 				"MakeDir [./obj/]",
 				Path.new("C:/target/"),
-				Path.new("ProcessFolder/mkdir.exe"),
+				Path.new("C:/Program Files/SoupBuild/Soup/Soup/mkdir.exe"),
 				"\"./obj/\"",
 				[],
 				[
@@ -235,7 +238,7 @@ class BuildEngineUnitTests {
 			BuildOperation.new(
 				"MakeDir [./bin/]",
 				Path.new("C:/target/"),
-				Path.new("ProcessFolder/mkdir.exe"),
+				Path.new("C:/Program Files/SoupBuild/Soup/Soup/mkdir.exe"),
 				"\"./bin/\"",
 				[],
 				[
@@ -244,7 +247,7 @@ class BuildEngineUnitTests {
 			BuildOperation.new(
 				"MakeDir [./bin/ref/]",
 				Path.new("C:/target/"),
-				Path.new("ProcessFolder/mkdir.exe"),
+				Path.new("C:/Program Files/SoupBuild/Soup/Soup/mkdir.exe"),
 				"\"./bin/ref/\"",
 				[],
 				[

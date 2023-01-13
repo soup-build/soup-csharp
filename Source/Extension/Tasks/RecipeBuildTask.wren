@@ -27,10 +27,12 @@ class RecipeBuildTask : IBuildTask
 	/// The Core Execute task
 	/// </summary>
 	Execute() {
-		var rootTable = this.buildState.ActiveState
-		var parametersTable = rootTable["Parameters"].AsTable()
-		var recipeTable = rootTable["Recipe"].AsTable()
-		var buildTable = rootTable.EnsureValueTable(this.factory, "Build")
+		var activeState = Soup.activeState
+		var globalState = Soup.globalState
+
+		var parametersTable = globalState["Parameters"].AsTable()
+		var recipeTable = globalState["Recipe"].AsTable()
+		var buildTable = activeState.EnsureValueTable(this.factory, "Build")
 
 		// Load the input properties
 		var compilerName = parametersTable["Compiler"].AsString()
@@ -122,8 +124,7 @@ class RecipeBuildTask : IBuildTask
 			preprocessorDefinitions.add("RELEASE")
 			optimizationLevel = BuildOptimizationLevel.Speed
 		} else {
-			this.buildState.LogTrace(TraceLevel.Error, "Unknown build flavor type.")
-			Fiber.abort("Unknown build flavors type.")
+			Fiber.abort("Unknown build flavor type.")
 		}
 
 		buildTable["TargetName"] = this.factory.Create(name)

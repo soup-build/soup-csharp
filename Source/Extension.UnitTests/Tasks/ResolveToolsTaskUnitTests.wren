@@ -3,27 +3,22 @@
 // </copyright>
 
 class ResolveToolsTaskUnitTests {
-	// [Fact]
-	Initialize_Success() {
-		var buildState = new MockBuildState()
-		var factory = new ValueFactory()
-		var uut = new ResolveToolsTask(buildState, factory)
-	}
 
 	// [Fact]
 	Execute() {
 		// Setup the input build state
-		var buildState = new MockBuildState()
-		var state = buildState.ActiveState
+		SoupTest.initialize()
+		var activeState = SoupTest.activeState
+		var globalState = SoupTest.globalState
 
 		// Set the sdks
-		var sdks = new ValueList()
-		sdks.add(new Value(new ValueTable()
+		var sdks = [
+		sdks.add(new Value({}
 		{
 			{ "Name", new Value("Roslyn") },
 			{
 				"Properties",
-				new Value(new ValueTable()
+				new Value({}
 				{
 					{ "ToolsRoot", new Value("C:/Roslyn/ToolsRoot/") }
 				})
@@ -31,31 +26,28 @@ class ResolveToolsTaskUnitTests {
 		}))
 
 		// Setup parameters table
-		var parametersTable = new ValueTable()
+		var parametersTable = {}
 		state.add("Parameters", new Value(parametersTable))
 		parametersTable.add("SDKs", new Value(sdks))
 		parametersTable.add("System", new Value("win32"))
 		parametersTable.add("Architecture", new Value("x64"))
 
 		// Setup build table
-		var buildTable = new ValueTable()
+		var buildTable = {}
 		state.add("Build", new Value(buildTable))
 
-		var factory = new ValueFactory()
-		var uut = new ResolveToolsTask(buildState, factory)
-
-		uut.Execute()
+		ResolveToolsTask.evaluate()
 
 		// Verify expected logs
-		// Assert.Equal(
-		// 	[],
-		// 	testListener.GetMessages())
+		Assert.ListEqual(
+			[],
+			SoupTest.logs)
 
 		// Verify build state
 		var expectedBuildOperations = []
 
-		Assert.Equal(
+		Assert.ListEqual(
 			expectedBuildOperations,
-			buildState.GetBuildOperations())
+			SoupTest.operations)
 	}
 }

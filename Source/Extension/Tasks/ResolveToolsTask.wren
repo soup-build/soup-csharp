@@ -5,39 +5,26 @@
 /// <summary>
 /// The recipe build task that knows how to build a single recipe
 /// </summary>
-class ResolveToolsTask : IBuildTask
-{
-	IBuildState buildState
-	IValueFactory factory
-
+class ResolveToolsTask is SoupTask {
 	/// <summary>
 	/// Get the run before list
 	/// </summary>
-	static runBefore { [
-	{
-	}
+	static runBefore { [] }
 
 	/// <summary>
 	/// Get the run after list
 	/// </summary>
-	static runAfter { [
-	{
-	}
-
-	ResolveToolsTask(IBuildState buildState, IValueFactory factory)
-	{
-		this.buildState = buildState
-		this.factory = factory
-	}
+	static runAfter { [] }
 
 	/// <summary>
 	/// The Core Execute task
 	/// </summary>
-	Execute()
-	{
-		var state = this.buildState.ActiveState
-		var parameters = state["Parameters"].AsTable()
-		var buildTable = state.EnsureValueTable(this.factory, "Build")
+	static evaluate() {
+		var activeState = Soup.activeState
+		var globalState = Soup.globalState
+
+		var parameters = globalState["Parameters"].AsTable()
+		var buildTable = activeState.EnsureValueTable(this.factory, "Build")
 
 		var systemName = parameters["System"].AsString()
 		var architectureName = parameters["Architecture"].AsString()

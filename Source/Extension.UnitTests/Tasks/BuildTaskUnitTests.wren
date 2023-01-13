@@ -2,13 +2,19 @@
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
+import "soup-test" for SoupTest, SoupTestOperation
+import "../../Extension/Tasks/BuildTask" for BuildTask
+import "../../Compiler/Core/MockCompiler" for MockCompiler
+import "../../Compiler/Core/BuildArguments" for BuildOptimizationLevel, BuildTargetType
+import "../../Compiler/Core/CompileArguments" for CompileArguments, LinkTarget, NullableState
+import "../../Utils/Path" for Path
+import "../../Test/Assert" for Assert
+
 class BuildTaskUnitTests {
 	construct new() {
 	}
 
 	RunTests() {
-		System.print("BuildTaskUnitTests.Initialize_Success")
-		this.Initialize_Success()
 		System.print("BuildTaskUnitTests.Build_Executable")
 		this.Build_Executable()
 		System.print("BuildTaskUnitTests.Build_Library_MultipleFiles")
@@ -16,72 +22,58 @@ class BuildTaskUnitTests {
 	}
 
 	// [Fact]
-	Initialize_Success() {
-		var buildState = new MockBuildState()
-		var factory = new ValueFactory()
-		var uut = new BuildTask(buildState, factory)
-	}
-
-	// [Fact]
 	Build_Executable() {
 		// Setup the input build state
-		var buildState = new MockBuildState()
-		var state = buildState.ActiveState
+		SoupTest.initialize()
+		var activeState = SoupTest.activeState
+		var globalState = SoupTest.globalState
 
 		// Setup build table
-		var buildTable = new ValueTable()
-		state.add("Build", new Value(buildTable))
-		buildTable.add("TargetName", new Value("Program"))
-		buildTable.add("TargetType", new Value((long)BuildTargetType.Executable))
-		buildTable.add("SourceRootDirectory", new Value("C:/source/"))
-		buildTable.add("TargetRootDirectory", new Value("C:/target/"))
-		buildTable.add("ObjectDirectory", new Value("obj/"))
-		buildTable.add("BinaryDirectory", new Value("bin/"))
-		buildTable.add(
-			"Source",
-			new Value(new ValueList()
-				{
-					new Value("TestFile.cs"),
-				}))
+		var buildTable = {}
+		activeState["Build"] = buildTable
+		buildTable["TargetName"] = "Program"
+		buildTable["TargetType"] = BuildTargetType.Executable
+		buildTable["SourceRootDirectory"] = "C:/source/"
+		buildTable["TargetRootDirectory"] = "C:/target/"
+		buildTable["ObjectDirectory"] = "obj/"
+		buildTable["BinaryDirectory"] = "bin/"
+		buildTable["Source"] = [
+			"TestFile.cs",
+		]
 
 		// Setup parameters table
-		var parametersTable = new ValueTable()
-		state.add("Parameters", new Value(parametersTable))
-		parametersTable.add("Architecture", new Value("x64"))
-		parametersTable.add("Compiler", new Value("MOCK"))
+		var parametersTable = {}
+		globalState["Parameters"] = parametersTable
+		parametersTable["Architecture"] = "x64"
+		parametersTable["Compiler"] = "MOCK"
 
 		// Register the mock compiler
-		var compiler = new Compiler.Mock.Compiler()
-		var compilerFactory = new Dictionary<string, Func<IValueTable, ICompiler>>()
-		compilerFactory.add("MOCK", (IValueTable state) { { return compiler })
+		var compiler = MockCompiler.new()
+		BuildTask.registerCompiler("MOCK", Fn.new { |activeState| compiler })
 
-		var factory = new ValueFactory()
-		var uut = new BuildTask(buildState, factory, compilerFactory)
-
-		uut.Execute()
+		BuildTask.evaluate()
 
 		// Verify expected logs
-		// Assert.Equal(
-		// 	[
-		// 		"INFO: Build Generate Done"
-		// 	],
-		// 	testListener.GetMessages())
+		Assert.ListEqual(
+			[
+				"INFO: Build Generate Done"
+			],
+			SoupTest.logs)
 
 		var expectedCompileArguments = CompileArguments.new()
-		{
-			Target = Path.new("./bin/Program.mock.dll"),
-			ReferenceTarget = Path.new("./bin/ref/Program.mock.dll"),
-			TargetType = LinkTarget.Executable,
-			SourceRootDirectory = Path.new("C:/source/"),
-			TargetRootDirectory = Path.new("C:/target/"),
-			ObjectDirectory = Path.new("obj/"),
-			SourceFiles = [
-				Path.new("TestFile.cs")
-			],
-		}
+		expectedCompileArguments.Target = Path.new("./bin/Program.mock.dll")
+		expectedCompileArguments.ReferenceTarget = Path.new("./bin/ref/Program.mock.dll")
+		expectedCompileArguments.TargetType = LinkTarget.Executable
+		expectedCompileArguments.SourceRootDirectory = Path.new("C:/source/")
+		expectedCompileArguments.TargetRootDirectory = Path.new("C:/target/")
+		expectedCompileArguments.ObjectDirectory = Path.new("obj/")
+		expectedCompileArguments.SourceFiles = [
+			Path.new("TestFile.cs")
+		]
+		expectedCompileArguments.NullableState = NullableState.Enabled
 
 		// Verify expected compiler calls
-		Assert.Equal(
+		Assert.ListEqual(
 			[
 				expectedCompileArguments,
 			],
@@ -89,199 +81,187 @@ class BuildTaskUnitTests {
 
 		// Verify build state
 		var expectedBuildOperations = [
-			BuildOperation.new(
+			SoupTestOperation.new(
 				"MakeDir [./obj/]",
-				Path.new("C:/target/"),
-				Path.new("C:/mkdir.exe"),
+				Path.new("C:/Program Files/SoupBuild/Soup/Soup/mkdir.exe"),
 				"\"./obj/\"",
+				Path.new("C:/target/"),
 				[],
 				[
 					Path.new("./obj/"),
 				]),
-			BuildOperation.new(
+			SoupTestOperation.new(
 				"MakeDir [./bin/]",
-				Path.new("C:/target/"),
-				Path.new("C:/mkdir.exe"),
+				Path.new("C:/Program Files/SoupBuild/Soup/Soup/mkdir.exe"),
 				"\"./bin/\"",
+				Path.new("C:/target/"),
 				[],
 				[
 					Path.new("./bin/"),
 				]),
-			BuildOperation.new(
+			SoupTestOperation.new(
 				"MakeDir [./bin/ref/]",
-				Path.new("C:/target/"),
-				Path.new("C:/mkdir.exe"),
+				Path.new("C:/Program Files/SoupBuild/Soup/Soup/mkdir.exe"),
 				"\"./bin/ref/\"",
+				Path.new("C:/target/"),
 				[],
 				[
 					Path.new("./bin/ref/"),
 				]),
-			BuildOperation.new(
+			SoupTestOperation.new(
 				"MockCompile: 1",
-				Path.new("MockWorkingDirectory"),
 				Path.new("MockCompiler.exe"),
 				"Arguments",
+				Path.new("MockWorkingDirectory"),
 				[
 					Path.new("./InputFile.in"),
 				],
 				[
 					Path.new("./OutputFile.out"),
 				]),
-			BuildOperation.new(
+			SoupTestOperation.new(
 				"WriteFile [./bin/Program.runtimeconfig.json]",
-				Path.new("C:/target/"),
 				Path.new("./writefile.exe"),
-				"./bin/Program.runtimeconfig.json"" ""{
-""runtimeOptions"": {
-""tfm"": ""net6.0"",
-""framework"": {
-""name"": ""Microsoft.NETCore.App"",
-""version"": ""6.0.0""
-},
-""configProperties"": {
-""System.Reflection.Metadata.MetadataUpdater.IsSupported"": false
-}
-}
-}""",
+				"\"./bin/Program.runtimeconfig.json\" \"{
+	\"runtimeOptions\": {
+		\"tfm\": \"net6.0\",
+		\"framework\": {
+			\"name\": \"Microsoft.NETCore.App\",
+			\"version\": \"6.0.0\"
+		},
+		\"configProperties\": {
+			\"System.Reflection.Metadata.MetadataUpdater.IsSupported\": false
+		}
+	}
+}\"",
+				Path.new("C:/target/"),
 				[],
 				[
 					Path.new("./bin/Program.runtimeconfig.json"),
 				]),
 		]
 
-		Assert.Equal(
+		Assert.ListEqual(
 			expectedBuildOperations,
-			buildState.GetBuildOperations())
+			SoupTest.operations)
 	}
 
 	// [Fact]
 	Build_Library_MultipleFiles() {
 		// Setup the input build state
-		var buildState = new MockBuildState()
-		var state = buildState.ActiveState
+		SoupTest.initialize()
+		var activeState = SoupTest.activeState
+		var globalState = SoupTest.globalState
 
 		// Setup build table
-		var buildTable = new ValueTable()
-		state.add("Build", new Value(buildTable))
-		buildTable.add("TargetName", new Value("Library"))
-		buildTable.add("TargetType", new Value((long)BuildTargetType.Library))
-		buildTable.add("SourceRootDirectory", new Value("C:/source/"))
-		buildTable.add("TargetRootDirectory", new Value("C:/target/"))
-		buildTable.add("ObjectDirectory", new Value("obj/"))
-		buildTable.add("BinaryDirectory", new Value("bin/"))
-		buildTable.add("Source", new Value(new ValueList()
-		{
-			new Value("TestFile1.cpp"),
-			new Value("TestFile2.cpp"),
-			new Value("TestFile3.cpp"),
-		}))
-		buildTable.add("IncludeDirectories", new Value(new ValueList()
-		{
-			new Value("Folder"),
-			new Value("AnotherFolder/Sub"),
-		}))
-		buildTable.add("ModuleDependencies", new Value(new ValueList()
-		{
-			new Value("../Other/bin/OtherModule1.mock.bmi"),
-			new Value("../OtherModule2.mock.bmi"),
-		}))
-		buildTable.add("OptimizationLevel", new Value((long)BuildOptimizationLevel.None))
+		var buildTable = {}
+		activeState["Build"] = buildTable
+		buildTable["TargetName"] = "Library"
+		buildTable["TargetType"] = BuildTargetType.Library
+		buildTable["SourceRootDirectory"] = "C:/source/"
+		buildTable["TargetRootDirectory"] = "C:/target/"
+		buildTable["ObjectDirectory"] = "obj/"
+		buildTable["BinaryDirectory"] = "bin/"
+		buildTable["Source"] = [
+			"TestFile1.cpp",
+			"TestFile2.cpp",
+			"TestFile3.cpp",
+		]
+		buildTable["IncludeDirectories"] = [
+			"Folder",
+			"AnotherFolder/Sub",
+		]
+		buildTable["ModuleDependencies"] = [
+			"../Other/bin/OtherModule1.mock.bmi",
+			"../OtherModule2.mock.bmi",
+		]
+		buildTable["OptimizationLevel"] = BuildOptimizationLevel.None
 
 		// Setup parameters table
-		var parametersTable = new ValueTable()
-		state.add("Parameters", new Value(parametersTable))
-		parametersTable.add("Architecture", new Value("x64"))
-		parametersTable.add("Compiler", new Value("MOCK"))
+		var parametersTable = {}
+		globalState["Parameters"] = parametersTable
+		parametersTable["Architecture"] = "x64"
+		parametersTable["Compiler"] = "MOCK"
 
 		// Register the mock compiler
-		var compiler = new Compiler.Mock.Compiler()
-		var compilerFactory = new Dictionary<string, Func<IValueTable, ICompiler>>()
-		compilerFactory.add("MOCK", (IValueTable state) { { return compiler })
+		var compiler = MockCompiler.new()
+		BuildTask.registerCompiler("MOCK", Fn.new { |activeState| compiler })
 
-		var factory = new ValueFactory()
-		var uut = new BuildTask(buildState, factory, compilerFactory)
-
-		uut.Execute()
+		BuildTask.evaluate()
 
 		// Verify expected logs
-		// Assert.Equal(
-		// 	[
-		// 		"INFO: Build Generate Done",
-		// 	],
-		// 	testListener.GetMessages())
+		Assert.ListEqual(
+			[
+				"INFO: Build Generate Done",
+			],
+			SoupTest.logs)
 
 		// Setup the shared arguments
 		var expectedCompileArguments = CompileArguments.new()
-		{
-			Target = Path.new("./bin/Library.mock.dll"),
-			ReferenceTarget = Path.new("./bin/ref/Library.mock.dll"),
-			SourceRootDirectory = Path.new("C:/source/"),
-			TargetRootDirectory = Path.new("C:/target/"),
-			ObjectDirectory = Path.new("obj/"),
-			SourceFiles = [
-			{
-				Path.new("TestFile1.cpp"),
-				Path.new("TestFile2.cpp"),
-				Path.new("TestFile3.cpp"),
-			},
-		}
+		expectedCompileArguments.Target = Path.new("./bin/Library.mock.dll")
+		expectedCompileArguments.TargetType = LinkTarget.Library
+		expectedCompileArguments.ReferenceTarget = Path.new("./bin/ref/Library.mock.dll")
+		expectedCompileArguments.SourceRootDirectory = Path.new("C:/source/")
+		expectedCompileArguments.TargetRootDirectory = Path.new("C:/target/")
+		expectedCompileArguments.ObjectDirectory = Path.new("obj/")
+		expectedCompileArguments.SourceFiles = [
+			Path.new("TestFile1.cpp"),
+			Path.new("TestFile2.cpp"),
+			Path.new("TestFile3.cpp"),
+		]
+		expectedCompileArguments.NullableState = NullableState.Enabled
 
 		// Verify expected compiler calls
-		Assert.Equal(
-			new List<CompileArguments>()
-			{
+		Assert.ListEqual(
+			[
 				expectedCompileArguments,
-			},
+			],
 			compiler.GetCompileRequests())
 
 		// Verify build state
 		var expectedBuildOperations = [
-		{
-			BuildOperation.new(
+			SoupTestOperation.new(
 				"MakeDir [./obj/]",
-				Path.new("C:/target/"),
-				Path.new("C:/mkdir.exe"),
+				Path.new("C:/Program Files/SoupBuild/Soup/Soup/mkdir.exe"),
 				"\"./obj/\"",
-				[,
+				Path.new("C:/target/"),
+				[],
 				[
-				{
 					Path.new("./obj/"),
-				}),
-			BuildOperation.new(
+				]),
+			SoupTestOperation.new(
 				"MakeDir [./bin/]",
-				Path.new("C:/target/"),
-				Path.new("C:/mkdir.exe"),
+				Path.new("C:/Program Files/SoupBuild/Soup/Soup/mkdir.exe"),
 				"\"./bin/\"",
-				[,
-				[
-				{
-					Path.new("./bin/"),
-				}),
-			BuildOperation.new(
-				"MakeDir [./bin/ref/]",
 				Path.new("C:/target/"),
-				Path.new("C:/mkdir.exe"),
-				"\"./bin/ref/\"",
-				[,
+				[],
 				[
-				{
+					Path.new("./bin/"),
+				]),
+			SoupTestOperation.new(
+				"MakeDir [./bin/ref/]",
+				Path.new("C:/Program Files/SoupBuild/Soup/Soup/mkdir.exe"),
+				"\"./bin/ref/\"",
+				Path.new("C:/target/"),
+				[],
+				[
 					Path.new("./bin/ref/"),
-				}),
-			BuildOperation.new(
+				]),
+			SoupTestOperation.new(
 				"MockCompile: 1",
-				Path.new("MockWorkingDirectory"),
 				Path.new("MockCompiler.exe"),
 				"Arguments",
+				Path.new("MockWorkingDirectory"),
 				[
 					Path.new("./InputFile.in"),
 				],
 				[
 					Path.new("./OutputFile.out"),
 				]),
-		}
+		]
 
-		Assert.Equal(
+		Assert.ListEqual(
 			expectedBuildOperations,
-			buildState.GetBuildOperations())
+			SoupTest.operations)
 	}
 }
