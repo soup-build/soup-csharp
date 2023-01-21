@@ -4,8 +4,8 @@
 
 import "../Core/CompileArguments" for CompileArguments, LinkTarget, NullableState
 import "../Roslyn/RoslynCompiler" for RoslynCompiler
-import "../../Utils/BuildOperation" for BuildOperation
-import "../../Utils/Path" for Path
+import "Soup.Build.Utils:./BuildOperation" for BuildOperation
+import "Soup.Build.Utils:./Path" for Path
 import "../../Test/Assert" for Assert
 
 class RoslynCompilerUnitTests {

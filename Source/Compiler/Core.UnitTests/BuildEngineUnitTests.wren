@@ -7,8 +7,8 @@ import "../Core/BuildArguments" for BuildArguments, BuildNullableState, BuildOpt
 import "../Core/CompileArguments" for CompileArguments, LinkTarget, NullableState
 import "../Core/BuildEngine" for BuildEngine
 import "../Core/MockCompiler" for MockCompiler
-import "../../Utils/BuildOperation" for BuildOperation
-import "../../Utils/Path" for Path
+import "Soup.Build.Utils:./BuildOperation" for BuildOperation
+import "Soup.Build.Utils:./Path" for Path
 import "../../Test/Assert" for Assert
 
 class BuildEngineUnitTests {

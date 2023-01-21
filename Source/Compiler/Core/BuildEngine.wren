@@ -5,8 +5,8 @@
 import "./BuildResult" for BuildResult
 import "./BuildArguments" for BuildTargetType, BuildNullableState
 import "./CompileArguments" for CompileArguments, LinkTarget, NullableState
-import "../../Utils/SharedOperations" for SharedOperations
-import "../../Utils/Path" for Path
+import "Soup.Build.Utils:./SharedOperations" for SharedOperations
+import "Soup.Build.Utils:./Path" for Path
 
 /// <summary>
 /// The build engine

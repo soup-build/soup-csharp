@@ -1,4 +1,3 @@
-import "./Utils.UnitTests/PathUnitTests" for PathUnitTests
 import "./Compiler/Core.UnitTests/BuildEngineUnitTests" for BuildEngineUnitTests
 import "./Compiler/Roslyn.UnitTests/RoslynArgumentBuilderUnitTests" for RoslynArgumentBuilderUnitTests
 import "./Compiler/Roslyn.UnitTests/RoslynCompilerUnitTests" for RoslynCompilerUnitTests
@@ -7,10 +6,6 @@ import "./Extension.UnitTests/Tasks/RecipeBuildTaskUnitTests" for RecipeBuildTas
 import "./Extension.UnitTests/Tasks/ResolveToolsTaskUnitTests" for ResolveToolsTaskUnitTests
 
 var uut
-
-// Utils.UnitTests
-uut = PathUnitTests.new()
-uut.RunTests()
 
 // Compiler.Core.UnitTests
 uut = BuildEngineUnitTests.new()

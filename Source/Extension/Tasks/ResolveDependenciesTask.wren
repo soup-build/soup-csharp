@@ -30,10 +30,10 @@ class ResolveDependenciesTask is SoupTask {
 		var parametersTable = globalState["Parameters"].AsTable()
 		var buildTable = activeState.EnsureValueTable(this.factory, "Build")
 
-		if (activeState.TryGetValue("Dependencies", out var dependenciesValue))
+		if (globalState.containsKey("Dependencies", out var dependenciesValue))
 		{
 			var dependenciesTable = dependenciesValue.AsTable()
-			if (dependenciesTable.TryGetValue("Runtime", out var runtimeValue))
+			if (dependenciesTable.containsKey("Runtime", out var runtimeValue))
 			{
 				var runtimeDependenciesTable = runtimeValue.AsTable()
 
@@ -43,23 +43,23 @@ class ResolveDependenciesTask is SoupTask {
 					Soup.info("Combine Runtime Dependency: %(dependencyName)")
 					var dependencyTable = runtimeDependenciesTable[dependencyName].AsTable()
 
-					if (dependencyTable.TryGetValue("Build", out var buildValue)) {
+					if (dependencyTable.containsKey("Build", out var buildValue)) {
 						var dependencyBuildTable = buildValue.AsTable()
 						var dependencyReference = GetRuntimeDependencyParameterReference(parametersTable, dependencyName)
 						var dependencyRecipeReference = GetRuntimeDependencyReference(recipeTable, dependencyReference)
 
 						if (!dependencyRecipeReference.ExcludeRuntime) {
-							if (dependencyBuildTable.TryGetValue("RuntimeDependencies", out var runtimeDependenciesValue)) {
+							if (dependencyBuildTable.containsKey("RuntimeDependencies", out var runtimeDependenciesValue)) {
 								var runtimeDependencies = runtimeDependenciesValue.AsList()
-								buildTable.EnsureValueList(this.factory, "RuntimeDependencies").Append(runtimeDependencies)
+								buildTable.EnsureValueList(this.factory, "RuntimeDependencies").append(runtimeDependencies)
 							}
 						} else {
 							Soup.info("Excluding Runtime dependency content: %(dependencyName)")
 						}
 
-						if (dependencyBuildTable.TryGetValue("LinkDependencies", out var linkDependenciesValue)) {
+						if (dependencyBuildTable.containsKey("LinkDependencies", out var linkDependenciesValue)) {
 							var linkDependencies = linkDependenciesValue.AsList()
-							buildTable.EnsureValueList(this.factory, "LinkDependencies").Append(linkDependencies)
+							buildTable.EnsureValueList(this.factory, "LinkDependencies").append(linkDependencies)
 						}
 					}
 				}

@@ -4,9 +4,9 @@
 
 import "soup" for Soup, SoupTask
 import "../../Compiler/Core/BuildArguments" for BuildNullableState, BuildOptimizationLevel, BuildTargetType
-import "../../Utils/ListExtensions" for ListExtensions
-import "../../Utils/MapExtensions" for MapExtensions
-import "../../Utils/Path" for Path
+import "Soup.Build.Utils:./ListExtensions" for ListExtensions
+import "Soup.Build.Utils:./MapExtensions" for MapExtensions
+import "Soup.Build.Utils:./Path" for Path
 
 /// <summary>
 /// The recipe build task that knows how to build a single recipe

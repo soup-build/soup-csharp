@@ -4,9 +4,9 @@
 
 import "./RoslynArgumentBuilder" for RoslynArgumentBuilder
 import "../Core/ICompiler" for ICompiler
-import "../../Utils/BuildOperation" for BuildOperation
-import "../../Utils/SharedOperations" for SharedOperations
-import "../../Utils/Path" for Path
+import "Soup.Build.Utils:./BuildOperation" for BuildOperation
+import "Soup.Build.Utils:./SharedOperations" for SharedOperations
+import "Soup.Build.Utils:./Path" for Path
 
 /// <summary>
 /// The Clang compiler implementation
