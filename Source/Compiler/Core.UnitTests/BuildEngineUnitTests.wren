@@ -3,10 +3,10 @@
 // </copyright>
 
 import "soup-test" for SoupTest
-import "../Core/BuildArguments" for BuildArguments, BuildNullableState, BuildOptimizationLevel, BuildTargetType
-import "../Core/CompileArguments" for CompileArguments, LinkTarget, NullableState
-import "../Core/BuildEngine" for BuildEngine
-import "../Core/MockCompiler" for MockCompiler
+import "Soup.CSharp.Compiler:./BuildArguments" for BuildArguments, BuildNullableState, BuildOptimizationLevel, BuildTargetType
+import "Soup.CSharp.Compiler:./CompileArguments" for CompileArguments, LinkTarget, NullableState
+import "Soup.CSharp.Compiler:./BuildEngine" for BuildEngine
+import "Soup.CSharp.Compiler:./MockCompiler" for MockCompiler
 import "Soup.Build.Utils:./BuildOperation" for BuildOperation
 import "Soup.Build.Utils:./Path" for Path
 import "../../Test/Assert" for Assert

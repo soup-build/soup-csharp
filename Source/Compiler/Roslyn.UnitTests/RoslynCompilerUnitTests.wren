@@ -2,8 +2,8 @@
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
-import "../Core/CompileArguments" for CompileArguments, LinkTarget, NullableState
-import "../Roslyn/RoslynCompiler" for RoslynCompiler
+import "Soup.CSharp.Compiler:./CompileArguments" for CompileArguments, LinkTarget, NullableState
+import "Soup.CSharp.Compiler.Roslyn:./RoslynCompiler" for RoslynCompiler
 import "Soup.Build.Utils:./BuildOperation" for BuildOperation
 import "Soup.Build.Utils:./Path" for Path
 import "../../Test/Assert" for Assert

@@ -3,7 +3,7 @@
 // </copyright>
 
 import "soup" for Soup, SoupTask
-import "../../Compiler/Core/BuildArguments" for BuildNullableState, BuildOptimizationLevel, BuildTargetType
+import "Soup.CSharp.Compiler:./BuildArguments" for BuildNullableState, BuildOptimizationLevel, BuildTargetType
 import "Soup.Build.Utils:./ListExtensions" for ListExtensions
 import "Soup.Build.Utils:./MapExtensions" for MapExtensions
 import "Soup.Build.Utils:./Path" for Path

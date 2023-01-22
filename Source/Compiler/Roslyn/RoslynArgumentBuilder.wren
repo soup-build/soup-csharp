@@ -2,7 +2,7 @@
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
-import "../Core/CompileArguments" for LinkTarget, NullableState
+import "Soup.CSharp.Compiler:./CompileArguments" for LinkTarget, NullableState
 
 /// <summary>
 /// A helper class that builds the correct set of compiler arguments for a given

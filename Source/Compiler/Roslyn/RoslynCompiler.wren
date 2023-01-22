@@ -3,7 +3,7 @@
 // </copyright>
 
 import "./RoslynArgumentBuilder" for RoslynArgumentBuilder
-import "../Core/ICompiler" for ICompiler
+import "Soup.CSharp.Compiler:./ICompiler" for ICompiler
 import "Soup.Build.Utils:./BuildOperation" for BuildOperation
 import "Soup.Build.Utils:./SharedOperations" for SharedOperations
 import "Soup.Build.Utils:./Path" for Path

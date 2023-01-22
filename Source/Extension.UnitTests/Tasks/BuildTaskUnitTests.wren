@@ -4,9 +4,9 @@
 
 import "soup-test" for SoupTest, SoupTestOperation
 import "../../Extension/Tasks/BuildTask" for BuildTask
-import "../../Compiler/Core/MockCompiler" for MockCompiler
-import "../../Compiler/Core/BuildArguments" for BuildOptimizationLevel, BuildTargetType
-import "../../Compiler/Core/CompileArguments" for CompileArguments, LinkTarget, NullableState
+import "Soup.CSharp.Compiler:./MockCompiler" for MockCompiler
+import "Soup.CSharp.Compiler:./BuildArguments" for BuildOptimizationLevel, BuildTargetType
+import "Soup.CSharp.Compiler:./CompileArguments" for CompileArguments, LinkTarget, NullableState
 import "Soup.Build.Utils:./Path" for Path
 import "../../Test/Assert" for Assert
 

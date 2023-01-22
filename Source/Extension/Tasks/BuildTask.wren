@@ -3,9 +3,9 @@
 // </copyright>
 
 import "soup" for Soup, SoupTask
-import "../../Compiler/Core/BuildArguments" for BuildArguments, BuildOptimizationLevel, BuildNullableState
-import "../../Compiler/Core/BuildEngine" for BuildEngine
-import "../../Compiler/Roslyn/RoslynCompiler" for RoslynCompiler
+import "Soup.CSharp.Compiler:./BuildArguments" for BuildArguments, BuildOptimizationLevel, BuildNullableState
+import "Soup.CSharp.Compiler:./BuildEngine" for BuildEngine
+import "Soup.CSharp.Compiler.Roslyn:./RoslynCompiler" for RoslynCompiler
 import "Soup.Build.Utils:./ListExtensions" for ListExtensions
 import "Soup.Build.Utils:./MapExtensions" for MapExtensions
 import "Soup.Build.Utils:./Path" for Path
@@ -122,8 +122,8 @@ class BuildTask is SoupTask {
 
 		// Always pass along required input to shared build tasks
 		var sharedBuildTable = MapExtensions.EnsureTable(sharedState, "Build")
-		sharedBuildTable["RuntimeDependencies"] = buildResult.RuntimeDependencies
-		sharedBuildTable["LinkDependencies"] = buildResult.LinkDependencies
+		sharedBuildTable["RuntimeDependencies"] = ListExtensions.ConvertFromPathList(buildResult.RuntimeDependencies)
+		sharedBuildTable["LinkDependencies"] = ListExtensions.ConvertFromPathList(buildResult.LinkDependencies)
 
 		if (!buildResult.TargetFile is Null) {
 			sharedBuildTable["TargetFile"] = buildResult.TargetFile.toString

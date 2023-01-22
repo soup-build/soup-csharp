@@ -72,7 +72,7 @@ class ResolveToolsTask is SoupTask {
 		}
 
 		linkDependencies = linkDependencies + ResolveToolsTask.GetPlatformLibraries(dotnetRootPath, dotnetRuntimeVersion)
-		buildTable["LinkDependencies"] = linkDependencies
+		buildTable["LinkDependencies"] = ListExtensions.ConvertFromPathList(linkDependencies)
 	}
 
 	static GetPlatformLibraries(dotnetRootPath, dotnetRuntimeVersion) {
