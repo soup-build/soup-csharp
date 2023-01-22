@@ -12,7 +12,7 @@ Source: [
 Dependencies: {
 	Runtime: [
 		"Soup.Build.Utils@0.2.0"
-		"../Compiler/Core/"
-		"../Compiler/Roslyn/"
+		"Soup.CSharp.Compiler@0.8.0"
+		"Soup.CSharp.Compiler.Roslyn@0.8.0"
 	]
 }

@@ -9,6 +9,6 @@ Source: [
 Dependencies: {
 	Runtime: [
 		"Soup.Build.Utils@0.2.0"
-		"../Core/"
+		"Soup.CSharp.Compiler@0.8.0"
 	]
 }
