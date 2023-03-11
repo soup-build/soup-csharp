@@ -46,7 +46,7 @@ class ResolveToolsTask is SoupTask {
 		}
 
 		// Find the Roslyn SDK
-		var roslynSDKProperties = ResolveToolsTask.GetSDKProperties("Roslyn", parameters)
+		var roslynSDKProperties = ResolveToolsTask.GetSDKProperties("Roslyn", globalState)
 
 		// Calculate the final Roslyn binaries folder
 		var roslynFolder = Path.new(roslynSDKProperties["ToolsRoot"])
@@ -54,7 +54,7 @@ class ResolveToolsTask is SoupTask {
 		var cscToolPath = roslynFolder + Path.new("csc.exe")
 
 		// Get the DotNet SDK
-		var dotnetSDKProperties = ResolveToolsTask.GetSDKProperties("DotNet", parameters)
+		var dotnetSDKProperties = ResolveToolsTask.GetSDKProperties("DotNet", globalState)
 		var dotnetRuntimeVersion = SemanticVersion.Parse(dotnetSDKProperties["RuntimeVersion"])
 		var dotnetRootPath = Path.new(dotnetSDKProperties["RootPath"])
 
@@ -241,8 +241,8 @@ class ResolveToolsTask is SoupTask {
 		return result
 	}
 
-	static GetSDKProperties(name, state) {
-		for (sdk in state["SDKs"]) {
+	static GetSDKProperties(name, globalState) {
+		for (sdk in globalState["SDKs"]) {
 			var sdkTable = sdk
 			if (sdkTable.containsKey("Name")) {
 				if (sdkTable["Name"] == name) {

@@ -38,7 +38,7 @@ class ResolveDependenciesTask is SoupTask {
 			if (dependenciesTable.containsKey("Runtime")) {
 				var runtimeDependenciesTable = dependenciesTable["Runtime"]
 
-				for (dependencyName in runtimeDependenciesTable.Keys) {
+				for (dependencyName in runtimeDependenciesTable.keys) {
 					// Combine the core dependency build inputs for the core build task
 					Soup.info("Combine Runtime Dependency: %(dependencyName)")
 					var dependencyTable = runtimeDependenciesTable[dependencyName]
