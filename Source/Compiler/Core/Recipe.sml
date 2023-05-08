@@ -1,20 +1,17 @@
 Name: "Soup.CSharp.Compiler"
-Language: "C#|0.1"
-Version: "0.6.1"
+Language: "Wren|0.1"
+Version: "0.8.0"
 Source: [
-	"BuildArguments.cs"
-	"BuildEngine.cs"
-	"BuildResult.cs"
-	"CompileArguments.cs"
-	"ICompiler.cs"
-	"MockCompiler.cs"
+	"BuildArguments.wren"
+	"BuildEngine.wren"
+	"BuildResult.wren"
+	"CompileArguments.wren"
+	"ICompiler.wren"
+	"MockCompiler.wren"
 ]
 
 Dependencies: {
 	Runtime: [
-		{ Reference: "Opal@1.2.0" }
-		{ Reference: "Soup.Build@0.2.0", ExcludeRuntime: true }
-		{ Reference: "Soup.Build.Extensions@0.4.1" }
-		{ Reference: "Soup.Build.Extensions.Utilities@0.4.1" }
+		"Soup.Build.Utils@0.2.0"
 	]
 }
