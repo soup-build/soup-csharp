@@ -59,7 +59,7 @@ class MockCompiler is ICompiler {
 				"MockCompile: %(_compileRequests.count)",
 				Path.new("MockWorkingDirectory"),
 				Path.new("MockCompiler.exe"),
-				"Arguments",
+				[ "Arguments" ],
 				[
 					Path.new("InputFile.in"),
 				],

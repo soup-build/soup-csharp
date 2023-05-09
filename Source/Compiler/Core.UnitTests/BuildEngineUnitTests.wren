@@ -33,6 +33,20 @@ class BuildEngineUnitTests {
 	// [Fact]
 	Build_Executable() {
 		SoupTest.initialize()
+		var globalState = SoupTest.globalState
+
+		// Setup dependencies table
+		var dependenciesTable = {}
+		globalState["Dependencies"] = dependenciesTable
+		dependenciesTable["Tool"] = {
+			"mkdir": {
+				"SharedState": {
+					"Build": {
+						"RunExecutable": "/TARGET/mkdir.exe"
+					}
+				}
+			}
+		}
 
 		// Register the mock compiler
 		var compiler = MockCompiler.new()
@@ -93,8 +107,10 @@ class BuildEngineUnitTests {
 			BuildOperation.new(
 				"MakeDir [./obj/]",
 				Path.new("C:/target/"),
-				Path.new("C:/Program Files/SoupBuild/Soup/Soup/mkdir.exe"),
-				"\"./obj/\"",
+				Path.new("/TARGET/mkdir.exe"),
+				[
+					"./obj/",
+				],
 				[],
 				[
 					Path.new("./obj/"),
@@ -102,8 +118,10 @@ class BuildEngineUnitTests {
 			BuildOperation.new(
 				"MakeDir [./bin/]",
 				Path.new("C:/target/"),
-				Path.new("C:/Program Files/SoupBuild/Soup/Soup/mkdir.exe"),
-				"\"./bin/\"",
+				Path.new("/TARGET/mkdir.exe"),
+				[
+					"./bin/",
+				],
 				[],
 				[
 					Path.new("./bin/"),
@@ -111,8 +129,10 @@ class BuildEngineUnitTests {
 			BuildOperation.new(
 				"MakeDir [./bin/ref/]",
 				Path.new("C:/target/"),
-				Path.new("C:/Program Files/SoupBuild/Soup/Soup/mkdir.exe"),
-				"\"./bin/ref/\"",
+				Path.new("/TARGET/mkdir.exe"),
+				[
+					"./bin/ref/",
+				],
 				[],
 				[
 					Path.new("./bin/ref/"),
@@ -121,7 +141,9 @@ class BuildEngineUnitTests {
 				"MockCompile: 1",
 				Path.new("MockWorkingDirectory"),
 				Path.new("MockCompiler.exe"),
-				"Arguments",
+				[
+					"Arguments",
+				],
 				[
 					Path.new("./InputFile.in"),
 				],
@@ -132,7 +154,9 @@ class BuildEngineUnitTests {
 				"WriteFile [./bin/Program.runtimeconfig.json]",
 				Path.new("C:/target/"),
 				Path.new("./writefile.exe"),
-				"\"./bin/Program.runtimeconfig.json\" \"{
+				[
+					"./bin/Program.runtimeconfig.json",
+					"{
 	\"runtimeOptions\": {
 		\"tfm\": \"net6.0\",
 		\"framework\": {
@@ -143,7 +167,8 @@ class BuildEngineUnitTests {
 			\"System.Reflection.Metadata.MetadataUpdater.IsSupported\": false
 		}
 	}
-}\"",
+}",
+				],
 				[],
 				[
 					Path.new("./bin/Program.runtimeconfig.json"),
@@ -229,8 +254,10 @@ class BuildEngineUnitTests {
 			BuildOperation.new(
 				"MakeDir [./obj/]",
 				Path.new("C:/target/"),
-				Path.new("C:/Program Files/SoupBuild/Soup/Soup/mkdir.exe"),
-				"\"./obj/\"",
+				Path.new("/TARGET/mkdir.exe"),
+				[
+					"./obj/",
+				],
 				[],
 				[
 					Path.new("./obj/"),
@@ -238,8 +265,10 @@ class BuildEngineUnitTests {
 			BuildOperation.new(
 				"MakeDir [./bin/]",
 				Path.new("C:/target/"),
-				Path.new("C:/Program Files/SoupBuild/Soup/Soup/mkdir.exe"),
-				"\"./bin/\"",
+				Path.new("/TARGET/mkdir.exe"),
+				[
+					"./bin/",
+				],
 				[],
 				[
 					Path.new("./bin/"),
@@ -247,8 +276,10 @@ class BuildEngineUnitTests {
 			BuildOperation.new(
 				"MakeDir [./bin/ref/]",
 				Path.new("C:/target/"),
-				Path.new("C:/Program Files/SoupBuild/Soup/Soup/mkdir.exe"),
-				"\"./bin/ref/\"",
+				Path.new("/TARGET/mkdir.exe"),
+				[
+					"./bin/ref/",
+				],
 				[],
 				[
 					Path.new("./bin/ref/"),
@@ -257,7 +288,9 @@ class BuildEngineUnitTests {
 				"MockCompile: 1",
 				Path.new("MockWorkingDirectory"),
 				Path.new("MockCompiler.exe"),
-				"Arguments",
+				[
+					"Arguments",
+				],
 				[
 					Path.new("InputFile.in"),
 				],

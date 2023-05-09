@@ -3,13 +3,13 @@
 // </copyright>
 
 import "soup" for Soup, SoupTask
+import "Soup.Build.Utils:./Path" for Path
+import "Soup.Build.Utils:./Set" for Set
+import "Soup.Build.Utils:./ListExtensions" for ListExtensions
+import "Soup.Build.Utils:./MapExtensions" for MapExtensions
 import "Soup.CSharp.Compiler:./BuildArguments" for BuildArguments, BuildOptimizationLevel, BuildNullableState
 import "Soup.CSharp.Compiler:./BuildEngine" for BuildEngine
 import "Soup.CSharp.Compiler.Roslyn:./RoslynCompiler" for RoslynCompiler
-import "Soup.Build.Utils:./ListExtensions" for ListExtensions
-import "Soup.Build.Utils:./MapExtensions" for MapExtensions
-import "Soup.Build.Utils:./Path" for Path
-import "Soup.Build.Utils:./Set" for Set
 
 class BuildTask is SoupTask {
 	/// <summary>
@@ -29,17 +29,15 @@ class BuildTask is SoupTask {
 
 	static evaluate() {
 		// Register default compilers
-		BuildTask.registerCompiler("MSVC", BuildTask.createRoslynCompiler)
+		BuildTask.registerCompiler("Roslyn", BuildTask.createRoslynCompiler)
 
-		var globalState = Soup.globalState
 		var activeState = Soup.activeState
 		var sharedState = Soup.sharedState
 
 		var buildTable = activeState["Build"]
-		var parametersTable = globalState["Parameters"]
 
 		var arguments = BuildArguments.new()
-		arguments.TargetArchitecture = parametersTable["Architecture"]
+		arguments.TargetArchitecture = buildTable["Architecture"]
 		arguments.TargetName = buildTable["TargetName"]
 		arguments.TargetType = buildTable["TargetType"]
 		arguments.SourceRootDirectory = Path.new(buildTable["SourceRootDirectory"])
@@ -107,7 +105,8 @@ class BuildTask is SoupTask {
 		}
 
 		// Initialize the compiler to use
-		var compilerName = parametersTable["Compiler"]
+		var compilerName = buildTable["Compiler"]
+		Soup.info("Using Compiler: %(compilerName)")
 		if (!__compilerFactory.containsKey(compilerName)) {
 			Fiber.abort("Unknown compiler: %(compilerName)")
 		}
@@ -118,17 +117,16 @@ class BuildTask is SoupTask {
 		var buildResult = buildEngine.Execute(arguments)
 
 		// Pass along internal state for other stages to gain access
-		buildTable["InternalLinkDependencies"] = buildResult.InternalLinkDependencies
+		buildTable["InternalLinkDependencies"] = ListExtensions.ConvertFromPathList(buildResult.InternalLinkDependencies)
 
 		// Always pass along required input to shared build tasks
 		var sharedBuildTable = MapExtensions.EnsureTable(sharedState, "Build")
 		sharedBuildTable["RuntimeDependencies"] = ListExtensions.ConvertFromPathList(buildResult.RuntimeDependencies)
 		sharedBuildTable["LinkDependencies"] = ListExtensions.ConvertFromPathList(buildResult.LinkDependencies)
 
-		if (!buildResult.TargetFile is Null) {
+		if (!(buildResult.TargetFile is Null)) {
 			sharedBuildTable["TargetFile"] = buildResult.TargetFile.toString
 			sharedBuildTable["RunExecutable"] = "C:/Program Files/dotnet/dotnet.exe"
-
 			sharedBuildTable["RunArguments"] = [ buildResult.TargetFile.toString ]
 		}
 
@@ -148,8 +146,10 @@ class BuildTask is SoupTask {
 
 	static createRoslynCompiler {
 		return Fn.new { |activeState|
-			var clToolPath = Path.new(activeState["Roslyn.CscToolPath"])
-			return RoslynCompiler.new(clToolPath)
+			var roslyn = activeState["Roslyn"]
+			var cscToolPath = Path.new(roslyn["CscToolPath"])
+			return RoslynCompiler.new(
+				cscToolPath)
 		}
 	}
 

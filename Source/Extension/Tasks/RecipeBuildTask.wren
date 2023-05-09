@@ -23,6 +23,7 @@ class RecipeBuildTask is SoupTask {
 	/// Get the run after list
 	/// </summary>
 	static runAfter { [
+		"InitializeDefaultsTask",
 		"ResolveToolsTask",
 	] }
 
@@ -33,15 +34,14 @@ class RecipeBuildTask is SoupTask {
 		var activeState = Soup.activeState
 		var globalState = Soup.globalState
 
-		var parametersTable = globalState["Parameters"]
 		var contextTable = globalState["Context"]
 		var recipeTable = globalState["Recipe"]
-		var buildTable = MapExtensions.EnsureTable(activeState, "Build")
+
+		var build = MapExtensions.EnsureTable(activeState, "Build")
 
 		// Load the input properties
-		var compilerName = parametersTable["Compiler"]
 		var packageRoot = Path.new(contextTable["PackageDirectory"])
-		var buildFlavor = parametersTable["Flavor"]
+		var flavor = build["Flavor"]
 
 		// Load Recipe properties
 		var name = recipeTable["Name"]
@@ -62,8 +62,8 @@ class RecipeBuildTask is SoupTask {
 		// Add the dependency runtime dependencies closure if present
 		if (recipeTable.containsKey("RuntimeDependencies")) {
 			var runtimeDependencies = []
-			if (buildTable.containsKey("RuntimeDependencies")) {
-				runtimeDependencies = ListExtensions.ConvertToPathList(buildTable["RuntimeDependencies"])
+			if (build.containsKey("RuntimeDependencies")) {
+				runtimeDependencies = ListExtensions.ConvertToPathList(build["RuntimeDependencies"])
 			}
 
 			for (value in ListExtensions.ConvertToPathList(recipeTable["RuntimeDependencies"])) {
@@ -75,7 +75,7 @@ class RecipeBuildTask is SoupTask {
 				}
 			}
 
-			buildTable["RuntimeDependencies"] = runtimeDependencies
+			build["RuntimeDependencies"] = runtimeDependencies
 		}
 
 		// Load the extra library paths provided to the build system
@@ -115,43 +115,43 @@ class RecipeBuildTask is SoupTask {
 		// Set the correct optimization level for the requested flavor
 		var optimizationLevel = BuildOptimizationLevel.None
 		var generateSourceDebugInfo = false
-		if (buildFlavor == "debug") {
+		if (flavor == "Debug") {
 			// preprocessorDefinitions.add("DEBUG")
 			generateSourceDebugInfo = true
-		} else if (buildFlavor == "debugrelease") {
+		} else if (flavor == "DebugRelease") {
 			preprocessorDefinitions.add("RELEASE")
 			generateSourceDebugInfo = true
 			optimizationLevel = BuildOptimizationLevel.Speed
-		} else if (buildFlavor == "release") {
+		} else if (flavor == "Release") {
 			preprocessorDefinitions.add("RELEASE")
 			optimizationLevel = BuildOptimizationLevel.Speed
 		} else {
-			Fiber.abort("Unknown build flavor type.")
+			Fiber.abort("Unknown build flavor: %(flavor)")
 		}
 
-		buildTable["TargetName"] = name
-		buildTable["SourceRootDirectory"] = packageRoot.toString
-		buildTable["TargetRootDirectory"] = targetDirectory.toString
-		buildTable["ObjectDirectory"] = objectDirectory.toString
-		buildTable["BinaryDirectory"] = binaryDirectory.toString
-		buildTable["OptimizationLevel"] = optimizationLevel
-		buildTable["GenerateSourceDebugInfo"] = generateSourceDebugInfo
+		build["TargetName"] = name
+		build["SourceRootDirectory"] = packageRoot.toString
+		build["TargetRootDirectory"] = targetDirectory.toString
+		build["ObjectDirectory"] = objectDirectory.toString
+		build["BinaryDirectory"] = binaryDirectory.toString
+		build["OptimizationLevel"] = optimizationLevel
+		build["GenerateSourceDebugInfo"] = generateSourceDebugInfo
 
 		ListExtensions.Append(
-			MapExtensions.EnsureList(buildTable, "LinkLibraries"),
+			MapExtensions.EnsureList(build, "LinkLibraries"),
 			linkLibraries)
 		ListExtensions.Append(
-			MapExtensions.EnsureList(buildTable, "PreprocessorDefinitions"),
+			MapExtensions.EnsureList(build, "PreprocessorDefinitions"),
 			preprocessorDefinitions)
 		ListExtensions.Append(
-			MapExtensions.EnsureList(buildTable, "LibraryPaths"),
+			MapExtensions.EnsureList(build, "LibraryPaths"),
 			libraryPaths)
 		ListExtensions.Append(
-			MapExtensions.EnsureList(buildTable, "Source"),
+			MapExtensions.EnsureList(build, "Source"),
 			sourceFiles)
 
-		buildTable["EnableWarningsAsErrors"] = enableWarningsAsErrors
-		buildTable["NullableState"] = nullableState
+		build["EnableWarningsAsErrors"] = enableWarningsAsErrors
+		build["NullableState"] = nullableState
 
 		// Convert the recipe type to the required build type
 		var targetType = BuildTargetType.Library
@@ -159,7 +159,7 @@ class RecipeBuildTask is SoupTask {
 			targetType = RecipeBuildTask.ParseType(recipeTable["Type"])
 		}
 
-		buildTable["TargetType"] = targetType
+		build["TargetType"] = targetType
 	}
 
 	static ParseType(value) {

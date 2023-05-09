@@ -28,9 +28,24 @@ class BuildTaskUnitTests {
 		var activeState = SoupTest.activeState
 		var globalState = SoupTest.globalState
 
+		// Setup dependencies table
+		var dependenciesTable = {}
+		globalState["Dependencies"] = dependenciesTable
+		dependenciesTable["Tool"] = {
+			"mkdir": {
+				"SharedState": {
+					"Build": {
+						"RunExecutable": "/TARGET/mkdir.exe"
+					}
+				}
+			}
+		}
+
 		// Setup build table
 		var buildTable = {}
 		activeState["Build"] = buildTable
+		buildTable["Architecture"] = "x64"
+		buildTable["Compiler"] = "MOCK"
 		buildTable["TargetName"] = "Program"
 		buildTable["TargetType"] = BuildTargetType.Executable
 		buildTable["SourceRootDirectory"] = "C:/source/"
@@ -41,12 +56,6 @@ class BuildTaskUnitTests {
 			"TestFile.cs",
 		]
 
-		// Setup parameters table
-		var parametersTable = {}
-		globalState["Parameters"] = parametersTable
-		parametersTable["Architecture"] = "x64"
-		parametersTable["Compiler"] = "MOCK"
-
 		// Register the mock compiler
 		var compiler = MockCompiler.new()
 		BuildTask.registerCompiler("MOCK", Fn.new { |activeState| compiler })
@@ -56,7 +65,8 @@ class BuildTaskUnitTests {
 		// Verify expected logs
 		Assert.ListEqual(
 			[
-				"INFO: Build Generate Done"
+				"INFO: Using Compiler: MOCK",
+				"INFO: Build Generate Done",
 			],
 			SoupTest.logs)
 
@@ -83,8 +93,10 @@ class BuildTaskUnitTests {
 		var expectedBuildOperations = [
 			SoupTestOperation.new(
 				"MakeDir [./obj/]",
-				Path.new("C:/Program Files/SoupBuild/Soup/Soup/mkdir.exe"),
-				"\"./obj/\"",
+				Path.new("/TARGET/mkdir.exe"),
+				[
+					"./obj/",
+				],
 				Path.new("C:/target/"),
 				[],
 				[
@@ -92,8 +104,10 @@ class BuildTaskUnitTests {
 				]),
 			SoupTestOperation.new(
 				"MakeDir [./bin/]",
-				Path.new("C:/Program Files/SoupBuild/Soup/Soup/mkdir.exe"),
-				"\"./bin/\"",
+				Path.new("/TARGET/mkdir.exe"),
+				[
+					"./bin/",
+				],
 				Path.new("C:/target/"),
 				[],
 				[
@@ -101,8 +115,10 @@ class BuildTaskUnitTests {
 				]),
 			SoupTestOperation.new(
 				"MakeDir [./bin/ref/]",
-				Path.new("C:/Program Files/SoupBuild/Soup/Soup/mkdir.exe"),
-				"\"./bin/ref/\"",
+				Path.new("/TARGET/mkdir.exe"),
+				[
+					"./bin/ref/",
+				],
 				Path.new("C:/target/"),
 				[],
 				[
@@ -111,7 +127,9 @@ class BuildTaskUnitTests {
 			SoupTestOperation.new(
 				"MockCompile: 1",
 				Path.new("MockCompiler.exe"),
-				"Arguments",
+				[
+					"Arguments",
+				],
 				Path.new("MockWorkingDirectory"),
 				[
 					Path.new("./InputFile.in"),
@@ -122,7 +140,9 @@ class BuildTaskUnitTests {
 			SoupTestOperation.new(
 				"WriteFile [./bin/Program.runtimeconfig.json]",
 				Path.new("./writefile.exe"),
-				"\"./bin/Program.runtimeconfig.json\" \"{
+				[
+					"./bin/Program.runtimeconfig.json",
+					"{
 	\"runtimeOptions\": {
 		\"tfm\": \"net6.0\",
 		\"framework\": {
@@ -133,7 +153,8 @@ class BuildTaskUnitTests {
 			\"System.Reflection.Metadata.MetadataUpdater.IsSupported\": false
 		}
 	}
-}\"",
+}",
+				],
 				Path.new("C:/target/"),
 				[],
 				[
@@ -153,9 +174,24 @@ class BuildTaskUnitTests {
 		var activeState = SoupTest.activeState
 		var globalState = SoupTest.globalState
 
+		// Setup dependencies table
+		var dependenciesTable = {}
+		globalState["Dependencies"] = dependenciesTable
+		dependenciesTable["Tool"] = {
+			"mkdir": {
+				"SharedState": {
+					"Build": {
+						"RunExecutable": "/TARGET/mkdir.exe"
+					}
+				}
+			}
+		}
+
 		// Setup build table
 		var buildTable = {}
 		activeState["Build"] = buildTable
+		buildTable["Architecture"] = "x64"
+		buildTable["Compiler"] = "MOCK"
 		buildTable["TargetName"] = "Library"
 		buildTable["TargetType"] = BuildTargetType.Library
 		buildTable["SourceRootDirectory"] = "C:/source/"
@@ -177,12 +213,6 @@ class BuildTaskUnitTests {
 		]
 		buildTable["OptimizationLevel"] = BuildOptimizationLevel.None
 
-		// Setup parameters table
-		var parametersTable = {}
-		globalState["Parameters"] = parametersTable
-		parametersTable["Architecture"] = "x64"
-		parametersTable["Compiler"] = "MOCK"
-
 		// Register the mock compiler
 		var compiler = MockCompiler.new()
 		BuildTask.registerCompiler("MOCK", Fn.new { |activeState| compiler })
@@ -192,6 +222,7 @@ class BuildTaskUnitTests {
 		// Verify expected logs
 		Assert.ListEqual(
 			[
+				"INFO: Using Compiler: MOCK",
 				"INFO: Build Generate Done",
 			],
 			SoupTest.logs)
@@ -222,8 +253,10 @@ class BuildTaskUnitTests {
 		var expectedBuildOperations = [
 			SoupTestOperation.new(
 				"MakeDir [./obj/]",
-				Path.new("C:/Program Files/SoupBuild/Soup/Soup/mkdir.exe"),
-				"\"./obj/\"",
+				Path.new("/TARGET/mkdir.exe"),
+				[
+					"./obj/",
+				],
 				Path.new("C:/target/"),
 				[],
 				[
@@ -231,8 +264,10 @@ class BuildTaskUnitTests {
 				]),
 			SoupTestOperation.new(
 				"MakeDir [./bin/]",
-				Path.new("C:/Program Files/SoupBuild/Soup/Soup/mkdir.exe"),
-				"\"./bin/\"",
+				Path.new("/TARGET/mkdir.exe"),
+				[
+					"./bin/",
+				],
 				Path.new("C:/target/"),
 				[],
 				[
@@ -240,8 +275,10 @@ class BuildTaskUnitTests {
 				]),
 			SoupTestOperation.new(
 				"MakeDir [./bin/ref/]",
-				Path.new("C:/Program Files/SoupBuild/Soup/Soup/mkdir.exe"),
-				"\"./bin/ref/\"",
+				Path.new("/TARGET/mkdir.exe"),
+				[
+					"./bin/ref/",
+				],
 				Path.new("C:/target/"),
 				[],
 				[
@@ -250,7 +287,9 @@ class BuildTaskUnitTests {
 			SoupTestOperation.new(
 				"MockCompile: 1",
 				Path.new("MockCompiler.exe"),
-				"Arguments",
+				[
+					"Arguments",
+				],
 				Path.new("MockWorkingDirectory"),
 				[
 					Path.new("./InputFile.in"),

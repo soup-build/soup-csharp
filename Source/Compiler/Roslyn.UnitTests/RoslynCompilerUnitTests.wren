@@ -54,7 +54,10 @@ class RoslynCompilerUnitTests {
 				"WriteFile [./ObjectDir/CompileArguments.rsp]",
 				Path.new("C:/target/"),
 				Path.new("./writefile.exe"),
-				"\"./ObjectDir/CompileArguments.rsp\" \"/unsafe- /checked- /fullpaths /nostdlib+ /errorreport:prompt /warn:5 /errorendlocation /preferreduilang:en-US /highentropyva+ /nullable:enable /debug+ /debug:portable /filealign:512 /optimize- /out:\"C:/target/bin/Target.dll\" /refout:\"C:/target/ref/Target.dll\" /target:library /warnaserror- /utf8output /deterministic+ /langversion:9.0 \"./File.cs\"\"",
+				[
+					"./ObjectDir/CompileArguments.rsp",
+					"/unsafe- /checked- /fullpaths /nostdlib+ /errorreport:prompt /warn:5 /errorendlocation /preferreduilang:en-US /highentropyva+ /nullable:enable /debug+ /debug:portable /filealign:512 /optimize- /out:\"C:/target/bin/Target.dll\" /refout:\"C:/target/ref/Target.dll\" /target:library /warnaserror- /utf8output /deterministic+ /langversion:9.0 \"./File.cs\"",
+				],
 				[],
 				[
 					Path.new("./ObjectDir/CompileArguments.rsp"),
@@ -63,7 +66,10 @@ class RoslynCompilerUnitTests {
 				"Compile - ./bin/Target.dll",
 				Path.new("C:/source/"),
 				Path.new("C:/bin/mock.csc.exe"),
-				"@C:/target/ObjectDir/CompileArguments.rsp /noconfig",
+				[
+					"@C:/target/ObjectDir/CompileArguments.rsp",
+					"/noconfig",
+				],
 				[
 					Path.new("C:/target/ObjectDir/CompileArguments.rsp"),
 					Path.new("./File.cs"),

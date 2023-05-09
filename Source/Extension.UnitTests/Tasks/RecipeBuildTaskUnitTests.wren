@@ -23,23 +23,23 @@ class RecipeBuildTaskUnitTests {
 		var activeState = SoupTest.activeState
 		var globalState = SoupTest.globalState
 
-		activeState["PlatformLibraries"] = []
-		activeState["PlatformIncludePaths"] = []
-		activeState["PlatformLibraryPaths"] = []
-		activeState["PlatformPreprocessorDefinitions"] = []
+		// Setup context table
+		var contextTable = {}
+		globalState["Context"] = contextTable
+		contextTable["TargetDirectory"] = "/(TARGET)/"
+		contextTable["PackageDirectory"] = "/(PACKAGE)/"
+
+
+		// Setup build table
+		var buildTable = {}
+		activeState["Build"] = buildTable
+		buildTable["Compiler"] = "MOCK"
+		buildTable["Flavor"] = "Debug"
 
 		// Setup recipe table
-		var buildTable = {}
-		globalState["Recipe"] = buildTable
-		buildTable["Name"] = "Program"
-
-		// Setup parameters table
-		var parametersTable = {}
-		globalState["Parameters"] = parametersTable
-		parametersTable["TargetDirectory"] = "C:/Target/"
-		parametersTable["PackageDirectory"] = "C:/PackageRoot/"
-		parametersTable["Compiler"] = "MOCK"
-		parametersTable["Flavor"] = "debug"
+		var recipeTable = {}
+		globalState["Recipe"] = recipeTable
+		recipeTable["Name"] = "Program"
 
 		RecipeBuildTask.evaluate()
 

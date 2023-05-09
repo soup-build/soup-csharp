@@ -32,12 +32,7 @@ class ResolveToolsTask is SoupTask {
 		var parameters = globalState["Parameters"]
 		var buildTable = MapExtensions.EnsureTable(activeState, "Build")
 
-		var systemName = parameters["System"]
 		var architectureName = parameters["Architecture"]
-
-		if (systemName != "win32") {
-			Fiber.abort("Win32 is the only supported system... so far.")
-		}
 
 		// Check if skip platform includes was specified
 		var skipPlatform = false
@@ -59,10 +54,13 @@ class ResolveToolsTask is SoupTask {
 		var dotnetRootPath = Path.new(dotnetSDKProperties["RootPath"])
 
 		// Save the build properties
-		activeState["Roslyn.BinRoot"] = roslynFolder.toString
-		activeState["Roslyn.CscToolPath"] = cscToolPath.toString
-		activeState["DotNet.RuntimeVersion"] = dotnetRuntimeVersion.toString
-		activeState["DotNet.RootPath"] = dotnetRootPath.toString
+		var roslyn = MapExtensions.EnsureTable(activeState, "Roslyn")
+		roslyn["BinRoot"] = roslynFolder.toString
+		roslyn["CscToolPath"] = cscToolPath.toString
+
+		var dotnet = MapExtensions.EnsureTable(activeState, "DotNet")
+		dotnet["RuntimeVersion"] = dotnetRuntimeVersion.toString
+		dotnet["RootPath"] = dotnetRootPath.toString
 
 		// Save the platform libraries
 		activeState["PlatformLibraries"] = ""

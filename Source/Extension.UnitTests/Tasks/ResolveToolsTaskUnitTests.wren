@@ -25,6 +25,7 @@ class ResolveToolsTaskUnitTests {
 
 		// Set the sdks
 		var sdks = []
+		globalState["SDKs"] = sdks
 		sdks.add(
 			{
 				"Name": "Roslyn",
@@ -39,9 +40,7 @@ class ResolveToolsTaskUnitTests {
 		// Setup parameters table
 		var parametersTable = {}
 		globalState["Parameters"] = parametersTable
-		parametersTable["SDKs"] = sdks
-		parametersTable["System"] = "win32"
-		parametersTable["Architecture"] = "x64"
+		parametersTable["Architecture"] = "AnyCPU"
 
 		// Setup build table
 		var buildTable = {}
