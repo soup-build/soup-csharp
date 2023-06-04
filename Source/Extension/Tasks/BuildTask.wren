@@ -49,6 +49,10 @@ class BuildTask is SoupTask {
 			arguments.SourceFiles = ListExtensions.ConvertToPathList(buildTable["Source"])
 		}
 
+		if (buildTable.containsKey("LinkLibraries")) {
+			arguments.LinkDependencies = BuildTask.MakeUnique(ListExtensions.ConvertToPathList(buildTable["LinkLibraries"]))
+		}
+
 		if (buildTable.containsKey("LibraryPaths")) {
 			arguments.LibraryPaths = ListExtensions.ConvertToPathList(buildTable["LibraryPaths"])
 		}
@@ -83,7 +87,8 @@ class BuildTask is SoupTask {
 
 		// Load the link dependencies
 		if (buildTable.containsKey("LinkDependencies")) {
-			arguments.LinkDependencies = BuildTask.MakeUnique(
+			arguments.LinkDependencies = BuildTask.CombineUnique(
+				arguments.LinkDependencies,
 				ListExtensions.ConvertToPathList(buildTable["LinkDependencies"]))
 		}
 
@@ -151,6 +156,18 @@ class BuildTask is SoupTask {
 			return RoslynCompiler.new(
 				cscToolPath)
 		}
+	}
+
+	static CombineUnique(collection1, collection2) {
+		var valueSet = Set.new()
+		for (value in collection1) {
+			valueSet.add(value.toString)
+		}
+		for (value in collection2) {
+			valueSet.add(value.toString)
+		}
+
+		return ListExtensions.ConvertToPathList(valueSet.list)
 	}
 
 	static MakeUnique(collection) {
