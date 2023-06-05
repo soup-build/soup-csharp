@@ -1,4 +1,4 @@
-﻿// <copyright file="ResolveToolsTask.wren", company="Soup">
+﻿// <copyright file="ResolveToolsTask.wren" company="Soup">
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
@@ -15,24 +15,30 @@ class ResolveToolsTask is SoupTask {
 	/// <summary>
 	/// Get the run before list
 	/// </summary>
-	static runBefore { [] }
+	static runBefore { [
+		"BuildTask",
+	] }
 
 	/// <summary>
 	/// Get the run after list
 	/// </summary>
-	static runAfter { [] }
+	static runAfter { [
+		"InitializeDefaultsTask",
+	] }
 
 	/// <summary>
 	/// The Core Execute task
 	/// </summary>
 	static evaluate() {
-		var activeState = Soup.activeState
 		var globalState = Soup.globalState
+		var activeState = Soup.activeState
 
-		var parameters = globalState["Parameters"]
-		var buildTable = MapExtensions.EnsureTable(activeState, "Build")
+		ResolveToolsTask.LoadRoslyn(globalState, activeState)
+	}
 
-		var architectureName = parameters["Architecture"]
+	static LoadRoslyn(globalState, activeState) {
+		var build = activeState["Build"]
+		var architecture = build["Architecture"]
 
 		// Check if skip platform includes was specified
 		var skipPlatform = false
@@ -46,12 +52,12 @@ class ResolveToolsTask is SoupTask {
 		// Calculate the final Roslyn binaries folder
 		var roslynFolder = Path.new(roslynSDKProperties["ToolsRoot"])
 
-		var cscToolPath = roslynFolder + Path.new("csc.exe")
-
 		// Get the DotNet SDK
 		var dotnetSDKProperties = ResolveToolsTask.GetSDKProperties("DotNet", globalState)
 		var dotnetRuntimeVersion = SemanticVersion.Parse(dotnetSDKProperties["RuntimeVersion"])
 		var dotnetRootPath = Path.new(dotnetSDKProperties["RootPath"])
+
+		var cscToolPath = roslynFolder + Path.new("csc.exe")
 
 		// Save the build properties
 		var roslyn = MapExtensions.EnsureTable(activeState, "Roslyn")
@@ -65,12 +71,12 @@ class ResolveToolsTask is SoupTask {
 		// Save the platform libraries
 		activeState["PlatformLibraries"] = ""
 		var linkDependencies = []
-		if (buildTable.containsKey("LinkDependencies")) {
-			linkDependencies = ListExtensions.ConvertToPathList(buildTable["LinkDependencies"])
+		if (build.containsKey("LinkDependencies")) {
+			linkDependencies = ListExtensions.ConvertToPathList(build["LinkDependencies"])
 		}
 
 		linkDependencies = linkDependencies + ResolveToolsTask.GetPlatformLibraries(dotnetRootPath, dotnetRuntimeVersion)
-		buildTable["LinkDependencies"] = ListExtensions.ConvertFromPathList(linkDependencies)
+		build["LinkDependencies"] = ListExtensions.ConvertFromPathList(linkDependencies)
 	}
 
 	static GetPlatformLibraries(dotnetRootPath, dotnetRuntimeVersion) {
@@ -241,10 +247,10 @@ class ResolveToolsTask is SoupTask {
 
 	static GetSDKProperties(name, globalState) {
 		for (sdk in globalState["SDKs"]) {
-			var sdkTable = sdk
-			if (sdkTable.containsKey("Name")) {
-				if (sdkTable["Name"] == name) {
-					return sdkTable["Properties"]
+			if (sdk.containsKey("Name")) {
+				var nameValue = sdk["Name"]
+				if (nameValue == name) {
+					return sdk["Properties"]
 				}
 			}
 		}

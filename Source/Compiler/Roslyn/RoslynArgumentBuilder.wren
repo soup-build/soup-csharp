@@ -41,7 +41,7 @@ class RoslynArgumentBuilder {
 
 		// Define conditional compilation symbol(s)
 		if (arguments.PreprocessorDefinitions.count > 0) {
-			var definesList = arguments.PreprocessorDefinitions.join("")
+			var definesList = arguments.PreprocessorDefinitions.join(";")
 			RoslynArgumentBuilder.AddParameter(commandArguments, "define", definesList)
 		}
 

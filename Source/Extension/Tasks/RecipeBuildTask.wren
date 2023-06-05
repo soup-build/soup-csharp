@@ -3,10 +3,10 @@
 // </copyright>
 
 import "soup" for Soup, SoupTask
-import "Soup.CSharp.Compiler:./BuildArguments" for BuildNullableState, BuildOptimizationLevel, BuildTargetType
+import "Soup.Build.Utils:./Path" for Path
 import "Soup.Build.Utils:./ListExtensions" for ListExtensions
 import "Soup.Build.Utils:./MapExtensions" for MapExtensions
-import "Soup.Build.Utils:./Path" for Path
+import "Soup.CSharp.Compiler:./BuildArguments" for BuildNullableState, BuildOptimizationLevel, BuildTargetType
 
 /// <summary>
 /// The recipe build task that knows how to build a single recipe
@@ -31,25 +31,25 @@ class RecipeBuildTask is SoupTask {
 	/// The Core Execute task
 	/// </summary>
 	static evaluate() {
-		var activeState = Soup.activeState
 		var globalState = Soup.globalState
+		var activeState = Soup.activeState
 
-		var contextTable = globalState["Context"]
-		var recipeTable = globalState["Recipe"]
+		var context = globalState["Context"]
+		var recipe = globalState["Recipe"]
 
 		var build = MapExtensions.EnsureTable(activeState, "Build")
 
 		// Load the input properties
-		var packageRoot = Path.new(contextTable["PackageDirectory"])
+		var packageRoot = Path.new(context["PackageDirectory"])
 		var flavor = build["Flavor"]
 
 		// Load Recipe properties
-		var name = recipeTable["Name"]
+		var name = recipe["Name"]
 
 		// Add the dependency static library closure to link if targeting an executable or dynamic library
 		var linkLibraries = []
-		if (recipeTable.containsKey("LinkLibraries")) {
-			for (value in ListExtensions.ConvertToPathList(recipeTable["LinkLibraries"])) {
+		if (recipe.containsKey("LinkLibraries")) {
+			for (value in ListExtensions.ConvertToPathList(recipe["LinkLibraries"])) {
 				// If relative then resolve to working directory
 				if (value.HasRoot) {
 					linkLibraries.add(value)
@@ -60,13 +60,13 @@ class RecipeBuildTask is SoupTask {
 		}
 
 		// Add the dependency runtime dependencies closure if present
-		if (recipeTable.containsKey("RuntimeDependencies")) {
+		if (recipe.containsKey("RuntimeDependencies")) {
 			var runtimeDependencies = []
 			if (build.containsKey("RuntimeDependencies")) {
 				runtimeDependencies = ListExtensions.ConvertToPathList(build["RuntimeDependencies"])
 			}
 
-			for (value in ListExtensions.ConvertToPathList(recipeTable["RuntimeDependencies"])) {
+			for (value in ListExtensions.ConvertToPathList(recipe["RuntimeDependencies"])) {
 				// If relative then resolve to working directory
 				if (value.HasRoot) {
 					runtimeDependencies.add(value)
@@ -75,7 +75,7 @@ class RecipeBuildTask is SoupTask {
 				}
 			}
 
-			build["RuntimeDependencies"] = runtimeDependencies
+			build["RuntimeDependencies"] = ListExtensions.ConvertFromPathList(runtimeDependencies)
 		}
 
 		// Load the extra library paths provided to the build system
@@ -83,33 +83,33 @@ class RecipeBuildTask is SoupTask {
 
 		// Combine the defines with the default set and the platform
 		var preprocessorDefinitions = []
-		if (recipeTable.containsKey("Defines")) {
-			preprocessorDefinitions = recipeTable["Defines"]
+		if (recipe.containsKey("Defines")) {
+			preprocessorDefinitions = recipe["Defines"]
 		}
 
 		preprocessorDefinitions.add("SOUP_BUILD")
 
 		// Build up arguments to build this individual recipe
-		var targetDirectory = Path.new(contextTable["TargetDirectory"])
+		var targetDirectory = Path.new(context["TargetDirectory"])
 		var binaryDirectory = Path.new("bin/")
 		var objectDirectory = Path.new("obj/")
 
 		// Load the source files if present
 		var sourceFiles = []
-		if (recipeTable.containsKey("Source")) {
-			sourceFiles = recipeTable["Source"]
+		if (recipe.containsKey("Source")) {
+			sourceFiles = recipe["Source"]
 		}
 
 		// Check for warning settings
 		var enableWarningsAsErrors = true
-		if (recipeTable.containsKey("EnableWarningsAsErrors")) {
-			enableWarningsAsErrors = recipeTable["EnableWarningsAsErrors"]
+		if (recipe.containsKey("EnableWarningsAsErrors")) {
+			enableWarningsAsErrors = recipe["EnableWarningsAsErrors"]
 		}
 
 		// Check for nullable settings, default to enabled
 		var nullableState = BuildNullableState.Enabled
-		if (recipeTable.containsKey("Nullable")) {
-			nullableState = RecipeBuildTask.ParseNullable(recipeTable["Nullable"])
+		if (recipe.containsKey("Nullable")) {
+			nullableState = RecipeBuildTask.ParseNullable(recipe["Nullable"])
 		}
 
 		// Set the correct optimization level for the requested flavor
@@ -139,13 +139,13 @@ class RecipeBuildTask is SoupTask {
 
 		ListExtensions.Append(
 			MapExtensions.EnsureList(build, "LinkLibraries"),
-			linkLibraries)
+			ListExtensions.ConvertFromPathList(linkLibraries))
 		ListExtensions.Append(
 			MapExtensions.EnsureList(build, "PreprocessorDefinitions"),
 			preprocessorDefinitions)
 		ListExtensions.Append(
 			MapExtensions.EnsureList(build, "LibraryPaths"),
-			libraryPaths)
+			ListExtensions.ConvertFromPathList(libraryPaths))
 		ListExtensions.Append(
 			MapExtensions.EnsureList(build, "Source"),
 			sourceFiles)
@@ -155,8 +155,8 @@ class RecipeBuildTask is SoupTask {
 
 		// Convert the recipe type to the required build type
 		var targetType = BuildTargetType.Library
-		if (recipeTable.containsKey("Type")) {
-			targetType = RecipeBuildTask.ParseType(recipeTable["Type"])
+		if (recipe.containsKey("Type")) {
+			targetType = RecipeBuildTask.ParseType(recipe["Type"])
 		}
 
 		build["TargetType"] = targetType
