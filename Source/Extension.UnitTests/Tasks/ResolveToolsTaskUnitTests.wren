@@ -34,7 +34,32 @@ class ResolveToolsTaskUnitTests {
 		sdks.add(
 			{
 				"Name": "DotNet",
-				"Properties": { "RuntimeVersion": "6.0.12", "RootPath": "C:/dotnet/", },
+				"Properties": {
+					"DotNetExecutable": "C:/Program Files/dotnet/dotnet.exe",
+					"SDKs": {
+						"7.0.304": "C:/Program Files/dotnet/sdk"
+					},
+					"Runtimes": {
+						"Microsoft.AspNetCore.App": {
+							"6.0.18": "C:/Program Files/dotnet/shared/Microsoft.AspNetCore.App",
+							"7.0.7": "C:/Program Files/dotnet/shared/Microsoft.AspNetCore.App"
+						},
+						"Microsoft.NETCore.App": {
+							"6.0.18": "C:/Program Files/dotnet/shared/Microsoft.NETCore.App",
+							"7.0.7": "C:/Program Files/dotnet/shared/Microsoft.NETCore.App"
+						},
+						"Microsoft.WindowsDesktop.App": {
+							"6.0.18": "C:/Program Files/dotnet/shared/Microsoft.WindowsDesktop.App",
+							"7.0.7": "C:/Program Files/dotnet/shared/Microsoft.WindowsDesktop.App"
+						},
+					},
+					"TargetingPacks": {
+						"Microsoft.NETCore.App.Ref": {
+							"6.0.18": "C:/Program Files/dotnet/pack/Microsoft.NETCore.App.Ref",
+							"7.0.7": "C:/Program Files/dotnet/pack/Microsoft.NETCore.App.Ref"
+						},
+					},
+				},
 			})
 
 		// Setup parameters table

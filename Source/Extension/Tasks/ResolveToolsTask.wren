@@ -54,8 +54,10 @@ class ResolveToolsTask is SoupTask {
 
 		// Get the DotNet SDK
 		var dotnetSDKProperties = ResolveToolsTask.GetSDKProperties("DotNet", globalState)
-		var dotnetRuntimeVersion = SemanticVersion.Parse(dotnetSDKProperties["RuntimeVersion"])
-		var dotnetRootPath = Path.new(dotnetSDKProperties["RootPath"])
+
+		var dotnetRuntimeVersion = ResolveToolsTask.GetLatestTargetingPack(dotnetSDKProperties, 6, "Microsoft.NETCore.App.Ref")
+
+		var dotnetRootPath = Path.new(dotnetSDKProperties["DotNetExecutable"]).GetParent()
 
 		var cscToolPath = roslynFolder + Path.new("csc.exe")
 
@@ -256,5 +258,33 @@ class ResolveToolsTask is SoupTask {
 		}
 
 		Fiber.abort("Missing SDK %(name)")
+	}
+
+	static GetLatestTargetingPack(properties, majorVersion, targetingPackName) {
+		if (!properties.containsKey("TargetingPacks")) {
+			Fiber.abort("Missing DotNet SDK TargetingPacks")
+		}
+
+		var packs = properties["TargetingPacks"]
+		if (!packs.containsKey(targetingPackName)) {
+			Fiber.abort("Missing DotNet SDK Targeting TargetingPacks Type %(targetingPackName)")
+		}
+
+		var targetingPackVersions = packs[targetingPackName]
+		var bestVersion
+		for (targetingPack in targetingPackVersions) {
+			var targetingPackVersion = SemanticVersion.Parse(targetingPack.key)
+			if (targetingPackVersion.Major == majorVersion) {
+				if (bestVersion is Null || targetingPackVersion > bestVersion) {
+					bestVersion = targetingPackVersion
+				}
+			}
+		}
+
+		if (bestVersion is Null) {
+			Fiber.abort("Missing DotNet SDK TargetingPacks Type %(targetingPackName) for version %(majorVersion)")
+		}
+
+		return bestVersion
 	}
 }
