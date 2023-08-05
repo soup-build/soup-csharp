@@ -12,8 +12,9 @@ import "Soup.Build.Utils:./Path" for Path
 /// The Clang compiler implementation
 /// </summary>
 class RoslynCompiler is ICompiler {
-	construct new(compilerExecutable) {
-		_compilerExecutable = compilerExecutable
+	construct new(dotnetExecutable, compilerLibrary) {
+		_dotnetExecutable = dotnetExecutable
+		_compilerLibrary = compilerLibrary
 	}
 
 	/// <summary>
@@ -60,6 +61,7 @@ class RoslynCompiler is ICompiler {
 
 		// Build up the input/output sets
 		var inputFiles = []
+		inputFiles.add(_compilerLibrary)
 		inputFiles.add(targetResponseFile)
 		inputFiles = inputFiles + arguments.SourceFiles
 		inputFiles = inputFiles + arguments.ReferenceLibraries
@@ -70,11 +72,11 @@ class RoslynCompiler is ICompiler {
 
 		// Generate the compile build operation
 		var commandArguments = RoslynArgumentBuilder.BuildUniqueCompilerArguments()
-		commandArguments.insert(0, "@%(targetResponseFile)")
+		commandArguments = ["exec", "\"%(_compilerLibrary)\"", "@%(targetResponseFile)"] + commandArguments
 		var buildOperation = BuildOperation.new(
 			"Compile - %(arguments.Target)",
 			arguments.SourceRootDirectory,
-			_compilerExecutable,
+			_dotnetExecutable,
 			commandArguments,
 			inputFiles,
 			outputFiles)

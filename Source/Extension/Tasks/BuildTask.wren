@@ -151,9 +151,13 @@ class BuildTask is SoupTask {
 
 	static createRoslynCompiler {
 		return Fn.new { |activeState|
+			var dotnet = activeState["DotNet"]
 			var roslyn = activeState["Roslyn"]
+
+			var dotnetPath = Path.new(dotnet["ExecutablePath"])
 			var cscToolPath = Path.new(roslyn["CscToolPath"])
 			return RoslynCompiler.new(
+				dotnetPath,
 				cscToolPath)
 		}
 	}

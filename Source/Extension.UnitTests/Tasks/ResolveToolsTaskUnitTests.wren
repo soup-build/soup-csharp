@@ -28,16 +28,12 @@ class ResolveToolsTaskUnitTests {
 		globalState["SDKs"] = sdks
 		sdks.add(
 			{
-				"Name": "Roslyn",
-				"Properties": { "ToolsRoot": "C:/Roslyn/ToolsRoot/", },
-			})
-		sdks.add(
-			{
 				"Name": "DotNet",
 				"Properties": {
 					"DotNetExecutable": "C:/Program Files/dotnet/dotnet.exe",
 					"SDKs": {
-						"7.0.304": "C:/Program Files/dotnet/sdk"
+						"7.0.304": "C:/Program Files/dotnet/sdk",
+						"7.0.400-preview.23274.1": "C:/Program Files/dotnet/sdk"
 					},
 					"Runtimes": {
 						"Microsoft.AspNetCore.App": {
