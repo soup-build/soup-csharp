@@ -33,10 +33,10 @@ class ResolveToolsTask is SoupTask {
 		var globalState = Soup.globalState
 		var activeState = Soup.activeState
 
-		ResolveToolsTask.LoadRoslyn(globalState, activeState)
+		ResolveToolsTask.LoadDotNet(globalState, activeState)
 	}
 
-	static LoadRoslyn(globalState, activeState) {
+	static LoadDotNet(globalState, activeState) {
 		var build = activeState["Build"]
 		var architecture = build["Architecture"]
 
@@ -46,27 +46,33 @@ class ResolveToolsTask is SoupTask {
 			skipPlatform = activeState["SkipPlatform"]
 		}
 
-		// Find the Roslyn SDK
-		var roslynSDKProperties = ResolveToolsTask.GetSDKProperties("Roslyn", globalState)
-
-		// Calculate the final Roslyn binaries folder
-		var roslynFolder = Path.new(roslynSDKProperties["ToolsRoot"])
-
 		// Get the DotNet SDK
 		var dotnetSDKProperties = ResolveToolsTask.GetSDKProperties("DotNet", globalState)
-		var dotnetRuntimeVersion = SemanticVersion.Parse(dotnetSDKProperties["RuntimeVersion"])
-		var dotnetRootPath = Path.new(dotnetSDKProperties["RootPath"])
 
-		var cscToolPath = roslynFolder + Path.new("csc.exe")
+		// Get the latest .net 6 sdk
+		var sdk = ResolveToolsTask.GetLatestSDK(dotnetSDKProperties)
+		var sdkVersion = sdk["version"]
+		var sdkPath = sdk["path"] + Path.new("%(sdkVersion)")
+
+		// Get the latest .net 6 targeting pack
+		var targetingPack = ResolveToolsTask.GetLatestTargetingPack(dotnetSDKProperties, 6, "Microsoft.NETCore.App.Ref")
+		var targetingPackVersion = targetingPack["version"]
+		var targetingPackVersionPath = targetingPack["path"] + Path.new("%(targetingPackVersion)/ref/net6.0/")
+
+		// Reference the dotnet executable
+		var dotNetExecutable = Path.new(dotnetSDKProperties["DotNetExecutable"])
+
+		// Load the roslyn library compiler reference
+		var cscToolPath = sdkPath + Path.new("Roslyn/bincore/csc.dll")
 
 		// Save the build properties
 		var roslyn = MapExtensions.EnsureTable(activeState, "Roslyn")
-		roslyn["BinRoot"] = roslynFolder.toString
 		roslyn["CscToolPath"] = cscToolPath.toString
 
 		var dotnet = MapExtensions.EnsureTable(activeState, "DotNet")
-		dotnet["RuntimeVersion"] = dotnetRuntimeVersion.toString
-		dotnet["RootPath"] = dotnetRootPath.toString
+		dotnet["ExecutablePath"] = dotNetExecutable.toString
+		dotnet["TargetingPackVersion"] = targetingPack["version"].toString
+		dotnet["TargetingPackPath"] = targetingPackVersionPath.toString
 
 		// Save the platform libraries
 		activeState["PlatformLibraries"] = ""
@@ -75,13 +81,12 @@ class ResolveToolsTask is SoupTask {
 			linkDependencies = ListExtensions.ConvertToPathList(build["LinkDependencies"])
 		}
 
-		linkDependencies = linkDependencies + ResolveToolsTask.GetPlatformLibraries(dotnetRootPath, dotnetRuntimeVersion)
+		linkDependencies = linkDependencies + ResolveToolsTask.GetPlatformLibraries(targetingPackVersionPath)
 		build["LinkDependencies"] = ListExtensions.ConvertFromPathList(linkDependencies)
 	}
 
-	static GetPlatformLibraries(dotnetRootPath, dotnetRuntimeVersion) {
+	static GetPlatformLibraries(targetingPackVersionPath) {
 		// Set the platform libraries
-		var path = dotnetRootPath + Path.new("packs/Microsoft.NETCore.App.Ref/%(dotnetRuntimeVersion)/ref/net6.0/")
 		var platformLibraries = [
 			Path.new("Microsoft.CSharp.dll"),
 			Path.new("Microsoft.VisualBasic.Core.dll"),
@@ -239,7 +244,7 @@ class ResolveToolsTask is SoupTask {
 
 		var result = []
 		for (value in platformLibraries) {
-			result.add(path + value)
+			result.add(targetingPackVersionPath + value)
 		}
 
 		return result
@@ -256,5 +261,99 @@ class ResolveToolsTask is SoupTask {
 		}
 
 		Fiber.abort("Missing SDK %(name)")
+	}
+
+	static GetLatestSDK(properties) {
+		if (!properties.containsKey("SDKs")) {
+			Fiber.abort("Missing DotNet SDK SDKs")
+		}
+
+		var sdks = properties["SDKs"]
+
+		var bestVersion
+		var bestVersionValue
+		var bestVersionPath
+		for (sdk in sdks) {
+			var sdkVersion = ResolveToolsTask.ParseSemanticVersionWithExtras(sdk.key)
+			if (bestVersion is Null || sdkVersion > bestVersion) {
+				bestVersion = sdkVersion
+				bestVersionValue = sdk.key
+				bestVersionPath = Path.new(sdk.value)
+			}
+		}
+
+		if (bestVersion is Null) {
+			Fiber.abort("Missing DotNet SDK SDKs for version %(majorVersion)")
+		}
+
+		return { "version": bestVersionValue, "path": bestVersionPath } 
+	}
+
+	static GetLatestTargetingPack(properties, majorVersion, targetingPackName) {
+		if (!properties.containsKey("TargetingPacks")) {
+			Fiber.abort("Missing DotNet SDK TargetingPacks")
+		}
+
+		var packs = properties["TargetingPacks"]
+		if (!packs.containsKey(targetingPackName)) {
+			Fiber.abort("Missing DotNet SDK Targeting TargetingPacks Type %(targetingPackName)")
+		}
+
+		var targetingPackVersions = packs[targetingPackName]
+		var bestVersion
+		var bestVersionPath
+		for (targetingPack in targetingPackVersions) {
+			var targetingPackVersion = ResolveToolsTask.ParseSemanticVersionWithExtras(targetingPack.key)
+			if (targetingPackVersion.Major == majorVersion) {
+				if (bestVersion is Null || targetingPackVersion > bestVersion) {
+					bestVersion = targetingPackVersion
+					bestVersionPath = Path.new(targetingPack.value)
+				}
+			}
+		}
+
+		if (bestVersion is Null) {
+			Fiber.abort("Missing DotNet SDK TargetingPacks Type %(targetingPackName) for version %(majorVersion)")
+		}
+
+		return { "version": bestVersion, "path": bestVersionPath } 
+	}
+
+	static ParseSemanticVersionWithExtras(value) {
+		// Ignore the extras if present
+		var versionExtraValues = value.split("-")
+
+		// Parse the integer values
+		var stringValues = versionExtraValues[0].split(".")
+		if (stringValues.count < 1) {
+			Fiber.abort("The version string must have one to three values.")
+		}
+
+		var intValues = []
+		for (stringValue in stringValues) {
+			var intValue = Num.fromString(stringValue)
+			if (!(intValue is Null)) {
+				intValues.add(intValue)
+			} else {
+				Fiber.abort("Invalid version string: \"%(value)\"")
+			}
+		}
+
+		var major = intValues[0]
+
+		var minor = null
+		if (intValues.count >= 2) {
+			minor = intValues[1]
+		}
+
+		var patch = null
+		if (intValues.count >= 3) {
+			patch = intValues[2]
+		}
+
+		return SemanticVersion.new(
+			major,
+			minor,
+			patch)
 	}
 }
