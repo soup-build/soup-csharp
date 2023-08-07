@@ -56,6 +56,11 @@ class BuildTaskUnitTests {
 			"TestFile.cs",
 		]
 
+		// Setup dotnet table
+		var dotnetTable = {}
+		activeState["DotNet"] = dotnetTable
+		dotnetTable["ExecutablePath"] = "C:/bin/mock.dotnet.exe"
+
 		// Register the mock compiler
 		var compiler = MockCompiler.new()
 		BuildTask.registerCompiler("MOCK", Fn.new { |activeState| compiler })
@@ -212,6 +217,11 @@ class BuildTaskUnitTests {
 			"../OtherModule2.mock.bmi",
 		]
 		buildTable["OptimizationLevel"] = BuildOptimizationLevel.None
+
+		// Setup dotnet table
+		var dotnetTable = {}
+		activeState["DotNet"] = dotnetTable
+		dotnetTable["ExecutablePath"] = "C:/bin/mock.dotnet.exe"
 
 		// Register the mock compiler
 		var compiler = MockCompiler.new()
