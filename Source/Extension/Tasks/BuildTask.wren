@@ -36,6 +36,9 @@ class BuildTask is SoupTask {
 
 		var buildTable = activeState["Build"]
 
+		var dotnet = activeState["DotNet"]
+		var dotnetPath = Path.new(dotnet["ExecutablePath"])
+
 		var arguments = BuildArguments.new()
 		arguments.TargetArchitecture = buildTable["Architecture"]
 		arguments.TargetName = buildTable["TargetName"]
@@ -131,7 +134,7 @@ class BuildTask is SoupTask {
 
 		if (!(buildResult.TargetFile is Null)) {
 			sharedBuildTable["TargetFile"] = buildResult.TargetFile.toString
-			sharedBuildTable["RunExecutable"] = "C:/Program Files/dotnet/dotnet.exe"
+			sharedBuildTable["RunExecutable"] = dotnetPath.toString
 			sharedBuildTable["RunArguments"] = [ buildResult.TargetFile.toString ]
 		}
 

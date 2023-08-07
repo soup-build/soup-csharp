@@ -72,7 +72,7 @@ class RoslynCompiler is ICompiler {
 
 		// Generate the compile build operation
 		var commandArguments = RoslynArgumentBuilder.BuildUniqueCompilerArguments()
-		commandArguments = ["exec", "\"%(_compilerLibrary)\"", "@%(targetResponseFile)"] + commandArguments
+		commandArguments = ["exec", "%(_compilerLibrary)", "@%(targetResponseFile)"] + commandArguments
 		var buildOperation = BuildOperation.new(
 			"Compile - %(arguments.Target)",
 			arguments.SourceRootDirectory,
