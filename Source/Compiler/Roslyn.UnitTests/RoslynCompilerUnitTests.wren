@@ -22,7 +22,8 @@ class RoslynCompilerUnitTests {
 	// [Fact]
 	Initialize() {
 		var uut = RoslynCompiler.new(
-			Path.new("C:/bin/mock.csc.exe"))
+			Path.new("C:/bin/mock.dotnet.exe"),
+			Path.new("C:/lib/mock.csc.dll"))
 		Assert.Equal("Roslyn", uut.Name)
 		Assert.Equal("obj", uut.ObjectFileExtension)
 		Assert.Equal("lib", uut.StaticLibraryFileExtension)
@@ -32,7 +33,8 @@ class RoslynCompilerUnitTests {
 	// [Fact]
 	Compile_Simple() {
 		var uut = RoslynCompiler.new(
-			Path.new("C:/bin/mock.csc.exe"))
+			Path.new("C:/bin/mock.dotnet.exe"),
+			Path.new("C:/lib/mock.csc.dll"))
 
 		var arguments = CompileArguments.new()
 		arguments.Target = Path.new("bin/Target.dll")
@@ -65,12 +67,15 @@ class RoslynCompilerUnitTests {
 			BuildOperation.new(
 				"Compile - ./bin/Target.dll",
 				Path.new("C:/source/"),
-				Path.new("C:/bin/mock.csc.exe"),
+				Path.new("C:/bin/mock.dotnet.exe"),
 				[
+					"exec",
+					"C:/lib/mock.csc.dll",
 					"@C:/target/ObjectDir/CompileArguments.rsp",
 					"/noconfig",
 				],
 				[
+					Path.new("C:/lib/mock.csc.dll"),
 					Path.new("C:/target/ObjectDir/CompileArguments.rsp"),
 					Path.new("./File.cs"),
 				],

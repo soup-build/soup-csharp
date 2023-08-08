@@ -1,6 +1,6 @@
 Name: "Soup.CSharp"
 Language: "Wren|0.1"
-Version: "0.11.0"
+Version: "0.11.1"
 Source: [
 	"Tasks/BuildTask.wren"
 	"Tasks/InitializeDefaultsTask.wren"

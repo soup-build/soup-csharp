@@ -1,6 +1,6 @@
 Name: "Soup.CSharp.Compiler.Roslyn"
 Language: "Wren|0.1"
-Version: "0.10.0"
+Version: "0.10.1"
 Source: [
 	"RoslynArgumentBuilder.wren"
 	"RoslynCompiler.wren"

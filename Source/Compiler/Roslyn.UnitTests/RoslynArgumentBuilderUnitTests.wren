@@ -207,7 +207,7 @@ class RoslynArgumentBuilderUnitTests {
 			"/nostdlib+",
 			"/errorreport:prompt",
 			"/warn:5",
-			"/define:DEBUGVERSION=1",
+			"/define:DEBUG;VERSION=1",
 			"/errorendlocation",
 			"/preferreduilang:en-US",
 			"/highentropyva+",
