@@ -2,7 +2,7 @@ Version: 4
 Closures: {
 	Root: {
 		Wren: [
-			{ Name: "Soup.Build.Utils", Version: "0.4.0", Build: "Build0", Tool: "Tool0" }
+			{ Name: "Soup.Build.Utils", Version: "0.4.1", Build: "Build0", Tool: "Tool0" }
 			{ Name: "Soup.CSharp.Compiler", Version: "0.8.0", Build: "Build0", Tool: "Tool0" }
 			{ Name: "Soup.CSharp.Compiler.Roslyn", Version: "./", Build: "Build0", Tool: "Tool0" }
 		]

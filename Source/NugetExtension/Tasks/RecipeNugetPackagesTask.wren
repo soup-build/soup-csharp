@@ -41,6 +41,9 @@ class RecipeNugetPackagesTask is SoupTask {
 
 			var linkLibraries = []
 
+			var nugetProperties = RecipeNugetPackagesTask.GetSDKProperties("Nuget")
+			var packagesDirectory = Path.new(nugetProperties["PackagesDirectory"])
+
 			// Resolve all dependency packages
 			if (nuget.containsKey("Dependencies")) {
 				var nugetSDKProperties = RecipeNugetPackagesTask.GetSDKProperties("Nuget")
@@ -49,10 +52,15 @@ class RecipeNugetPackagesTask is SoupTask {
 				if (nugetDependencies.containsKey("Runtime")) {
 					for (package in nugetDependencies["Runtime"]) {
 						var packageProperties = RecipeNugetPackagesTask.GetPackageProperties(nugetSDKProperties, package)
+
+						var name = package["Name"]
+						var version = package["Version"]
+						var packageVersionFolder = nugetPackagesDirectory + Path.new("%(name)/%(version)/")
+
 						var targetFrameworks = packageProperties["TargetFrameworks"]
 						var currentTargetFramework = RecipeNugetPackagesTask.GetBestFramework(targetFrameworks)
 						for (value in ListExtensions.ConvertToPathList(currentTargetFramework["Libraries"])) {
-							linkLibraries.add(nugetPackagesDirectory + value)
+							linkLibraries.add(packageVersionFolder + value)
 						}
 					}
 				}
