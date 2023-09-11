@@ -132,6 +132,7 @@ class RecipeNugetPackagesTaskUnitTests {
 		// Verify expected logs
 		Assert.ListEqual(
 			[
+				"INFO: Nuget package directory: C:/Users/me/.nuget/packages",
 				"INFO: Resolve package TestPackage1 1.2.3",
 			],
 			SoupTest.logs)

@@ -46,18 +46,20 @@ class RecipeNugetPackagesTask is SoupTask {
 
 			// Resolve all dependency packages
 			if (nuget.containsKey("Dependencies")) {
+				var nugetSDKProperties = RecipeNugetPackagesTask.GetSDKProperties("Nuget")
+				var nugetPackagesDirectory = RecipeNugetPackagesTask.GetPackagesDirectory(nugetSDKProperties)
 				var nugetDependencies = nuget["Dependencies"]
 				if (nugetDependencies.containsKey("Runtime")) {
 					for (package in nugetDependencies["Runtime"]) {
-						var packageProperties = RecipeNugetPackagesTask.GetPackageProperties(nugetProperties, package)
+						var packageProperties = RecipeNugetPackagesTask.GetPackageProperties(nugetSDKProperties, package)
 
 						var name = package["Name"]
 						var version = package["Version"]
-						var packageVersionFolder = packagesDirectory + Path.new("%(name)/%(version)/")
+						var packageVersionFolder = nugetPackagesDirectory + Path.new("%(name)/%(version)/")
 
-						var targetFramework = RecipeNugetPackagesTask.GetPackageTargetFramework(packageProperties)
-
-						for (value in ListExtensions.ConvertToPathList(targetFramework["Libraries"])) {
+						var targetFrameworks = packageProperties["TargetFrameworks"]
+						var currentTargetFramework = RecipeNugetPackagesTask.GetBestFramework(targetFrameworks)
+						for (value in ListExtensions.ConvertToPathList(currentTargetFramework["Libraries"])) {
 							linkLibraries.add(packageVersionFolder + value)
 						}
 					}
@@ -71,37 +73,36 @@ class RecipeNugetPackagesTask is SoupTask {
 		}
 	}
 
-	static GetPackageTargetFramework(packageProperties) {
-		if (!packageProperties.containsKey("TargetFrameworks")) {
-			Fiber.abort("Missing Nuget Package TargetFrameworks")
+	static GetPackagesDirectory(nugetSDKProperties) {
+		if (!nugetSDKProperties.containsKey("PackagesDirectory")) {
+			Fiber.abort("Missing Nuget PackagesDirectory in SDK")
 		}
-		var targetFrameworks = packageProperties["TargetFrameworks"]
-
-		// Check highest compatible runtime
-		if (targetFrameworks.containsKey("net6.0")) {
-			return targetFrameworks["net6.0"]
-		}
-
-		if (targetFrameworks.containsKey("net5.0")) {
-			return targetFrameworks["net5.0"]
-		}
-
-		if (targetFrameworks.containsKey("netstandard2.0")) {
-			return targetFrameworks["netstandard2.0"]
-		}
-
-		Fiber.abort("Missing Nuget Package Compatible target framework")
+		var packagesDirectory = Path.new(nugetSDKProperties["PackagesDirectory"])
+		Soup.info("Nuget package directory: %(packagesDirectory)")
+		return packagesDirectory
 	}
 
-	static GetPackageProperties(nugetProperties, package) {
+	static GetBestFramework(targetFrameworks) {
+		if (targetFrameworks.containsKey("net6.0")) {
+			return targetFrameworks["net6.0"]
+		} else if (targetFrameworks.containsKey("net5.0")) {
+			return targetFrameworks["net5.0"]
+		} else if (targetFrameworks.containsKey("netstandard2.0")) {
+			return targetFrameworks["netstandard2.0"]
+		} else {
+			Fiber.abort("Missing compatible target framework")
+		}
+	}
+
+	static GetPackageProperties(nugetSDKProperties, package) {
 		var name = package["Name"]
 		var version = package["Version"]
 		Soup.info("Resolve package %(name) %(version)")
 
-		if (!nugetProperties.containsKey("Packages")) {
+		if (!nugetSDKProperties.containsKey("Packages")) {
 			Fiber.abort("Missing Nuget Packages in SDK")
 		}
-		var nugetPackages = nugetProperties["Packages"]
+		var nugetPackages = nugetSDKProperties["Packages"]
 
 		// Check for the requested package
 		if (!nugetPackages.containsKey(name)) {
@@ -122,8 +123,9 @@ class RecipeNugetPackagesTask is SoupTask {
 		for (sdk in Soup.globalState["SDKs"]) {
 			var sdkTable = sdk
 			if (sdkTable.containsKey("Name")) {
-				if (sdkTable["Name"] == name) {
-					return sdkTable["Properties"]
+				if (sdkTable["Name"] == name && sdkTable.containsKey("Properties")) {
+					var sdkProperties = sdkTable["Properties"]
+					return sdkProperties
 				}
 			}
 		}
