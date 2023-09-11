@@ -12,12 +12,14 @@ class RecipeNugetPackagesTaskUnitTests {
 	}
 
 	RunTests() {
-		System.print("RecipeNugetPackagesTaskUnitTests.Build_Executable")
-		this.Build_Executable()
+		System.print("RecipeNugetPackagesTaskUnitTests.Evaluate_Empty")
+		this.Evaluate_Empty()
+		System.print("RecipeNugetPackagesTaskUnitTests.Evaluate_Single")
+		this.Evaluate_Single()
 	}
 
 	// [Fact]
-	Build_Executable() {
+	Evaluate_Empty() {
 		// Setup the input build state
 		SoupTest.initialize()
 		var activeState = SoupTest.activeState
@@ -54,6 +56,105 @@ class RecipeNugetPackagesTaskUnitTests {
 			expectedBuildOperations,
 			SoupTest.operations)
 
-		// TODO: Verify output build state
+		// Verify output build state
+		var expectedActiveState = {
+			"Build": {
+				"Compiler": "MOCK",
+				"Flavor": "Debug"
+			}
+		}
+		Assert.MapEqual(
+			expectedActiveState,
+			SoupTest.activeState)
+	}
+
+	// [Fact]
+	Evaluate_Single() {
+		// Setup the input build state
+		SoupTest.initialize()
+		var activeState = SoupTest.activeState
+		var globalState = SoupTest.globalState
+
+		// Setup context table
+		var contextTable = {}
+		globalState["Context"] = contextTable
+		contextTable["TargetDirectory"] = "/(TARGET)/"
+		contextTable["PackageDirectory"] = "/(PACKAGE)/"
+
+		// Setup build table
+		var buildTable = {}
+		activeState["Build"] = buildTable
+		buildTable["Compiler"] = "MOCK"
+		buildTable["Flavor"] = "Debug"
+
+		// Setup SDKs table
+		globalState["SDKs"] = [
+			{
+				"Name": "Nuget",
+				"SourceDirectories": [
+					"C:/Users/me/.nuget/packages"
+				],
+				"Properties": {
+					"PackagesDirectory": "C:/Users/me/.nuget/packages",
+					"Packages": {
+						"TestPackage1": {
+							"1.2.3": {
+								"TargetFrameworks": {
+									"netstandard2.0": {
+										"Libraries": [
+											"./lib/netstandard2.0/TestPackage1.dll"
+										]
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		]
+
+		// Setup recipe table
+		var recipeTable = {}
+		globalState["Recipe"] = recipeTable
+		recipeTable["Name"] = "Program"
+
+		// Setup nuget table
+		recipeTable["Nuget"] = {
+			"Dependencies": {
+				"Runtime": [
+					{ "Name": "TestPackage1", "Version": "1.2.3" }
+				]
+			}
+		}
+
+		RecipeNugetPackagesTask.evaluate()
+
+		// Verify expected logs
+		Assert.ListEqual(
+			[
+				"INFO: Resolve package TestPackage1 1.2.3",
+			],
+			SoupTest.logs)
+
+		// Verify build state
+		var expectedBuildOperations = []
+
+		Assert.ListEqual(
+			expectedBuildOperations,
+			SoupTest.operations)
+
+		// Verify output build state
+		var expectedActiveState = {
+			"Build": {
+				"LinkLibraries": [
+					"./lib/netstandard2.0/TestPackage1.dll"
+				],
+				"Compiler": "MOCK",
+				"Flavor": "Debug"
+			}
+		}
+		Assert.MapEqual(
+			expectedActiveState,
+			SoupTest.activeState)
 	}
 }

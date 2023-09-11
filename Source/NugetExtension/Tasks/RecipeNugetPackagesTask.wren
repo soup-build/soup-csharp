@@ -47,7 +47,8 @@ class RecipeNugetPackagesTask is SoupTask {
 				if (nugetDependencies.containsKey("Runtime")) {
 					for (package in nugetDependencies["Runtime"]) {
 						var packageProperties = RecipeNugetPackagesTask.GetPackageProperties(package)
-						for (value in ListExtensions.ConvertToPathList(packageProperties["Libraries"])) {
+						var targetFramework = RecipeNugetPackagesTask.GetPackageTargetFramework(packageProperties)
+						for (value in ListExtensions.ConvertToPathList(targetFramework["Libraries"])) {
 							linkLibraries.add(value)
 						}
 					}
@@ -59,6 +60,28 @@ class RecipeNugetPackagesTask is SoupTask {
 				MapExtensions.EnsureList(build, "LinkLibraries"),
 				ListExtensions.ConvertFromPathList(linkLibraries))
 		}
+	}
+
+	static GetPackageTargetFramework(packageProperties) {
+		if (!packageProperties.containsKey("TargetFrameworks")) {
+			Fiber.abort("Missing Nuget Package TargetFrameworks")
+		}
+		var targetFrameworks = packageProperties["TargetFrameworks"]
+
+		// Check highest compatible runtime
+		if (targetFrameworks.containsKey("net6.0")) {
+			return targetFrameworks["net6.0"]
+		}
+
+		if (targetFrameworks.containsKey("net5.0")) {
+			return targetFrameworks["net5.0"]
+		}
+
+		if (targetFrameworks.containsKey("netstandard2.0")) {
+			return targetFrameworks["netstandard2.0"]
+		}
+
+		Fiber.abort("Missing Nuget Package Compatible target framework")
 	}
 
 	static GetPackageProperties(package) {
