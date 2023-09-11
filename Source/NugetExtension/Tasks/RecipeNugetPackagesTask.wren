@@ -41,15 +41,24 @@ class RecipeNugetPackagesTask is SoupTask {
 
 			var linkLibraries = []
 
+			var nugetProperties = RecipeNugetPackagesTask.GetSDKProperties("Nuget")
+			var packagesDirectory = Path.new(nugetProperties["PackagesDirectory"])
+
 			// Resolve all dependency packages
 			if (nuget.containsKey("Dependencies")) {
 				var nugetDependencies = nuget["Dependencies"]
 				if (nugetDependencies.containsKey("Runtime")) {
 					for (package in nugetDependencies["Runtime"]) {
-						var packageProperties = RecipeNugetPackagesTask.GetPackageProperties(package)
+						var packageProperties = RecipeNugetPackagesTask.GetPackageProperties(nugetProperties, package)
+
+						var name = package["Name"]
+						var version = package["Version"]
+						var packageVersionFolder = packagesDirectory + Path.new("%(name)/%(version)/")
+
 						var targetFramework = RecipeNugetPackagesTask.GetPackageTargetFramework(packageProperties)
+
 						for (value in ListExtensions.ConvertToPathList(targetFramework["Libraries"])) {
-							linkLibraries.add(value)
+							linkLibraries.add(packageVersionFolder + value)
 						}
 					}
 				}
@@ -84,12 +93,10 @@ class RecipeNugetPackagesTask is SoupTask {
 		Fiber.abort("Missing Nuget Package Compatible target framework")
 	}
 
-	static GetPackageProperties(package) {
+	static GetPackageProperties(nugetProperties, package) {
 		var name = package["Name"]
 		var version = package["Version"]
 		Soup.info("Resolve package %(name) %(version)")
-
-		var nugetProperties = RecipeNugetPackagesTask.GetSDKProperties("Nuget")
 
 		if (!nugetProperties.containsKey("Packages")) {
 			Fiber.abort("Missing Nuget Packages in SDK")

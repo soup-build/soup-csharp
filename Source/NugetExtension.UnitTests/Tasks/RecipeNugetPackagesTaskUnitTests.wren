@@ -147,7 +147,7 @@ class RecipeNugetPackagesTaskUnitTests {
 		var expectedActiveState = {
 			"Build": {
 				"LinkLibraries": [
-					"./lib/netstandard2.0/TestPackage1.dll"
+					"C:/Users/me/.nuget/packages/TestPackage1/1.2.3/lib/netstandard2.0/TestPackage1.dll"
 				],
 				"Compiler": "MOCK",
 				"Flavor": "Debug"
