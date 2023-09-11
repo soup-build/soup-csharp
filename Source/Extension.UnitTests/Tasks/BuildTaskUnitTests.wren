@@ -149,10 +149,10 @@ class BuildTaskUnitTests {
 					"./bin/Program.runtimeconfig.json",
 					"{
 	\"runtimeOptions\": {
-		\"tfm\": \"net6.0\",
+		\"tfm\": \"net7.0\",
 		\"framework\": {
 			\"name\": \"Microsoft.NETCore.App\",
-			\"version\": \"6.0.0\"
+			\"version\": \"7.0.0\"
 		},
 		\"configProperties\": {
 			\"System.Reflection.Metadata.MetadataUpdater.IsSupported\": false

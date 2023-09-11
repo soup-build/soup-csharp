@@ -49,15 +49,15 @@ class ResolveToolsTask is SoupTask {
 		// Get the DotNet SDK
 		var dotnetSDKProperties = ResolveToolsTask.GetSDKProperties("DotNet", globalState)
 
-		// Get the latest .net 6 sdk
+		// Get the latest .net 7 sdk
 		var sdk = ResolveToolsTask.GetLatestSDK(dotnetSDKProperties)
 		var sdkVersion = sdk["version"]
 		var sdkPath = sdk["path"] + Path.new("%(sdkVersion)")
 
-		// Get the latest .net 6 targeting pack
-		var targetingPack = ResolveToolsTask.GetLatestTargetingPack(dotnetSDKProperties, 6, "Microsoft.NETCore.App.Ref")
+		// Get the latest .net 7 targeting pack
+		var targetingPack = ResolveToolsTask.GetLatestTargetingPack(dotnetSDKProperties, 7, "Microsoft.NETCore.App.Ref")
 		var targetingPackVersion = targetingPack["version"]
-		var targetingPackVersionPath = targetingPack["path"] + Path.new("%(targetingPackVersion)/ref/net6.0/")
+		var targetingPackVersionPath = targetingPack["path"] + Path.new("%(targetingPackVersion)/ref/net7.0/")
 
 		// Reference the dotnet executable
 		var dotNetExecutable = Path.new(dotnetSDKProperties["DotNetExecutable"])

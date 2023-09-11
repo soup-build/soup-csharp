@@ -75,7 +75,9 @@ class RecipeNugetPackagesTask is SoupTask {
 	}
 
 	static GetBestFramework(targetFrameworks) {
-		if (targetFrameworks.containsKey("net6.0")) {
+		if (targetFrameworks.containsKey("net7.0")) {
+			return targetFrameworks["net7.0"]
+		} else if (targetFrameworks.containsKey("net6.0")) {
 			return targetFrameworks["net6.0"]
 		} else if (targetFrameworks.containsKey("net5.0")) {
 			return targetFrameworks["net5.0"]
