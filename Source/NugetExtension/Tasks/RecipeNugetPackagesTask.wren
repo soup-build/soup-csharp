@@ -83,6 +83,8 @@ class RecipeNugetPackagesTask is SoupTask {
 			return targetFrameworks["net5.0"]
 		} else if (targetFrameworks.containsKey("netstandard2.0")) {
 			return targetFrameworks["netstandard2.0"]
+		} else if (targetFrameworks.containsKey("netstandard1.3")) {
+			return targetFrameworks["netstandard1.3"]
 		} else {
 			Fiber.abort("Missing compatible target framework")
 		}
