@@ -116,7 +116,7 @@ class RoslynArgumentBuilder {
 		RoslynArgumentBuilder.AddFlag(commandArguments, "deterministic+")
 
 		// Specify language version
-		RoslynArgumentBuilder.AddParameter(commandArguments, "langversion", "9.0")
+		RoslynArgumentBuilder.AddParameter(commandArguments, "langversion", "11.0")
 
 		// Add the source files
 		for (file in arguments.SourceFiles) {
