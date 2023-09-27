@@ -40,6 +40,7 @@ class InitializeDefaultsTask is SoupTask {
 		var architecture = "AnyCPU"
 		var compiler = "Roslyn"
 		var flavor = "Debug"
+		var preprocessorDefinitions = []
 
 		if (parameters.containsKey("Architecture")) {
 			architecture = parameters["Architecture"]
@@ -48,10 +49,11 @@ class InitializeDefaultsTask is SoupTask {
 		if (parameters.containsKey("Flavor")) {
 			flavor = parameters["Flavor"]
 		}
-
+		
 		// Save the internal parameters
 		build["Architecture"] = architecture
 		build["Compiler"] = compiler
 		build["Flavor"] = flavor
+		build["PreprocessorDefinitions"] = preprocessorDefinitions
 	}
 }

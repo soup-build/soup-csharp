@@ -116,7 +116,7 @@ class RecipeBuildTask is SoupTask {
 		var optimizationLevel = BuildOptimizationLevel.None
 		var generateSourceDebugInfo = false
 		if (flavor == "Debug") {
-			// preprocessorDefinitions.add("DEBUG")
+			preprocessorDefinitions.add("DEBUG")
 			generateSourceDebugInfo = true
 		} else if (flavor == "DebugRelease") {
 			preprocessorDefinitions.add("RELEASE")
@@ -129,6 +129,17 @@ class RecipeBuildTask is SoupTask {
 			Fiber.abort("Unknown build flavor: %(flavor)")
 		}
 
+		preprocessorDefinitions = preprocessorDefinitions + RecipeBuildTask.GetTargetFrameworkPreprocessorDefinitions()
+
+		var disabledWarnings = []
+
+		// Turn off a few annoying warnings
+		disabledWarnings = disabledWarnings + [
+			"1701",
+			"1702",
+			"2008",
+		]
+
 		build["TargetName"] = name
 		build["SourceRootDirectory"] = packageRoot.toString
 		build["TargetRootDirectory"] = targetDirectory.toString
@@ -136,6 +147,7 @@ class RecipeBuildTask is SoupTask {
 		build["BinaryDirectory"] = binaryDirectory.toString
 		build["OptimizationLevel"] = optimizationLevel
 		build["GenerateSourceDebugInfo"] = generateSourceDebugInfo
+		build["DisabledWarnings"] = disabledWarnings
 
 		ListExtensions.Append(
 			MapExtensions.EnsureList(build, "LinkLibraries"),
@@ -184,5 +196,23 @@ class RecipeBuildTask is SoupTask {
 		} else {
 			Fiber.abort("Unknown nullable state value.")
 		}
+	}
+
+	static GetTargetFrameworkPreprocessorDefinitions() {
+		return [
+			"NET",
+			"NET7_0",
+			"NETCOREAPP",
+			"NET5_0_OR_GREATER",
+			"NET6_0_OR_GREATER",
+			"NET7_0_OR_GREATER",
+			"NETCOREAPP1_0_OR_GREATER",
+			"NETCOREAPP1_1_OR_GREATER",
+			"NETCOREAPP2_0_OR_GREATER",
+			"NETCOREAPP2_1_OR_GREATER",
+			"NETCOREAPP2_2_OR_GREATER",
+			"NETCOREAPP3_0_OR_GREATER",
+			"NETCOREAPP3_1_OR_GREATER",
+		]
 	}
 }

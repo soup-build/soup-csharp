@@ -23,7 +23,7 @@ class RoslynArgumentBuilder {
 
 		// Disable warnings
 		if (arguments.DisabledWarnings.count > 0) {
-			var noWarnList = string.Join(",", arguments.DisabledWarnings)
+			var noWarnList = arguments.DisabledWarnings.join(",")
 			RoslynArgumentBuilder.AddParameter(commandArguments, "nowarn", noWarnList)
 		}
 
@@ -32,6 +32,9 @@ class RoslynArgumentBuilder {
 
 		// Do not reference standard library (mscorlib.dll)
 		RoslynArgumentBuilder.AddFlag(commandArguments, "nostdlib+")
+
+		// Set the target platform
+		// RoslynArgumentBuilder.AddParameter(commandArguments, "platform", "x64")
 
 		// Specify how to handle internal compiler errors
 		RoslynArgumentBuilder.AddParameter(commandArguments, "errorreport", "prompt")
