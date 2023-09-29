@@ -40,6 +40,7 @@ class RecipeNugetPackagesTask is SoupTask {
 			var build = MapExtensions.EnsureTable(activeState, "Build")
 
 			var linkLibraries = []
+			var runtimeLibraries = []
 
 			var nugetProperties = RecipeNugetPackagesTask.GetSDKProperties("Nuget")
 			var packagesDirectory = Path.new(nugetProperties["PackagesDirectory"])
@@ -60,16 +61,21 @@ class RecipeNugetPackagesTask is SoupTask {
 						var targetFrameworks = packageProperties["TargetFrameworks"]
 						var currentTargetFramework = RecipeNugetPackagesTask.GetBestFramework(targetFrameworks)
 						for (value in ListExtensions.ConvertToPathList(currentTargetFramework["Libraries"])) {
-							linkLibraries.add(packageVersionFolder + value)
+							var libraryPath = packageVersionFolder + value
+							linkLibraries.add(libraryPath)
+							runtimeLibraries.add(libraryPath)
 						}
 					}
 				}
 			}
 
-			// Append the nuget package link libraries
+			// Append the nuget package libraries
 			ListExtensions.Append(
 				MapExtensions.EnsureList(build, "LinkLibraries"),
 				ListExtensions.ConvertFromPathList(linkLibraries))
+			ListExtensions.Append(
+				MapExtensions.EnsureList(build, "RuntimeDependencies"),
+				ListExtensions.ConvertFromPathList(runtimeLibraries))
 		}
 	}
 
