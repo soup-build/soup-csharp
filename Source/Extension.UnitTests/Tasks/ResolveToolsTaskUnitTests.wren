@@ -4,7 +4,7 @@
 
 import "soup-test" for SoupTest
 import "../../Extension/Tasks/ResolveToolsTask" for ResolveToolsTask
-import "Soup.Build.Utils:./Path" for Path
+import "mwasplund|Soup.Build.Utils:./Path" for Path
 import "../../Test/Assert" for Assert
 
 class ResolveToolsTaskUnitTests {

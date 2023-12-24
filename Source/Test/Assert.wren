@@ -1,5 +1,5 @@
-import "Soup.Build.Utils:./ListExtensions" for ListExtensions
-import "Soup.Build.Utils:./MapExtensions" for MapExtensions
+import "mwasplund|Soup.Build.Utils:./ListExtensions" for ListExtensions
+import "mwasplund|Soup.Build.Utils:./MapExtensions" for MapExtensions
 
 class Assert {
 	static True(value) {
