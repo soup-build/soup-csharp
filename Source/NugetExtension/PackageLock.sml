@@ -1,20 +1,21 @@
-Version: 4
+Version: 5
 Closures: {
 	Root: {
-		Wren: [
-			{ Name: "Soup.Build.Utils", Version: "0.4.1", Build: "Build0", Tool: "Tool0" }
-			{ Name: "Soup.CSharp.Nuget", Version: "./", Build: "Build0", Tool: "Tool0" }
-		]
+		Wren: {
+			"mwasplund|Soup.Build.Utils": { Version: "0.6.0", Build: "Build0", Tool: "Tool0" }
+			"mwasplund|Soup.CSharp.Nuget": { Version: "../NugetExtension", Build: "Build0", Tool: "Tool0" }
+			"Soup.CSharp.Nuget": { Version: "../NugetExtension", Build: "Build0", Tool: "Tool0" }
+		}
 	}
 	Build0: {
-		Wren: [
-			{ Name: "Soup.Wren", Version: "0.2.0" }
-		]
+		Wren: {
+			"mwasplund|Soup.Wren": { Version: "0.2.0" }
+		}
 	}
 	Tool0: {
-		"C++": [
-			{ Name: "copy", Version: "1.0.0" }
-			{ Name: "mkdir", Version: "1.0.0" }
-		]
+		"C++": {
+			"mwasplund|copy": { Version: "1.0.0" }
+			"mwasplund|mkdir": { Version: "1.0.0" }
+		}
 	}
 }
