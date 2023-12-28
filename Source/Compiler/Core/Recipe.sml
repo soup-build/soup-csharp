@@ -1,17 +1,17 @@
-Name: "Soup.CSharp.Compiler"
-Language: "Wren|0"
-Version: "0.10.0"
+Name: 'Soup.CSharp.Compiler'
+Language: 'Wren|0'
+Version: '0.11.0'
 Source: [
-	"BuildArguments.wren"
-	"BuildEngine.wren"
-	"BuildResult.wren"
-	"CompileArguments.wren"
-	"ICompiler.wren"
-	"MockCompiler.wren"
+	'BuildArguments.wren'
+	'BuildEngine.wren'
+	'BuildResult.wren'
+	'CompileArguments.wren'
+	'ICompiler.wren'
+	'MockCompiler.wren'
 ]
 
 Dependencies: {
 	Runtime: [
-		"Soup.Build.Utils@0"
+		'Soup.Build.Utils@0'
 	]
 }
