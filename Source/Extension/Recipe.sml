@@ -1,22 +1,22 @@
-Name: "Soup.CSharp"
-Language: "Wren|0"
-Version: "0.12.0"
+Name: 'Soup.CSharp'
+Language: 'Wren|0'
+Version: '0.14.0'
 Source: [
-	"Tasks/BuildTask.wren"
-	"Tasks/InitializeDefaultsTask.wren"
-	"Tasks/RecipeBuildTask.wren"
-	"Tasks/ResolveDependenciesTask.wren"
-	"Tasks/ResolveToolsTask.wren"
+	'Tasks/BuildTask.wren'
+	'Tasks/ExpandSourceTask.wren'
+	'Tasks/InitializeDefaultsTask.wren'
+	'Tasks/RecipeBuildTask.wren'
+	'Tasks/ResolveDependenciesTask.wren'
+	'Tasks/ResolveToolsTask.wren'
 ]
-
 Dependencies: {
 	Runtime: [
-		"mwasplund|Soup.Build.Utils@0"
-		"mwasplund|Soup.CSharp.Compiler@0"
-		"mwasplund|Soup.CSharp.Compiler.Roslyn@0"
+		'mwasplund|Soup.Build.Utils@0'
+		'mwasplund|Soup.CSharp.Compiler@0'
+		'mwasplund|Soup.CSharp.Compiler.Roslyn@0'
 	]
 	Tool: [
-		"[C++]mwasplund|copy@1"
-		"[C++]mwasplund|mkdir@1"
+		'[C++]mwasplund|copy@1'
+		'[C++]mwasplund|mkdir@1'
 	]
 }
