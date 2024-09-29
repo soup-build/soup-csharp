@@ -2,6 +2,7 @@
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
+import "./CommandLineBuilder" for CommandLineBuilder
 import "./RoslynArgumentBuilder" for RoslynArgumentBuilder
 import "mwasplund|Soup.CSharp.Compiler:./ICompiler" for ICompiler
 import "mwasplund|Soup.Build.Utils:./BuildOperation" for BuildOperation
@@ -42,16 +43,18 @@ class RoslynCompiler is ICompiler {
 	/// <summary>
 	/// Compile
 	/// </summary>
-	CreateCompileOperations(arguments) {
+	CreateCompileOperations(options) {
 		var operations = []
 
 		// Write the shared arguments to the response file
 		var responseFile = arguments.ObjectDirectory + Path.new("CompileArguments.rsp")
-		var sharedCommandArguments = RoslynArgumentBuilder.BuildSharedCompilerArguments(arguments)
+		var responseFileArgumentBuilder = CommandLineBuilder.new()
+		RoslynArgumentBuilder.BuildResponseFileArguments(options, responseFileArgumentBuilder)
+
 		var writeSharedArgumentsOperation = SharedOperations.CreateWriteFileOperation(
 			arguments.TargetRootDirectory,
 			responseFile,
-			sharedCommandArguments.join(" "))
+			sharedCommandArguments.toString)
 		operations.add(writeSharedArgumentsOperation)
 
 		var symbolFile = Path.new(arguments.Target.toString)
@@ -70,9 +73,14 @@ class RoslynCompiler is ICompiler {
 			arguments.TargetRootDirectory + symbolFile,
 		]
 
+		var commandLineArgumentBuilder = CommandLineBuilder.new()
+		commandLineArgumentBuilder.Append("exec")
+		commandLineArgumentBuilder.Append("%(_compilerLibrary)")
+		commandLineArgumentBuilder.Append("@%(targetResponseFile)")
+		RoslynArgumentBuilder.BuildCommandLineArguments(commandLineArgumentBuilder)
+
 		// Generate the compile build operation
-		var commandArguments = RoslynArgumentBuilder.BuildUniqueCompilerArguments()
-		commandArguments = ["exec", "%(_compilerLibrary)", "@%(targetResponseFile)"] + commandArguments
+		var commandArguments = commandLineArgumentBuilder.CommandArguments
 		var buildOperation = BuildOperation.new(
 			"Compile - %(arguments.Target)",
 			arguments.SourceRootDirectory,

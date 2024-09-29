@@ -5,8 +5,8 @@
 import "soup-test" for SoupTest, SoupTestOperation
 import "../../Extension/Tasks/BuildTask" for BuildTask
 import "mwasplund|Soup.CSharp.Compiler:./MockCompiler" for MockCompiler
-import "mwasplund|Soup.CSharp.Compiler:./BuildArguments" for BuildOptimizationLevel, BuildTargetType
-import "mwasplund|Soup.CSharp.Compiler:./CompileArguments" for CompileArguments, LinkTarget, NullableState
+import "mwasplund|Soup.CSharp.Compiler:./BuildOptions" for BuildOptimizationLevel, BuildTargetType
+import "mwasplund|Soup.CSharp.Compiler:./CompileOptions" for CompileOptions, LinkTarget, NullableState
 import "mwasplund|Soup.Build.Utils:./Path" for Path
 import "../../Test/Assert" for Assert
 
@@ -75,22 +75,22 @@ class BuildTaskUnitTests {
 			],
 			SoupTest.logs)
 
-		var expectedCompileArguments = CompileArguments.new()
-		expectedCompileArguments.Target = Path.new("./bin/Program.mock.dll")
-		expectedCompileArguments.ReferenceTarget = Path.new("./bin/ref/Program.mock.dll")
-		expectedCompileArguments.TargetType = LinkTarget.Executable
-		expectedCompileArguments.SourceRootDirectory = Path.new("C:/source/")
-		expectedCompileArguments.TargetRootDirectory = Path.new("C:/target/")
-		expectedCompileArguments.ObjectDirectory = Path.new("obj/")
-		expectedCompileArguments.SourceFiles = [
+		var expectedCompileOptions = CompileOptions.new()
+		expectedCompileOptions.Target = Path.new("./bin/Program.mock.dll")
+		expectedCompileOptions.ReferenceTarget = Path.new("./bin/ref/Program.mock.dll")
+		expectedCompileOptions.TargetType = LinkTarget.Executable
+		expectedCompileOptions.SourceRootDirectory = Path.new("C:/source/")
+		expectedCompileOptions.TargetRootDirectory = Path.new("C:/target/")
+		expectedCompileOptions.ObjectDirectory = Path.new("obj/")
+		expectedCompileOptions.SourceFiles = [
 			Path.new("TestFile.cs")
 		]
-		expectedCompileArguments.NullableState = NullableState.Enabled
+		expectedCompileOptions.NullableState = NullableState.Enabled
 
 		// Verify expected compiler calls
 		Assert.ListEqual(
 			[
-				expectedCompileArguments,
+				expectedCompileOptions,
 			],
 			compiler.GetCompileRequests())
 
@@ -238,24 +238,24 @@ class BuildTaskUnitTests {
 			SoupTest.logs)
 
 		// Setup the shared arguments
-		var expectedCompileArguments = CompileArguments.new()
-		expectedCompileArguments.Target = Path.new("./bin/Library.mock.dll")
-		expectedCompileArguments.TargetType = LinkTarget.Library
-		expectedCompileArguments.ReferenceTarget = Path.new("./bin/ref/Library.mock.dll")
-		expectedCompileArguments.SourceRootDirectory = Path.new("C:/source/")
-		expectedCompileArguments.TargetRootDirectory = Path.new("C:/target/")
-		expectedCompileArguments.ObjectDirectory = Path.new("obj/")
-		expectedCompileArguments.SourceFiles = [
+		var expectedCompileOptions = CompileOptions.new()
+		expectedCompileOptions.Target = Path.new("./bin/Library.mock.dll")
+		expectedCompileOptions.TargetType = LinkTarget.Library
+		expectedCompileOptions.ReferenceTarget = Path.new("./bin/ref/Library.mock.dll")
+		expectedCompileOptions.SourceRootDirectory = Path.new("C:/source/")
+		expectedCompileOptions.TargetRootDirectory = Path.new("C:/target/")
+		expectedCompileOptions.ObjectDirectory = Path.new("obj/")
+		expectedCompileOptions.SourceFiles = [
 			Path.new("TestFile1.cpp"),
 			Path.new("TestFile2.cpp"),
 			Path.new("TestFile3.cpp"),
 		]
-		expectedCompileArguments.NullableState = NullableState.Enabled
+		expectedCompileOptions.NullableState = NullableState.Enabled
 
 		// Verify expected compiler calls
 		Assert.ListEqual(
 			[
-				expectedCompileArguments,
+				expectedCompileOptions,
 			],
 			compiler.GetCompileRequests())
 

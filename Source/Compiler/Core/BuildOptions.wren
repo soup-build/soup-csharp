@@ -1,4 +1,4 @@
-﻿// <copyright file="BuildArguments.wren" company="Soup">
+﻿// <copyright file="BuildOptions.wren" company="Soup">
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
@@ -63,9 +63,9 @@ class BuildNullableState {
 }
 
 /// <summary>
-/// The set of build arguments
+/// The set of build options
 /// </summary>
-class BuildArguments {
+class BuildOptions {
 	construct new() {
 		_targetName = null
 		_targetArchitecture = null

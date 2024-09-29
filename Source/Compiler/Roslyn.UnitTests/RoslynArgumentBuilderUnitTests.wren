@@ -3,7 +3,7 @@
 // </copyright>
 
 import "mwasplund|Soup.CSharp.Compiler.Roslyn:./RoslynArgumentBuilder" for RoslynArgumentBuilder
-import "mwasplund|Soup.CSharp.Compiler:./CompileArguments" for CompileArguments, LinkTarget, NullableState
+import "mwasplund|Soup.CSharp.Compiler:./CompileOptions" for CompileOptions, LinkTarget, NullableState
 import "mwasplund|Soup.Build.Utils:./Path" for Path
 import "../../Test/Assert" for Assert
 
@@ -28,15 +28,15 @@ class RoslynArgumentBuilderUnitTests {
 
 	// [Fact]
 	BSCA_DefaultParameters() {
-		var arguments = CompileArguments.new()
-		arguments.Target = Path.new("bin/Target.dll")
-		arguments.ReferenceTarget = Path.new("ref/Target.dll")
-		arguments.TargetRootDirectory = Path.new("./root/")
-		arguments.TargetType = LinkTarget.Library
-		arguments.NullableState =  NullableState.Enabled
+		var options = CompileOptions.new()
+		options.Target = Path.new("bin/Target.dll")
+		options.ReferenceTarget = Path.new("ref/Target.dll")
+		options.TargetRootDirectory = Path.new("./root/")
+		options.TargetType = LinkTarget.Library
+		options.NullableState =  NullableState.Enabled
 
 		var actualArguments = RoslynArgumentBuilder.BuildSharedCompilerArguments(
-			arguments)
+			options)
 
 		var expectedArguments = [
 			"/unsafe-",
@@ -67,15 +67,15 @@ class RoslynArgumentBuilderUnitTests {
 
 	// [Fact]
 	BSCA_SingleArgument_Executable() {
-		var arguments = CompileArguments.new()
-		arguments.Target = Path.new("bin/Target.dll")
-		arguments.ReferenceTarget = Path.new("ref/Target.dll")
-		arguments.TargetType = LinkTarget.Executable
-		arguments.TargetRootDirectory = Path.new("./root/")
-		arguments.NullableState =  NullableState.Enabled
+		var options = CompileOptions.new()
+		options.Target = Path.new("bin/Target.dll")
+		options.ReferenceTarget = Path.new("ref/Target.dll")
+		options.TargetType = LinkTarget.Executable
+		options.TargetRootDirectory = Path.new("./root/")
+		options.NullableState =  NullableState.Enabled
 
 		var actualArguments = RoslynArgumentBuilder.BuildSharedCompilerArguments(
-			arguments)
+			options)
 
 		var expectedArguments = [
 			"/unsafe-",
@@ -106,16 +106,16 @@ class RoslynArgumentBuilderUnitTests {
 
 	// [Fact]
 	BSCA_SingleArgument_EnableWarningsAsErrors() {
-		var arguments = CompileArguments.new()
-		arguments.Target = Path.new("bin/Target.dll")
-		arguments.ReferenceTarget = Path.new("ref/Target.dll")
-		arguments.TargetRootDirectory = Path.new("./root/")
-		arguments.TargetType = LinkTarget.Library
-		arguments.NullableState =  NullableState.Enabled
-		arguments.EnableWarningsAsErrors = true
+		var options = CompileOptions.new()
+		options.Target = Path.new("bin/Target.dll")
+		options.ReferenceTarget = Path.new("ref/Target.dll")
+		options.TargetRootDirectory = Path.new("./root/")
+		options.TargetType = LinkTarget.Library
+		options.NullableState =  NullableState.Enabled
+		options.EnableWarningsAsErrors = true
 
 		var actualArguments = RoslynArgumentBuilder.BuildSharedCompilerArguments(
-			arguments)
+			options)
 
 		var expectedArguments = [
 			"/unsafe-",
@@ -146,16 +146,16 @@ class RoslynArgumentBuilderUnitTests {
 
 	// [Fact]
 	BSCA_SingleArgument_GenerateDebugInformation() {
-		var arguments = CompileArguments.new()
-		arguments.Target = Path.new("bin/Target.dll")
-		arguments.ReferenceTarget = Path.new("ref/Target.dll")
-		arguments.TargetRootDirectory = Path.new("./root/")
-		arguments.TargetType = LinkTarget.Library
-		arguments.NullableState =  NullableState.Enabled
-		arguments.GenerateSourceDebugInfo = true
+		var options = CompileOptions.new()
+		options.Target = Path.new("bin/Target.dll")
+		options.ReferenceTarget = Path.new("ref/Target.dll")
+		options.TargetRootDirectory = Path.new("./root/")
+		options.TargetType = LinkTarget.Library
+		options.NullableState =  NullableState.Enabled
+		options.GenerateSourceDebugInfo = true
 
 		var actualArguments = RoslynArgumentBuilder.BuildSharedCompilerArguments(
-			arguments)
+			options)
 
 		var expectedArguments = [
 			"/unsafe-",
@@ -186,13 +186,13 @@ class RoslynArgumentBuilderUnitTests {
 
 	// [Fact]
 	BSCA_SingleArgument_PreprocessorDefinitions() {
-		var arguments = CompileArguments.new()
-		arguments.Target = Path.new("bin/Target.dll")
-		arguments.ReferenceTarget = Path.new("ref/Target.dll")
-		arguments.TargetRootDirectory = Path.new("./root/")
-		arguments.TargetType = LinkTarget.Library
-		arguments.NullableState =  NullableState.Enabled
-		arguments.PreprocessorDefinitions = [
+		var options = CompileOptions.new()
+		options.Target = Path.new("bin/Target.dll")
+		options.ReferenceTarget = Path.new("ref/Target.dll")
+		options.TargetRootDirectory = Path.new("./root/")
+		options.TargetType = LinkTarget.Library
+		options.NullableState =  NullableState.Enabled
+		options.PreprocessorDefinitions = [
 			"DEBUG",
 			"VERSION=1"
 		]

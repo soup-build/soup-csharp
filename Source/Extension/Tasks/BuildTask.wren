@@ -7,7 +7,7 @@ import "mwasplund|Soup.Build.Utils:./Path" for Path
 import "mwasplund|Soup.Build.Utils:./Set" for Set
 import "mwasplund|Soup.Build.Utils:./ListExtensions" for ListExtensions
 import "mwasplund|Soup.Build.Utils:./MapExtensions" for MapExtensions
-import "mwasplund|Soup.CSharp.Compiler:./BuildArguments" for BuildArguments, BuildOptimizationLevel, BuildNullableState
+import "mwasplund|Soup.CSharp.Compiler:./BuildOptions" for BuildOptions, BuildOptimizationLevel, BuildNullableState
 import "mwasplund|Soup.CSharp.Compiler:./BuildEngine" for BuildEngine
 import "mwasplund|Soup.CSharp.Compiler.Roslyn:./RoslynCompiler" for RoslynCompiler
 
@@ -39,77 +39,77 @@ class BuildTask is SoupTask {
 		var dotnet = activeState["DotNet"]
 		var dotnetPath = Path.new(dotnet["ExecutablePath"])
 
-		var arguments = BuildArguments.new()
-		arguments.TargetArchitecture = buildTable["Architecture"]
-		arguments.TargetName = buildTable["TargetName"]
-		arguments.TargetType = buildTable["TargetType"]
-		arguments.SourceRootDirectory = Path.new(buildTable["SourceRootDirectory"])
-		arguments.TargetRootDirectory = Path.new(buildTable["TargetRootDirectory"])
-		arguments.ObjectDirectory = Path.new(buildTable["ObjectDirectory"])
-		arguments.BinaryDirectory = Path.new(buildTable["BinaryDirectory"])
+		var options = BuildOptions.new()
+		options.TargetArchitecture = buildTable["Architecture"]
+		options.TargetName = buildTable["TargetName"]
+		options.TargetType = buildTable["TargetType"]
+		options.SourceRootDirectory = Path.new(buildTable["SourceRootDirectory"])
+		options.TargetRootDirectory = Path.new(buildTable["TargetRootDirectory"])
+		options.ObjectDirectory = Path.new(buildTable["ObjectDirectory"])
+		options.BinaryDirectory = Path.new(buildTable["BinaryDirectory"])
 
 		if (buildTable.containsKey("Source")) {
-			arguments.SourceFiles = ListExtensions.ConvertToPathList(buildTable["Source"])
+			options.SourceFiles = ListExtensions.ConvertToPathList(buildTable["Source"])
 		}
 
 		if (buildTable.containsKey("LinkLibraries")) {
-			arguments.LinkDependencies = BuildTask.MakeUnique(ListExtensions.ConvertToPathList(buildTable["LinkLibraries"]))
+			options.LinkDependencies = BuildTask.MakeUnique(ListExtensions.ConvertToPathList(buildTable["LinkLibraries"]))
 		}
 
 		if (buildTable.containsKey("LibraryPaths")) {
-			arguments.LibraryPaths = ListExtensions.ConvertToPathList(buildTable["LibraryPaths"])
+			options.LibraryPaths = ListExtensions.ConvertToPathList(buildTable["LibraryPaths"])
 		}
 
 		if (buildTable.containsKey("PreprocessorDefinitions")) {
-			arguments.PreprocessorDefinitions = buildTable["PreprocessorDefinitions"]
+			options.PreprocessorDefinitions = buildTable["PreprocessorDefinitions"]
 		}
 
 		if (buildTable.containsKey("OptimizationLevel")) {
-			arguments.OptimizationLevel = buildTable["OptimizationLevel"]
+			options.OptimizationLevel = buildTable["OptimizationLevel"]
 		} else {
-			arguments.OptimizationLevel = BuildOptimizationLevel.None
+			options.OptimizationLevel = BuildOptimizationLevel.None
 		}
 
 		if (buildTable.containsKey("GenerateSourceDebugInfo")) {
-			arguments.GenerateSourceDebugInfo = buildTable["GenerateSourceDebugInfo"]
+			options.GenerateSourceDebugInfo = buildTable["GenerateSourceDebugInfo"]
 		} else {
-			arguments.GenerateSourceDebugInfo = false
+			options.GenerateSourceDebugInfo = false
 		}
 
 		if (buildTable.containsKey("NullableState")) {
-			arguments.NullableState = buildTable["NullableState"]
+			options.NullableState = buildTable["NullableState"]
 		} else {
-			arguments.NullableState = BuildNullableState.Enabled
+			options.NullableState = BuildNullableState.Enabled
 		}
 
 		// Load the runtime dependencies
 		if (buildTable.containsKey("RuntimeDependencies")) {
-			arguments.RuntimeDependencies = BuildTask.MakeUnique(
+			options.RuntimeDependencies = BuildTask.MakeUnique(
 				ListExtensions.ConvertToPathList(buildTable["RuntimeDependencies"]))
 		}
 
 		// Load the link dependencies
 		if (buildTable.containsKey("LinkDependencies")) {
-			arguments.LinkDependencies = BuildTask.CombineUnique(
-				arguments.LinkDependencies,
+			options.LinkDependencies = BuildTask.CombineUnique(
+				options.LinkDependencies,
 				ListExtensions.ConvertToPathList(buildTable["LinkDependencies"]))
 		}
 
 		// Load the list of disabled warnings
 		if (buildTable.containsKey("EnableWarningsAsErrors")) {
-			arguments.EnableWarningsAsErrors = buildTable["EnableWarningsAsErrors"]
+			options.EnableWarningsAsErrors = buildTable["EnableWarningsAsErrors"]
 		} else {
-			arguments.GenerateSourceDebugInfo = false
+			options.GenerateSourceDebugInfo = false
 		}
 
 		// Load the list of disabled warnings
 		if (buildTable.containsKey("DisabledWarnings")) {
-			arguments.DisabledWarnings = buildTable["DisabledWarnings"]
+			options.DisabledWarnings = buildTable["DisabledWarnings"]
 		}
 
 		// Check for any custom compiler flags
 		if (buildTable.containsKey("CustomCompilerProperties")) {
-			arguments.CustomProperties = buildTable["CustomCompilerProperties"]
+			options.CustomProperties = buildTable["CustomCompilerProperties"]
 		}
 
 		// Initialize the compiler to use
@@ -122,7 +122,7 @@ class BuildTask is SoupTask {
 		var compiler = __compilerFactory[compilerName].call(activeState)
 
 		var buildEngine = BuildEngine.new(compiler)
-		var buildResult = buildEngine.Execute(arguments)
+		var buildResult = buildEngine.Execute(options)
 
 		// Pass along internal state for other stages to gain access
 		buildTable["InternalLinkDependencies"] = ListExtensions.ConvertFromPathList(buildResult.InternalLinkDependencies)

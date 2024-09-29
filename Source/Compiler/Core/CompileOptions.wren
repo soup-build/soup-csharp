@@ -1,4 +1,4 @@
-﻿// <copyright file="CompilerArguments.wren" company="Soup">
+﻿// <copyright file="CompilerOptions.wren" company="Soup">
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
@@ -45,9 +45,9 @@ class NullableState {
 }
 
 /// <summary>
-/// The set of compiler arguments
+/// The set of compiler options
 /// </summary>
-class CompileArguments {
+class CompileOptionas {
 	construct new() {
 		_sourceRootDirectory = null
 		_targetRootDirectory = null
@@ -188,6 +188,6 @@ class CompileArguments {
 	}
 
 	toString {
-		return "CompileArguments { SourceRootDirectory=\"%(_sourceRootDirectory)\", TargetRootDirectory=\"%(_targetRootDirectory)\", ObjectDirectory=\"%(_objectDirectory)\", PreprocessorDefinitions=%(_preprocessorDefinitions), ReferenceLibraries=%(_referenceLibraries), SourceFiles=%(_sourceFiles), EnableOptimizations=\"%(_enableOptimizations)\", GenerateSourceDebugInfo=\"%(_generateSourceDebugInfo)\", TargetType=%(_targetType), Target=%(_target), ReferenceTarget=%(_referenceTarget), EnableWarningsAsErrors=\"%(_enableWarningsAsErrors)\", DisabledWarnings=%(_disabledWarnings), EnabledWarnings=%(_enabledWarnings), NullableState=\"%(_nullableState)\" CustomProperties=%(_customProperties) }"
+		return "CompileOptions { SourceRootDirectory=\"%(_sourceRootDirectory)\", TargetRootDirectory=\"%(_targetRootDirectory)\", ObjectDirectory=\"%(_objectDirectory)\", PreprocessorDefinitions=%(_preprocessorDefinitions), ReferenceLibraries=%(_referenceLibraries), SourceFiles=%(_sourceFiles), EnableOptimizations=\"%(_enableOptimizations)\", GenerateSourceDebugInfo=\"%(_generateSourceDebugInfo)\", TargetType=%(_targetType), Target=%(_target), ReferenceTarget=%(_referenceTarget), EnableWarningsAsErrors=\"%(_enableWarningsAsErrors)\", DisabledWarnings=%(_disabledWarnings), EnabledWarnings=%(_enabledWarnings), NullableState=\"%(_nullableState)\" CustomProperties=%(_customProperties) }"
 	}
 }

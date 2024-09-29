@@ -3,8 +3,8 @@
 // </copyright>
 
 import "soup-test" for SoupTest
-import "mwasplund|Soup.CSharp.Compiler:./BuildArguments" for BuildArguments, BuildNullableState, BuildOptimizationLevel, BuildTargetType
-import "mwasplund|Soup.CSharp.Compiler:./CompileArguments" for CompileArguments, LinkTarget, NullableState
+import "mwasplund|Soup.CSharp.Compiler:./BuildOptions" for BuildOptions, BuildNullableState, BuildOptimizationLevel, BuildTargetType
+import "mwasplund|Soup.CSharp.Compiler:./CompileOptions" for CompileOptions, LinkTarget, NullableState
 import "mwasplund|Soup.CSharp.Compiler:./BuildEngine" for BuildEngine
 import "mwasplund|Soup.CSharp.Compiler:./MockCompiler" for MockCompiler
 import "mwasplund|Soup.Build.Utils:./BuildOperation" for BuildOperation
@@ -39,7 +39,7 @@ class BuildEngineUnitTests {
 		var dependenciesTable = {}
 		globalState["Dependencies"] = dependenciesTable
 		dependenciesTable["Tool"] = {
-			"mkdir": {
+			"mwasplund|mkdir": {
 				"SharedState": {
 					"Build": {
 						"RunExecutable": "/TARGET/mkdir.exe"
@@ -51,55 +51,55 @@ class BuildEngineUnitTests {
 		// Register the mock compiler
 		var compiler = MockCompiler.new()
 
-		// Setup the build arguments
-		var arguments = BuildArguments.new()
-		arguments.TargetName = "Program"
-		arguments.TargetType = BuildTargetType.Executable
-		arguments.SourceRootDirectory = Path.new("C:/source/")
-		arguments.TargetRootDirectory = Path.new("C:/target/")
-		arguments.ObjectDirectory = Path.new("obj/")
-		arguments.BinaryDirectory = Path.new("bin/")
-		arguments.SourceFiles = [
+		// Setup the build options
+		var options = BuildOptions.new()
+		options.TargetName = "Program"
+		options.TargetType = BuildTargetType.Executable
+		options.SourceRootDirectory = Path.new("C:/source/")
+		options.TargetRootDirectory = Path.new("C:/target/")
+		options.ObjectDirectory = Path.new("obj/")
+		options.BinaryDirectory = Path.new("bin/")
+		options.SourceFiles = [
 			Path.new("TestFile.cs"),
 		]
-		arguments.OptimizationLevel = BuildOptimizationLevel.None
-		arguments.LinkDependencies = [
+		options.OptimizationLevel = BuildOptimizationLevel.None
+		options.LinkDependencies = [
 			Path.new("../Other/bin/OtherModule1.mock.a"),
 			Path.new("../OtherModule2.mock.a"),
 		]
-		arguments.NullableState = BuildNullableState.Enabled
+		options.NullableState = BuildNullableState.Enabled
 
 		var uut = BuildEngine.new(compiler)
-		var result = uut.Execute(arguments)
+		var result = uut.Execute(options)
 
 		// // Verify expected logs
 		Assert.ListEqual(
 			[],
 			SoupTest.logs)
 
-		var expectedCompileArguments = CompileArguments.new()
-		expectedCompileArguments.Target = Path.new("./bin/Program.mock.dll")
-		expectedCompileArguments.ReferenceTarget = Path.new("./bin/ref/Program.mock.dll")
-		expectedCompileArguments.TargetType = LinkTarget.Executable
-		expectedCompileArguments.ObjectDirectory = Path.new("obj/")
-		expectedCompileArguments.SourceRootDirectory = Path.new("C:/source/")
-		expectedCompileArguments.TargetRootDirectory = Path.new("C:/target/")
-		expectedCompileArguments.SourceFiles = [
+		var expectedCompileOptions = CompileOptions.new()
+		expectedCompileOptions.Target = Path.new("./bin/Program.mock.dll")
+		expectedCompileOptions.ReferenceTarget = Path.new("./bin/ref/Program.mock.dll")
+		expectedCompileOptions.TargetType = LinkTarget.Executable
+		expectedCompileOptions.ObjectDirectory = Path.new("obj/")
+		expectedCompileOptions.SourceRootDirectory = Path.new("C:/source/")
+		expectedCompileOptions.TargetRootDirectory = Path.new("C:/target/")
+		expectedCompileOptions.SourceFiles = [
 			Path.new("TestFile.cs"),
 		]
-		expectedCompileArguments.ReferenceLibraries = [
+		expectedCompileOptions.ReferenceLibraries = [
 			Path.new("../Other/bin/OtherModule1.mock.a"),
 			Path.new("../OtherModule2.mock.a"),
 		]
-		expectedCompileArguments.NullableState = NullableState.Enabled
+		expectedCompileOptions.NullableState = NullableState.Enabled
 
 		// Verify expected compiler calls
 		var val = compiler.GetCompileRequests()[0]
-		var areEqual = val == expectedCompileArguments
-		var areEqual2 = val.ObjectDirectory == expectedCompileArguments.ObjectDirectory
+		var areEqual = val == expectedCompileOptions
+		var areEqual2 = val.ObjectDirectory == expectedCompileOptions.ObjectDirectory
 		Assert.ListEqual(
 			[
-				expectedCompileArguments,
+				expectedCompileOptions,
 			],
 			compiler.GetCompileRequests())
 
@@ -195,28 +195,28 @@ class BuildEngineUnitTests {
 		// Register the mock compiler
 		var compiler = MockCompiler.new()
 
-		// Setup the build arguments
-		var arguments = BuildArguments.new()
-		arguments.TargetName = "Library"
-		arguments.TargetType = BuildTargetType.Library
-		arguments.SourceRootDirectory = Path.new("C:/source/")
-		arguments.TargetRootDirectory = Path.new("C:/target/")
-		arguments.ObjectDirectory = Path.new("obj/")
-		arguments.BinaryDirectory = Path.new("bin/")
-		arguments.SourceFiles = [
+		// Setup the build options
+		var options = BuildOptions.new()
+		options.TargetName = "Library"
+		options.TargetType = BuildTargetType.Library
+		options.SourceRootDirectory = Path.new("C:/source/")
+		options.TargetRootDirectory = Path.new("C:/target/")
+		options.ObjectDirectory = Path.new("obj/")
+		options.BinaryDirectory = Path.new("bin/")
+		options.SourceFiles = [
 			Path.new("TestFile1.cs"),
 			Path.new("TestFile2.cs"),
 			Path.new("TestFile3.cs"),
 		]
-		arguments.OptimizationLevel = BuildOptimizationLevel.Size
-		arguments.LinkDependencies = [
+		options.OptimizationLevel = BuildOptimizationLevel.Size
+		options.LinkDependencies = [
 			Path.new("../Other/bin/OtherModule1.mock.a"),
 			Path.new("../OtherModule2.mock.a"),
 		]
-		arguments.NullableState = BuildNullableState.Disabled
+		options.NullableState = BuildNullableState.Disabled
 
 		var uut = BuildEngine.new(compiler)
-		var result = uut.Execute(arguments)
+		var result = uut.Execute(options)
 
 		// // Verify expected logs
 		Assert.ListEqual(
@@ -224,28 +224,28 @@ class BuildEngineUnitTests {
 			SoupTest.logs)
 
 		// Setup the shared arguments
-		var expectedCompileArguments = CompileArguments.new()
-		expectedCompileArguments.Target = Path.new("./bin/Library.mock.dll")
-		expectedCompileArguments.TargetType = LinkTarget.Library
-		expectedCompileArguments.ReferenceTarget = Path.new("./bin/ref/Library.mock.dll")
-		expectedCompileArguments.SourceRootDirectory = Path.new("C:/source/")
-		expectedCompileArguments.TargetRootDirectory = Path.new("C:/target/")
-		expectedCompileArguments.ObjectDirectory = Path.new("obj/")
-		expectedCompileArguments.SourceFiles = [
+		var expectedCompileOptions = CompileOptions.new()
+		expectedCompileOptions.Target = Path.new("./bin/Library.mock.dll")
+		expectedCompileOptions.TargetType = LinkTarget.Library
+		expectedCompileOptions.ReferenceTarget = Path.new("./bin/ref/Library.mock.dll")
+		expectedCompileOptions.SourceRootDirectory = Path.new("C:/source/")
+		expectedCompileOptions.TargetRootDirectory = Path.new("C:/target/")
+		expectedCompileOptions.ObjectDirectory = Path.new("obj/")
+		expectedCompileOptions.SourceFiles = [
 			Path.new("TestFile1.cs"),
 			Path.new("TestFile2.cs"),
 			Path.new("TestFile3.cs"),
 		]
-		expectedCompileArguments.ReferenceLibraries = [
+		expectedCompileOptions.ReferenceLibraries = [
 			Path.new("../Other/bin/OtherModule1.mock.a"),
 			Path.new("../OtherModule2.mock.a"),
 		]
-		expectedCompileArguments.NullableState = NullableState.Disabled
+		expectedCompileOptions.NullableState = NullableState.Disabled
 
 		// Verify expected compiler calls
 		Assert.ListEqual(
 			[
-				expectedCompileArguments,
+				expectedCompileOptions,
 			],
 			compiler.GetCompileRequests())
 

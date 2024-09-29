@@ -2,7 +2,7 @@
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
-import "mwasplund|Soup.CSharp.Compiler:./CompileArguments" for CompileArguments, LinkTarget, NullableState
+import "mwasplund|Soup.CSharp.Compiler:./CompileOptions" for CompileOptions, LinkTarget, NullableState
 import "mwasplund|Soup.CSharp.Compiler.Roslyn:./RoslynCompiler" for RoslynCompiler
 import "mwasplund|Soup.Build.Utils:./BuildOperation" for BuildOperation
 import "mwasplund|Soup.Build.Utils:./Path" for Path
@@ -36,19 +36,19 @@ class RoslynCompilerUnitTests {
 			Path.new("C:/bin/mock.dotnet.exe"),
 			Path.new("C:/lib/mock.csc.dll"))
 
-		var arguments = CompileArguments.new()
-		arguments.Target = Path.new("bin/Target.dll")
-		arguments.TargetType = LinkTarget.Library
-		arguments.ReferenceTarget = Path.new("ref/Target.dll")
-		arguments.SourceRootDirectory = Path.new("C:/source/")
-		arguments.TargetRootDirectory = Path.new("C:/target/")
-		arguments.ObjectDirectory = Path.new("ObjectDir/")
-		arguments.SourceFiles = [
+		var options = CompileOptions.new()
+		options.Target = Path.new("bin/Target.dll")
+		options.TargetType = LinkTarget.Library
+		options.ReferenceTarget = Path.new("ref/Target.dll")
+		options.SourceRootDirectory = Path.new("C:/source/")
+		options.TargetRootDirectory = Path.new("C:/target/")
+		options.ObjectDirectory = Path.new("ObjectDir/")
+		options.SourceFiles = [
 			Path.new("File.cs"),
 		]
-		arguments.NullableState =  NullableState.Enabled
+		options.NullableState =  NullableState.Enabled
 
-		var result = uut.CreateCompileOperations(arguments)
+		var result = uut.CreateCompileOperations(options)
 
 		// Verify result
 		var expected = [
