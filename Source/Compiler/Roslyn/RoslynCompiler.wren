@@ -43,47 +43,48 @@ class RoslynCompiler is ICompiler {
 	/// <summary>
 	/// Compile
 	/// </summary>
-	CreateCompileOperations(options) {
+	CreateCompileOperations(options, objectDirectory, targetRootDirectory) {
 		var operations = []
 
 		// Write the shared arguments to the response file
-		var responseFile = arguments.ObjectDirectory + Path.new("CompileArguments.rsp")
-		var responseFileArgumentBuilder = CommandLineBuilder.new()
-		RoslynArgumentBuilder.BuildResponseFileArguments(options, responseFileArgumentBuilder)
+		var responseFile = objectDirectory + Path.new("CompileArguments.rsp")
+		var responseFileBuilder = CommandLineBuilder.new()
+		var agumentBuilder = RoslynArgumentBuilder.new()
+		agumentBuilder.BuildResponseFileArguments(options, responseFileBuilder)
 
 		var writeSharedArgumentsOperation = SharedOperations.CreateWriteFileOperation(
-			arguments.TargetRootDirectory,
+			targetRootDirectory,
 			responseFile,
-			sharedCommandArguments.toString)
+			responseFileBuilder.toString)
 		operations.add(writeSharedArgumentsOperation)
 
-		var symbolFile = Path.new(arguments.Target.toString)
+		var symbolFile = Path.new(options.OutputAssembly.toString)
 		symbolFile.SetFileExtension("pdb")
 
-		var targetResponseFile = arguments.TargetRootDirectory + responseFile
+		var targetResponseFile = targetRootDirectory + responseFile
 
 		// Build up the input/output sets
 		var inputFiles = []
 		inputFiles.add(_compilerLibrary)
 		inputFiles.add(targetResponseFile)
-		inputFiles = inputFiles + arguments.SourceFiles
-		inputFiles = inputFiles + arguments.ReferenceLibraries
+		inputFiles = inputFiles + options.Sources
+		inputFiles = inputFiles + options.ReferenceLibraries
 		var outputFiles = [
-			arguments.TargetRootDirectory + arguments.Target,
-			arguments.TargetRootDirectory + symbolFile,
+			targetRootDirectory + options.OutputAssembly,
+			targetRootDirectory + symbolFile,
 		]
 
-		var commandLineArgumentBuilder = CommandLineBuilder.new()
-		commandLineArgumentBuilder.Append("exec")
-		commandLineArgumentBuilder.Append("%(_compilerLibrary)")
-		commandLineArgumentBuilder.Append("@%(targetResponseFile)")
-		RoslynArgumentBuilder.BuildCommandLineArguments(commandLineArgumentBuilder)
+		var commandLineBuilder = CommandLineBuilder.new()
+		commandLineBuilder.Append("exec")
+		commandLineBuilder.Append("%(_compilerLibrary)")
+		commandLineBuilder.Append("@%(targetResponseFile)")
+		agumentBuilder.BuildCommandLineArguments(options, commandLineBuilder)
 
 		// Generate the compile build operation
-		var commandArguments = commandLineArgumentBuilder.CommandArguments
+		var commandArguments = commandLineBuilder.CommandArguments
 		var buildOperation = BuildOperation.new(
-			"Compile - %(arguments.Target)",
-			arguments.SourceRootDirectory,
+			"Compile - %(options.OutputAssembly)",
+			options.SourceRootDirectory,
 			_dotnetExecutable,
 			commandArguments,
 			inputFiles,

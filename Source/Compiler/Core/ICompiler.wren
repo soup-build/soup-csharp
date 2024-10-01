@@ -31,5 +31,5 @@ class ICompiler {
 	/// <summary>
 	/// Compile
 	/// </summary>
-	CreateCompileOperations(arguments) {}
+	CreateCompileOperations(options, objectDirectory, targetRootDirectory) {}
 }

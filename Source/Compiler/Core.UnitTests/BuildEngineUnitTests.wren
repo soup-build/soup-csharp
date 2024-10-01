@@ -4,7 +4,8 @@
 
 import "soup-test" for SoupTest
 import "mwasplund|Soup.CSharp.Compiler:./BuildOptions" for BuildOptions, BuildNullableState, BuildOptimizationLevel, BuildTargetType
-import "mwasplund|Soup.CSharp.Compiler:./CompileOptions" for CompileOptions, LinkTarget, NullableState
+import "mwasplund|Soup.CSharp.Compiler:./CompileOptions" for CompileOptions, NullableState
+import "mwasplund|Soup.CSharp.Compiler:./ManagedCompileOptions" for LinkTarget
 import "mwasplund|Soup.CSharp.Compiler:./BuildEngine" for BuildEngine
 import "mwasplund|Soup.CSharp.Compiler:./MockCompiler" for MockCompiler
 import "mwasplund|Soup.Build.Utils:./BuildOperation" for BuildOperation
@@ -78,13 +79,13 @@ class BuildEngineUnitTests {
 			SoupTest.logs)
 
 		var expectedCompileOptions = CompileOptions.new()
-		expectedCompileOptions.Target = Path.new("./bin/Program.mock.dll")
-		expectedCompileOptions.ReferenceTarget = Path.new("./bin/ref/Program.mock.dll")
+		expectedCompileOptions.OutputAssembly = Path.new("./bin/Program.mock.dll")
+		expectedCompileOptions.OutputRefAssembly = Path.new("./bin/ref/Program.mock.dll")
 		expectedCompileOptions.TargetType = LinkTarget.Executable
 		expectedCompileOptions.ObjectDirectory = Path.new("obj/")
 		expectedCompileOptions.SourceRootDirectory = Path.new("C:/source/")
 		expectedCompileOptions.TargetRootDirectory = Path.new("C:/target/")
-		expectedCompileOptions.SourceFiles = [
+		expectedCompileOptions.Sources = [
 			Path.new("TestFile.cs"),
 		]
 		expectedCompileOptions.ReferenceLibraries = [

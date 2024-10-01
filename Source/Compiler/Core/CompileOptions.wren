@@ -1,23 +1,9 @@
-﻿// <copyright file="CompilerOptions.wren" company="Soup">
+﻿// <copyright file="CompileOptions.wren" company="Soup">
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
 import "mwasplund|Soup.Build.Utils:./ListExtensions" for ListExtensions
-
-/// <summary>
-/// The enumeration of link targets
-/// </summary>
-class LinkTarget {
-	/// <summary>
-	/// Dynamic Library
-	/// </summary>
-	static Library { "Library" }
-
-	/// <summary>
-	/// Executable
-	/// </summary>
-	static Executable { "Executable" }
-}
+import "./ManagedCompileOptions" for ManagedCompileOptions
 
 /// <summary>
 /// The enumeration of nullable state
@@ -47,20 +33,26 @@ class NullableState {
 /// <summary>
 /// The set of compiler options
 /// </summary>
-class CompileOptionas {
+class CompileOptions is ManagedCompileOptions {
 	construct new() {
+		super()
 		_sourceRootDirectory = null
-		_targetRootDirectory = null
-		_objectDirectory = null
-		_preprocessorDefinitions = []
+		_defineConstants = []
 		_referenceLibraries = []
-		_sourceFiles = []
 		_enableOptimizations = false
 		_generateSourceDebugInfo = false
-		_targetType = null
 		_target = null
 		_referenceTarget = null
-		_enableWarningsAsErrors = false
+		_allowUnsafeBlocks = false
+		_checkForOverflowUnderflow = false
+		_errorReport = "prompt"
+		_warningLevel = 5
+		_errorEndLocation = true
+		_preferredUILang = "en-US"
+		_highEntropyVA = true
+		_nullable = "enable"
+		_generateFullPaths = true
+		_noStandardLib = true
 		_disabledWarnings = []
 		_enabledWarnings = []
 		_nullableState = null
@@ -74,34 +66,16 @@ class CompileOptionas {
 	SourceRootDirectory=(value) { _sourceRootDirectory = value }
 
 	/// <summary>
-	/// Gets or sets the target directory
-	/// </summary>
-	TargetRootDirectory { _targetRootDirectory }
-	TargetRootDirectory=(value) { _targetRootDirectory = value }
-
-	/// <summary>
-	/// Gets or sets the object directory
-	/// </summary>
-	ObjectDirectory { _objectDirectory }
-	ObjectDirectory=(value) { _objectDirectory = value }
-
-	/// <summary>
 	/// Gets or sets the list of preprocessor definitions
 	/// </summary>
-	PreprocessorDefinitions { _preprocessorDefinitions }
-	PreprocessorDefinitions=(value) { _preprocessorDefinitions = value }
+	DefineConstants { _defineConstants }
+	DefineConstants=(value) { _defineConstants = value }
 
 	/// <summary>
 	/// Gets or sets the list of reference libraries
 	/// </summary>
 	ReferenceLibraries { _referenceLibraries }
 	ReferenceLibraries=(value) { _referenceLibraries = value }
-
-	/// <summary>
-	/// Gets or sets the list of source files
-	/// </summary>
-	SourceFiles { _sourceFiles }
-	SourceFiles=(value) { _sourceFiles = value }
 
 	/// <summary>
 	/// Gets or sets a value indicating whether to enable optimizations
@@ -116,28 +90,64 @@ class CompileOptionas {
 	GenerateSourceDebugInfo=(value) { _generateSourceDebugInfo = value }
 
 	/// <summary>
-	/// Gets or sets the target type
+	/// Gets or sets a value indicating if unsafe blocks are allowed
 	/// </summary>
-	TargetType { _targetType }
-	TargetType=(value) { _targetType = value }
+	AllowUnsafeBlocks { _allowUnsafeBlocks }
+	AllowUnsafeBlocks=(value) { _allowUnsafeBlocks = value }
+	
+	/// <summary>
+	/// Gets or sets a value indicating if overflow and underflow checks are enabled
+	/// </summary>
+	CheckForOverflowUnderflow { _checkForOverflowUnderflow }
+	CheckForOverflowUnderflow=(value) { _checkForOverflowUnderflow = value }
 
 	/// <summary>
-	/// Gets or sets the target file
+	/// Gets or sets a value indicating if full paths should be generated
 	/// </summary>
-	Target { _target }
-	Target=(value) { _target = value }
+	GenerateFullPaths { _generateFullPaths }
+	GenerateFullPaths=(value) { _generateFullPaths = value }
 
 	/// <summary>
-	/// Gets or sets the reference target file
+	/// Gets or sets a value indicating if the standard library should not be used
 	/// </summary>
-	ReferenceTarget { _referenceTarget }
-	ReferenceTarget=(value) { _referenceTarget = value }
+	NoStandardLib { _noStandardLib }
+	NoStandardLib=(value) { _noStandardLib = value }
 
 	/// <summary>
-	/// Gets or sets a value indicating whether to enable warnings as errors
+	/// Gets or sets the error report type
 	/// </summary>
-	EnableWarningsAsErrors { _enableWarningsAsErrors }
-	EnableWarningsAsErrors=(value) { _enableWarningsAsErrors = value }
+	ErrorReport { _errorReport }
+	ErrorReport=(value) { _errorReport = value }
+
+	/// <summary>
+	/// Gets or sets the warning level
+	/// </summary>
+	WarningLevel { _warningLevel }
+	WarningLevel=(value) { _warningLevel = value }
+
+	/// <summary>
+	/// Gets or sets a value indicating whether to show error end location
+	/// </summary>
+	ErrorEndLocation { _errorEndLocation }
+	ErrorEndLocation=(value) { _errorEndLocation = value }
+
+	/// <summary>
+	/// Gets or sets the preferred UI language
+	/// </summary>
+	PreferredUILang { _preferredUILang }
+	PreferredUILang=(value) { _preferredUILang = value }
+
+	/// <summary>
+	/// Gets or sets a value indicating whether to enable high entropy VA
+	/// </summary>
+	HighEntropyVA { _highEntropyVA }
+	HighEntropyVA=(value) { _highEntropyVA = value }
+
+	/// <summary>
+	/// Gets or sets the nullable state
+	/// </summary>
+	Nullable { _nullable }
+	Nullable=(value) { _nullable = value }
 
 	/// <summary>
 	/// Gets or sets the list of disabled warnings
@@ -169,18 +179,22 @@ class CompileOptionas {
 		}
 
 		// Return true if the fields match.
-		return this.SourceRootDirectory == rhs.SourceRootDirectory &&
-			this.TargetRootDirectory == rhs.TargetRootDirectory &&
-			this.ObjectDirectory == rhs.ObjectDirectory &&
-			ListExtensions.SequenceEqual(this.PreprocessorDefinitions, rhs.PreprocessorDefinitions) &&
+		return super.Equals(rhs) &&
+			this.SourceRootDirectory == rhs.SourceRootDirectory &&
+			ListExtensions.SequenceEqual(this.DefineConstants, rhs.DefineConstants) &&
 			ListExtensions.SequenceEqual(this.ReferenceLibraries, rhs.ReferenceLibraries) &&
-			ListExtensions.SequenceEqual(this.SourceFiles, rhs.SourceFiles) &&
 			this.EnableOptimizations == rhs.EnableOptimizations &&
 			this.GenerateSourceDebugInfo == rhs.GenerateSourceDebugInfo &&
-			this.TargetType == rhs.TargetType &&
-			this.Target == rhs.Target &&
-			this.ReferenceTarget == rhs.ReferenceTarget &&
-			this.EnableWarningsAsErrors == rhs.EnableWarningsAsErrors &&
+			this.AllowUnsafeBlocks == rhs.AllowUnsafeBlocks &&
+			this.CheckForOverflowUnderflow == rhs.CheckForOverflowUnderflow &&
+			this.GenerateFullPaths == rhs.GenerateFullPaths &&
+			this.NoStandardLib == rhs.NoStandardLib &&
+			this.ErrorReport == rhs.ErrorReport &&
+			this.WarningLevel == rhs.WarningLevel &&
+			this.ErrorEndLocation == rhs.ErrorEndLocation &&
+			this.PreferredUILang == rhs.PreferredUILang &&
+			this.HighEntropyVA == rhs.HighEntropyVA &&
+			this.Nullable == rhs.Nullable &&
 			ListExtensions.SequenceEqual(this.DisabledWarnings, rhs.DisabledWarnings) &&
 			ListExtensions.SequenceEqual(this.EnabledWarnings, rhs.EnabledWarnings) &&
 			this.NullableState == rhs.NullableState &&
@@ -188,6 +202,6 @@ class CompileOptionas {
 	}
 
 	toString {
-		return "CompileOptions { SourceRootDirectory=\"%(_sourceRootDirectory)\", TargetRootDirectory=\"%(_targetRootDirectory)\", ObjectDirectory=\"%(_objectDirectory)\", PreprocessorDefinitions=%(_preprocessorDefinitions), ReferenceLibraries=%(_referenceLibraries), SourceFiles=%(_sourceFiles), EnableOptimizations=\"%(_enableOptimizations)\", GenerateSourceDebugInfo=\"%(_generateSourceDebugInfo)\", TargetType=%(_targetType), Target=%(_target), ReferenceTarget=%(_referenceTarget), EnableWarningsAsErrors=\"%(_enableWarningsAsErrors)\", DisabledWarnings=%(_disabledWarnings), EnabledWarnings=%(_enabledWarnings), NullableState=\"%(_nullableState)\" CustomProperties=%(_customProperties) }"
+		return "CompileOptions { SourceRootDirectory=\"%(_sourceRootDirectory)\", DefineConstants=%(_defineConstants), ReferenceLibraries=%(_referenceLibraries), EnableOptimizations=\"%(_enableOptimizations)\", GenerateSourceDebugInfo=\"%(_generateSourceDebugInfo)\", TargetType=%(_targetType), Target=%(_target), ReferenceTarget=%(_referenceTarget), DisabledWarnings=%(_disabledWarnings), EnabledWarnings=%(_enabledWarnings), NullableState=\"%(_nullableState)\" CustomProperties=%(_customProperties) }"
 	}
 }

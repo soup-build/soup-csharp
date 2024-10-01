@@ -60,8 +60,8 @@ class BuildTask is SoupTask {
 			options.LibraryPaths = ListExtensions.ConvertToPathList(buildTable["LibraryPaths"])
 		}
 
-		if (buildTable.containsKey("PreprocessorDefinitions")) {
-			options.PreprocessorDefinitions = buildTable["PreprocessorDefinitions"]
+		if (buildTable.containsKey("DefineConstants")) {
+			options.DefineConstants = buildTable["DefineConstants"]
 		}
 
 		if (buildTable.containsKey("OptimizationLevel")) {
@@ -96,8 +96,8 @@ class BuildTask is SoupTask {
 		}
 
 		// Load the list of disabled warnings
-		if (buildTable.containsKey("EnableWarningsAsErrors")) {
-			options.EnableWarningsAsErrors = buildTable["EnableWarningsAsErrors"]
+		if (buildTable.containsKey("TreatWarningsAsErrors")) {
+			options.TreatWarningsAsErrors = buildTable["TreatWarningsAsErrors"]
 		} else {
 			options.GenerateSourceDebugInfo = false
 		}

@@ -7,31 +7,35 @@
 /// </summary>
 class CommandLineBuilder {
 	construct new() {
-		_commandArguments = []
+		_arguments = []
 	}
 
 	/// <summary>
 	/// Gets or sets the target name
 	/// </summary>
-	CommandArguments { _commandArguments }
+	CommandArguments { _arguments }
 
-	toString() {
-		return _commandArguments.join(" ")
+	toString {
+		return _arguments.join(" ")
 	}
 
-	AddValueWithQuotes(value) {
+	Append(value) {
+		_arguments.add(value)
+	}
+
+	AppendValueWithQuotes(value) {
 		_arguments.add("\"%(value)\"")
 	}
 
-	AddFlag(flag) {
+	AppendFlag(flag) {
 		_arguments.add("/%(flag)")
 	}
 
-	AddParameter(name, value) {
+	AppendSwitch(name, value) {
 		_arguments.add("/%(name):%(value)")
 	}
 
-	AddParameterWithQuotes(name, value) {
+	AppendSwitchWithQuotes(name, value) {
 		_arguments.add("/%(name):\"%(value)\"")
 	}
 	
@@ -49,7 +53,31 @@ class CommandLineBuilder {
 	AppendParameterArrayIfNotEmpty(name, values, separator) {
 		if (values.count > 0) {
 			var switchValue = values.join(separator)
-			this.AddParameter(name, switchValue)
+			this.AppendSwitch(name, switchValue)
+		}
+	}
+
+	AppendIfTrue(name, value) {
+		if (value) {
+			this.AppendFlag(name)
+		}
+	}
+
+	AppendSwitchIfNotNull(name, value) {
+		if (!(value is Null)) {
+			this.AppendSwitch(name, value)
+		}
+	}
+
+	AppendSwitchWithQuotesIfNotNull(name, value) {
+		if (!(value is Null)) {
+			this.AppendSwitchWithQuotes(name, value)
+		}
+	}
+
+	AppendArrayQuoted(values) {
+		for (value in values) {
+			this.AppendValueWithQuotes(value)
 		}
 	}
 }

@@ -82,12 +82,12 @@ class RecipeBuildTask is SoupTask {
 		var libraryPaths = []
 
 		// Combine the defines with the default set and the platform
-		var preprocessorDefinitions = []
+		var defineConstants = []
 		if (recipe.containsKey("Defines")) {
-			preprocessorDefinitions = recipe["Defines"]
+			defineConstants = recipe["Defines"]
 		}
 
-		preprocessorDefinitions.add("SOUP_BUILD")
+		defineConstants.add("SOUP_BUILD")
 
 		// Build up arguments to build this individual recipe
 		var targetDirectory = Path.new(context["TargetDirectory"])
@@ -101,9 +101,9 @@ class RecipeBuildTask is SoupTask {
 		}
 
 		// Check for warning settings
-		var enableWarningsAsErrors = true
-		if (recipe.containsKey("EnableWarningsAsErrors")) {
-			enableWarningsAsErrors = recipe["EnableWarningsAsErrors"]
+		var treatWarningsAsErrors = true
+		if (recipe.containsKey("TreatWarningsAsErrors")) {
+			treatWarningsAsErrors = recipe["TreatWarningsAsErrors"]
 		}
 
 		// Check for nullable settings, default to enabled
@@ -116,14 +116,14 @@ class RecipeBuildTask is SoupTask {
 		var optimizationLevel = BuildOptimizationLevel.None
 		var generateSourceDebugInfo = false
 		if (flavor == "Debug") {
-			// preprocessorDefinitions.add("DEBUG")
+			// defineConstants.add("DEBUG")
 			generateSourceDebugInfo = true
 		} else if (flavor == "DebugRelease") {
-			preprocessorDefinitions.add("RELEASE")
+			defineConstants.add("RELEASE")
 			generateSourceDebugInfo = true
 			optimizationLevel = BuildOptimizationLevel.Speed
 		} else if (flavor == "Release") {
-			preprocessorDefinitions.add("RELEASE")
+			defineConstants.add("RELEASE")
 			optimizationLevel = BuildOptimizationLevel.Speed
 		} else {
 			Fiber.abort("Unknown build flavor: %(flavor)")
@@ -141,8 +141,8 @@ class RecipeBuildTask is SoupTask {
 			MapExtensions.EnsureList(build, "LinkLibraries"),
 			ListExtensions.ConvertFromPathList(linkLibraries))
 		ListExtensions.Append(
-			MapExtensions.EnsureList(build, "PreprocessorDefinitions"),
-			preprocessorDefinitions)
+			MapExtensions.EnsureList(build, "DefineConstants"),
+			defineConstants)
 		ListExtensions.Append(
 			MapExtensions.EnsureList(build, "LibraryPaths"),
 			ListExtensions.ConvertFromPathList(libraryPaths))
@@ -152,7 +152,7 @@ class RecipeBuildTask is SoupTask {
 				sourceFiles)
 		}
 
-		build["EnableWarningsAsErrors"] = enableWarningsAsErrors
+		build["TreatWarningsAsErrors"] = treatWarningsAsErrors
 		build["NullableState"] = nullableState
 
 		// Convert the recipe type to the required build type

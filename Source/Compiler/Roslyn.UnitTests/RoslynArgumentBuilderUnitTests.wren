@@ -2,8 +2,10 @@
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
+import "mwasplund|Soup.CSharp.Compiler.Roslyn:./CommandLineBuilder" for CommandLineBuilder
 import "mwasplund|Soup.CSharp.Compiler.Roslyn:./RoslynArgumentBuilder" for RoslynArgumentBuilder
-import "mwasplund|Soup.CSharp.Compiler:./CompileOptions" for CompileOptions, LinkTarget, NullableState
+import "mwasplund|Soup.CSharp.Compiler:./CompileOptions" for CompileOptions, NullableState
+import "mwasplund|Soup.CSharp.Compiler:./ManagedCompileOptions" for LinkTarget
 import "mwasplund|Soup.Build.Utils:./Path" for Path
 import "../../Test/Assert" for Assert
 
@@ -22,21 +24,22 @@ class RoslynArgumentBuilderUnitTests {
 		this.BSCA_SingleArgument_GenerateDebugInformation()
 		System.print("RoslynArgumentBuilderUnitTests.BSCA_SingleArgument_PreprocessorDefinitions")
 		this.BSCA_SingleArgument_PreprocessorDefinitions()
-		System.print("RoslynArgumentBuilderUnitTests.BuildUniqueCompilerArguments")
-		this.BuildUniqueCompilerArguments()
+		System.print("RoslynArgumentBuilderUnitTests.BuildCommandLineArguments")
+		this.BuildCommandLineArguments()
 	}
 
 	// [Fact]
 	BSCA_DefaultParameters() {
 		var options = CompileOptions.new()
-		options.Target = Path.new("bin/Target.dll")
-		options.ReferenceTarget = Path.new("ref/Target.dll")
-		options.TargetRootDirectory = Path.new("./root/")
+		options.OutputAssembly = Path.new("./root/bin/Target.dll")
+		options.OutputRefAssembly = Path.new("./root/ref/Target.dll")
 		options.TargetType = LinkTarget.Library
 		options.NullableState =  NullableState.Enabled
 
-		var actualArguments = RoslynArgumentBuilder.BuildSharedCompilerArguments(
-			options)
+		var responseFileBuilder = CommandLineBuilder.new()
+		var agumentBuilder = RoslynArgumentBuilder.new()
+		agumentBuilder.BuildResponseFileArguments(
+			options, responseFileBuilder)
 
 		var expectedArguments = [
 			"/unsafe-",
@@ -62,20 +65,21 @@ class RoslynArgumentBuilderUnitTests {
 			"/langversion:9.0",
 		]
 
-		Assert.ListEqual(expectedArguments, actualArguments)
+		Assert.ListEqual(expectedArguments, responseFileBuilder.CommandArguments)
 	}
 
 	// [Fact]
 	BSCA_SingleArgument_Executable() {
 		var options = CompileOptions.new()
-		options.Target = Path.new("bin/Target.dll")
-		options.ReferenceTarget = Path.new("ref/Target.dll")
+		options.OutputAssembly = Path.new("./root/bin/Target.dll")
+		options.OutputRefAssembly = Path.new("./root/ref/Target.dll")
 		options.TargetType = LinkTarget.Executable
-		options.TargetRootDirectory = Path.new("./root/")
 		options.NullableState =  NullableState.Enabled
 
-		var actualArguments = RoslynArgumentBuilder.BuildSharedCompilerArguments(
-			options)
+		var responseFileBuilder = CommandLineBuilder.new()
+		var agumentBuilder = RoslynArgumentBuilder.new()
+		agumentBuilder.BuildResponseFileArguments(
+			options, responseFileBuilder)
 
 		var expectedArguments = [
 			"/unsafe-",
@@ -101,21 +105,22 @@ class RoslynArgumentBuilderUnitTests {
 			"/langversion:9.0",
 		]
 
-		Assert.ListEqual(expectedArguments, actualArguments)
+		Assert.ListEqual(expectedArguments, responseFileBuilder.CommandArguments)
 	}
 
 	// [Fact]
 	BSCA_SingleArgument_EnableWarningsAsErrors() {
 		var options = CompileOptions.new()
-		options.Target = Path.new("bin/Target.dll")
-		options.ReferenceTarget = Path.new("ref/Target.dll")
-		options.TargetRootDirectory = Path.new("./root/")
+		options.OutputAssembly = Path.new("./root/bin/Target.dll")
+		options.OutputRefAssembly = Path.new("./root/ref/Target.dll")
 		options.TargetType = LinkTarget.Library
 		options.NullableState =  NullableState.Enabled
-		options.EnableWarningsAsErrors = true
+		options.TreatWarningsAsErrors = true
 
-		var actualArguments = RoslynArgumentBuilder.BuildSharedCompilerArguments(
-			options)
+		var responseFileBuilder = CommandLineBuilder.new()
+		var agumentBuilder = RoslynArgumentBuilder.new()
+		agumentBuilder.BuildResponseFileArguments(
+			options, responseFileBuilder)
 
 		var expectedArguments = [
 			"/unsafe-",
@@ -141,21 +146,22 @@ class RoslynArgumentBuilderUnitTests {
 			"/langversion:9.0",
 		]
 
-		Assert.ListEqual(expectedArguments, actualArguments)
+		Assert.ListEqual(expectedArguments, responseFileBuilder.CommandArguments)
 	}
 
 	// [Fact]
 	BSCA_SingleArgument_GenerateDebugInformation() {
 		var options = CompileOptions.new()
-		options.Target = Path.new("bin/Target.dll")
-		options.ReferenceTarget = Path.new("ref/Target.dll")
-		options.TargetRootDirectory = Path.new("./root/")
+		options.OutputAssembly = Path.new("./root/bin/Target.dll")
+		options.OutputRefAssembly = Path.new("./root/ref/Target.dll")
 		options.TargetType = LinkTarget.Library
 		options.NullableState =  NullableState.Enabled
 		options.GenerateSourceDebugInfo = true
 
-		var actualArguments = RoslynArgumentBuilder.BuildSharedCompilerArguments(
-			options)
+		var responseFileBuilder = CommandLineBuilder.new()
+		var agumentBuilder = RoslynArgumentBuilder.new()
+		agumentBuilder.BuildResponseFileArguments(
+			options, responseFileBuilder)
 
 		var expectedArguments = [
 			"/unsafe-",
@@ -181,24 +187,25 @@ class RoslynArgumentBuilderUnitTests {
 			"/langversion:9.0",
 		]
 
-		Assert.ListEqual(expectedArguments, actualArguments)
+		Assert.ListEqual(expectedArguments, responseFileBuilder.CommandArguments)
 	}
 
 	// [Fact]
 	BSCA_SingleArgument_PreprocessorDefinitions() {
 		var options = CompileOptions.new()
-		options.Target = Path.new("bin/Target.dll")
-		options.ReferenceTarget = Path.new("ref/Target.dll")
-		options.TargetRootDirectory = Path.new("./root/")
+		options.OutputAssembly = Path.new("./root/bin/Target.dll")
+		options.OutputRefAssembly = Path.new("./root/ref/Target.dll")
 		options.TargetType = LinkTarget.Library
 		options.NullableState =  NullableState.Enabled
-		options.PreprocessorDefinitions = [
+		options.DefineConstants = [
 			"DEBUG",
 			"VERSION=1"
 		]
 
-		var actualArguments = RoslynArgumentBuilder.BuildSharedCompilerArguments(
-			arguments)
+		var responseFileBuilder = CommandLineBuilder.new()
+		var agumentBuilder = RoslynArgumentBuilder.new()
+		agumentBuilder.BuildResponseFileArguments(
+			options, responseFileBuilder)
 
 		var expectedArguments = [
 			"/unsafe-",
@@ -225,17 +232,20 @@ class RoslynArgumentBuilderUnitTests {
 			"/langversion:9.0",
 		]
 
-		Assert.ListEqual(expectedArguments, actualArguments)
+		Assert.ListEqual(expectedArguments, responseFileBuilder.CommandArguments)
 	}
 
 	// [Fact]
-	BuildUniqueCompilerArguments() {
-		var actualArguments = RoslynArgumentBuilder.BuildUniqueCompilerArguments()
+	BuildCommandLineArguments() {
+		var options = CompileOptions.new()
+		var commandLineBuilder = CommandLineBuilder.new()
+		var agumentBuilder = RoslynArgumentBuilder.new()
+		var actualArguments = agumentBuilder.BuildCommandLineArguments(options, commandLineBuilder)
 
 		var expectedArguments = [
-			"/noconfig",
+			"/noconfig"
 		]
 
-		Assert.ListEqual(expectedArguments, actualArguments)
+		Assert.ListEqual(expectedArguments, commandLineBuilder.CommandArguments)
 	}
 }

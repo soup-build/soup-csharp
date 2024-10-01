@@ -77,11 +77,11 @@ class BuildOptions {
 		_sourceFiles = []
 		_linkDependencies = []
 		_libraryPaths = []
-		_preprocessorDefinitions = []
+		_defineConstants = []
 		_runtimeDependencies = []
 		_optimizationLevel = null
 		_generateSourceDebugInfo = false
-		_enableWarningsAsErrors = false
+		_treatWarningsAsErrors = false
 		_nullableState = null
 		_disabledWarnings = []
 		_enabledWarnings = []
@@ -151,8 +151,8 @@ class BuildOptions {
 	/// <summary>
 	/// Gets or sets the list of preprocessor definitions
 	/// </summary>
-	PreprocessorDefinitions { _preprocessorDefinitions }
-	PreprocessorDefinitions=(value) { _preprocessorDefinitions = value }
+	DefineConstants { _defineConstants }
+	DefineConstants=(value) { _defineConstants = value }
 
 	/// <summary>
 	/// Gets or sets the list of runtime dependencies
@@ -175,8 +175,8 @@ class BuildOptions {
 	/// <summary>
 	/// Gets or sets a value indicating whether to enable warnings as errors
 	/// </summary>
-	EnableWarningsAsErrors { _enableWarningsAsErrors }
-	EnableWarningsAsErrors=(value) { _enableWarningsAsErrors = value }
+	TreatWarningsAsErrors { _treatWarningsAsErrors }
+	TreatWarningsAsErrors=(value) { _treatWarningsAsErrors = value }
 
 	/// <summary>
 	/// Gets or sets a the nullable state

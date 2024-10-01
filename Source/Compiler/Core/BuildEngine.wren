@@ -4,7 +4,8 @@
 
 import "./BuildResult" for BuildResult
 import "./BuildOptions" for BuildTargetType, BuildNullableState
-import "./CompileOptions" for CompileOptions, LinkTarget, NullableState
+import "./CompileOptions" for CompileOptions, NullableState
+import "./ManagedCompileOptions" for LinkTarget
 import "mwasplund|Soup.Build.Utils:./SharedOperations" for SharedOperations
 import "mwasplund|Soup.Build.Utils:./Path" for Path
 
@@ -100,16 +101,14 @@ class BuildEngine {
 
 			// Setup the shared properties
 			var compileOptions = CompileOptions.new()
-			options.Target = targetFile
-			compileOptions.ReferenceTarget = referenceTargetFile
+			compileOptions.OutputAssembly = targetFile
+			compileOptions.OutputRefAssembly = referenceTargetFile
 			compileOptions.TargetType = targetType
 			compileOptions.SourceRootDirectory = options.SourceRootDirectory
-			compileOptions.TargetRootDirectory = options.TargetRootDirectory
-			compileOptions.ObjectDirectory = options.ObjectDirectory
-			compileOptions.SourceFiles = options.SourceFiles
-			compileOptions.PreprocessorDefinitions = options.PreprocessorDefinitions
+			compileOptions.Sources = options.SourceFiles
+			compileOptions.DefineConstants = options.DefineConstants
 			compileOptions.GenerateSourceDebugInfo = options.GenerateSourceDebugInfo
-			compileOptions.EnableWarningsAsErrors = options.EnableWarningsAsErrors
+			compileOptions.TreatWarningsAsErrors = options.TreatWarningsAsErrors
 			compileOptions.DisabledWarnings = options.DisabledWarnings
 			compileOptions.EnabledWarnings = options.EnabledWarnings
 			compileOptions.NullableState = nullableState
@@ -117,7 +116,8 @@ class BuildEngine {
 			compileOptions.ReferenceLibraries = options.LinkDependencies
 
 			// Compile all source files as a single call
-			var compileOperations = _compiler.CreateCompileOperations(compileOptions)
+			var compileOperations = _compiler.CreateCompileOperations(
+				compileOptions, options.ObjectDirectory, options.TargetRootDirectory)
 			for (operation in compileOperations) {
 				result.BuildOperations.add(operation)
 			}

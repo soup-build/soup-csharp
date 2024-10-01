@@ -5,8 +5,9 @@ Source: [
 	'BuildEngine.wren'
 	'BuildOptions.wren'
 	'BuildResult.wren'
-	'CompileArguments.wren'
+	'CompileOptions.wren'
 	'ICompiler.wren'
+	'ManagedCompileOptions.wren'
 	'MockCompiler.wren'
 ]
 
