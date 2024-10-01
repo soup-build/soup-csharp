@@ -8,7 +8,7 @@
 /// </summary>
 class ManagedArgumentBuilder  {
 	BuildCommandLineArguments(options, builder) {
-		builder.AppendWhenTrue("noconfig", options.NoConfig)
+		builder.AppendIfTrue("noconfig", options.NoConfig)
 	}
 
 	BuildResponseFileArguments(options, builder) {
@@ -56,7 +56,7 @@ class ManagedArgumentBuilder  {
 
 		// builder.AppendPlusOrMinusSwitch("/delaysign", _store, nameof(DelaySign))
 
-		// builder.AppendWhenTrue("/reportivts", _store, nameof(ReportIVTs))
+		// builder.AppendIfTrue("/reportivts", _store, nameof(ReportIVTs))
 
 		builder.AppendSwitch("filealign", options.FileAlignment)
 		// builder.AppendSwitchIfNotNull("/generatedfilesout:", GeneratedFilesOutputPath)
@@ -64,17 +64,17 @@ class ManagedArgumentBuilder  {
 		// builder.AppendSwitchIfNotNull("/keyfile:", KeyFile)
 		// // If the strings "LogicalName" or "Access" ever change, make sure to search/replace everywhere in vsproject.
 		// builder.AppendSwitchIfNotNull("/linkresource:", LinkResources, new string[] { "LogicalName", "Access" })
-		// builder.AppendWhenTrue("/nologo", _store, nameof(NoLogo))
-		// builder.AppendWhenTrue("/nowin32manifest", _store, nameof(NoWin32Manifest))
+		// builder.AppendIfTrue("/nologo", _store, nameof(NoLogo))
+		// builder.AppendIfTrue("/nowin32manifest", _store, nameof(NoWin32Manifest))
 		builder.AppendPlusOrMinusSwitch("optimize", options.Optimize)
 		// builder.AppendSwitchIfNotNull("/pathmap:", PathMap)
 		builder.AppendSwitchWithQuotesIfNotNull("out", options.OutputAssembly)
 		builder.AppendSwitchWithQuotesIfNotNull("refout", options.OutputRefAssembly)
-		// builder.AppendWhenTrue("/refonly", _store, nameof(RefOnly))
+		// builder.AppendIfTrue("/refonly", _store, nameof(RefOnly))
 		// builder.AppendSwitchIfNotNull("/ruleset:", CodeAnalysisRuleSet)
 		// builder.AppendSwitchIfNotNull("/errorlog:", ErrorLog)
 		// builder.AppendSwitchIfNotNull("/subsystemversion:", SubsystemVersion)
-		// builder.AppendWhenTrue("/reportanalyzer", _store, nameof(ReportAnalyzer))
+		// builder.AppendIfTrue("/reportanalyzer", _store, nameof(ReportAnalyzer))
 		// // If the strings "LogicalName" or "Access" ever change, make sure to search/replace everywhere in vsproject.
 		// builder.AppendSwitchIfNotNull("/resource:", Resources, new string[] { "LogicalName", "Access" })
 		builder.AppendSwitchIfNotNull("target", options.TargetType)

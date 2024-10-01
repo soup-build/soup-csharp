@@ -77,13 +77,11 @@ class BuildTaskUnitTests {
 			SoupTest.logs)
 
 		var expectedCompileOptions = CompileOptions.new()
-		expectedCompileOptions.Target = Path.new("./bin/Program.mock.dll")
-		expectedCompileOptions.ReferenceTarget = Path.new("./bin/ref/Program.mock.dll")
+		expectedCompileOptions.OutputAssembly = Path.new("./bin/Program.mock.dll")
+		expectedCompileOptions.OutputRefAssembly = Path.new("./bin/ref/Program.mock.dll")
 		expectedCompileOptions.TargetType = LinkTarget.Executable
 		expectedCompileOptions.SourceRootDirectory = Path.new("C:/source/")
-		expectedCompileOptions.TargetRootDirectory = Path.new("C:/target/")
-		expectedCompileOptions.ObjectDirectory = Path.new("obj/")
-		expectedCompileOptions.SourceFiles = [
+		expectedCompileOptions.Sources = [
 			Path.new("TestFile.cs")
 		]
 		expectedCompileOptions.NullableState = NullableState.Enabled
@@ -184,7 +182,7 @@ class BuildTaskUnitTests {
 		var dependenciesTable = {}
 		globalState["Dependencies"] = dependenciesTable
 		dependenciesTable["Tool"] = {
-			"mkdir": {
+			"mwasplund|mkdir": {
 				"SharedState": {
 					"Build": {
 						"RunExecutable": "/TARGET/mkdir.exe"
@@ -240,13 +238,11 @@ class BuildTaskUnitTests {
 
 		// Setup the shared arguments
 		var expectedCompileOptions = CompileOptions.new()
-		expectedCompileOptions.Target = Path.new("./bin/Library.mock.dll")
+		expectedCompileOptions.OutputAssembly = Path.new("./bin/Library.mock.dll")
+		expectedCompileOptions.OutputRefAssembly = Path.new("./bin/ref/Library.mock.dll")
 		expectedCompileOptions.TargetType = LinkTarget.Library
-		expectedCompileOptions.ReferenceTarget = Path.new("./bin/ref/Library.mock.dll")
 		expectedCompileOptions.SourceRootDirectory = Path.new("C:/source/")
-		expectedCompileOptions.TargetRootDirectory = Path.new("C:/target/")
-		expectedCompileOptions.ObjectDirectory = Path.new("obj/")
-		expectedCompileOptions.SourceFiles = [
+		expectedCompileOptions.Sources = [
 			Path.new("TestFile1.cpp"),
 			Path.new("TestFile2.cpp"),
 			Path.new("TestFile3.cpp"),

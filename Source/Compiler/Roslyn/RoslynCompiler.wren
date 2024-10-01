@@ -70,8 +70,8 @@ class RoslynCompiler is ICompiler {
 		inputFiles = inputFiles + options.Sources
 		inputFiles = inputFiles + options.ReferenceLibraries
 		var outputFiles = [
-			targetRootDirectory + options.OutputAssembly,
-			targetRootDirectory + symbolFile,
+			options.OutputAssembly,
+			symbolFile,
 		]
 
 		var commandLineBuilder = CommandLineBuilder.new()

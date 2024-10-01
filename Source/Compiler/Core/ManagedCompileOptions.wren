@@ -135,6 +135,10 @@ class ManagedCompileOptions {
 			this.Utf8Output == rhs.Utf8Output &&
 			this.Deterministic == rhs.Deterministic &&
 			this.LangVersion == rhs.LangVersion &&
-			this.Sources == rhs.Sources
+			ListExtensions.SequenceEqual(this.Sources, rhs.Sources)
+	}
+
+	toString {
+		return "NoConfig=\"%(_noConfig)\", EmitDebugInformation=%(_emitDebugInformation), DebugType=%(_debugType), FileAlignment=\"%(_fileAlignment)\", Optimize=\"%(_optimize)\",OutputAssembly=%(_outputAssembly), OutputRefAssembly=%(_outputRefAssembly), TargetType=%(_targetType), TreatWarningsAsErrors=%(_treatWarningsAsErrors), Utf8Output=%(_utf8Output), Deterministic=\"%(_deterministic)\", LangVersion=%(_langVersion), Sources=%(_sources)"
 	}
 }

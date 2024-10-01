@@ -82,9 +82,7 @@ class BuildEngineUnitTests {
 		expectedCompileOptions.OutputAssembly = Path.new("./bin/Program.mock.dll")
 		expectedCompileOptions.OutputRefAssembly = Path.new("./bin/ref/Program.mock.dll")
 		expectedCompileOptions.TargetType = LinkTarget.Executable
-		expectedCompileOptions.ObjectDirectory = Path.new("obj/")
 		expectedCompileOptions.SourceRootDirectory = Path.new("C:/source/")
-		expectedCompileOptions.TargetRootDirectory = Path.new("C:/target/")
 		expectedCompileOptions.Sources = [
 			Path.new("TestFile.cs"),
 		]
@@ -95,9 +93,6 @@ class BuildEngineUnitTests {
 		expectedCompileOptions.NullableState = NullableState.Enabled
 
 		// Verify expected compiler calls
-		var val = compiler.GetCompileRequests()[0]
-		var areEqual = val == expectedCompileOptions
-		var areEqual2 = val.ObjectDirectory == expectedCompileOptions.ObjectDirectory
 		Assert.ListEqual(
 			[
 				expectedCompileOptions,
@@ -226,13 +221,11 @@ class BuildEngineUnitTests {
 
 		// Setup the shared arguments
 		var expectedCompileOptions = CompileOptions.new()
-		expectedCompileOptions.Target = Path.new("./bin/Library.mock.dll")
+		expectedCompileOptions.OutputAssembly = Path.new("./bin/Library.mock.dll")
+		expectedCompileOptions.OutputRefAssembly = Path.new("./bin/ref/Library.mock.dll")
 		expectedCompileOptions.TargetType = LinkTarget.Library
-		expectedCompileOptions.ReferenceTarget = Path.new("./bin/ref/Library.mock.dll")
 		expectedCompileOptions.SourceRootDirectory = Path.new("C:/source/")
-		expectedCompileOptions.TargetRootDirectory = Path.new("C:/target/")
-		expectedCompileOptions.ObjectDirectory = Path.new("obj/")
-		expectedCompileOptions.SourceFiles = [
+		expectedCompileOptions.Sources = [
 			Path.new("TestFile1.cs"),
 			Path.new("TestFile2.cs"),
 			Path.new("TestFile3.cs"),

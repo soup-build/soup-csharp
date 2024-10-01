@@ -202,6 +202,6 @@ class CompileOptions is ManagedCompileOptions {
 	}
 
 	toString {
-		return "CompileOptions { SourceRootDirectory=\"%(_sourceRootDirectory)\", DefineConstants=%(_defineConstants), ReferenceLibraries=%(_referenceLibraries), EnableOptimizations=\"%(_enableOptimizations)\", GenerateSourceDebugInfo=\"%(_generateSourceDebugInfo)\", TargetType=%(_targetType), Target=%(_target), ReferenceTarget=%(_referenceTarget), DisabledWarnings=%(_disabledWarnings), EnabledWarnings=%(_enabledWarnings), NullableState=\"%(_nullableState)\" CustomProperties=%(_customProperties) }"
+		return "CompileOptions { %(super.toString), SourceRootDirectory=\"%(_sourceRootDirectory)\", DefineConstants=%(_defineConstants), ReferenceLibraries=%(_referenceLibraries), EnableOptimizations=\"%(_enableOptimizations)\", GenerateSourceDebugInfo=\"%(_generateSourceDebugInfo)\", TargetType=%(_targetType), Target=%(_target), ReferenceTarget=%(_referenceTarget), DisabledWarnings=%(_disabledWarnings), EnabledWarnings=%(_enabledWarnings), NullableState=\"%(_nullableState)\" CustomProperties=%(_customProperties) }"
 	}
 }
