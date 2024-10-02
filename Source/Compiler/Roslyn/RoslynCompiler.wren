@@ -93,4 +93,43 @@ class RoslynCompiler is ICompiler {
 
 		return operations
 	}
+
+	/// <summary>
+	/// Configure the debug switches which will be placed on the compiler command-line.
+	/// The matrix of debug type and symbol inputs and the desired results is as follows:
+	///
+	/// Debug Symbols              DebugType   Desired Results
+	///          True               Full        /debug+ /debug:full
+	///          True               PdbOnly     /debug+ /debug:PdbOnly
+	///          True               None        /debug-
+	///          True               Blank       /debug+
+	///          False              Full        /debug- /debug:full
+	///          False              PdbOnly     /debug- /debug:PdbOnly
+	///          False              None        /debug-
+	///          False              Blank       /debug-
+	///          Blank              Full                /debug:full
+	///          Blank              PdbOnly             /debug:PdbOnly
+	///          Blank              None        /debug-
+	/// Debug:   Blank              Blank       /debug+ //Microsoft.common.targets will set this
+	/// Release: Blank              Blank       "Nothing for either switch"
+	///
+	/// The logic is as follows:
+	/// If debugtype is none  set debugtype to empty and debugSymbols to false
+	/// If debugType is blank  use the debugsymbols "as is"
+	/// If debug type is set, use its value and the debugsymbols value "as is"
+	/// </summary>
+	// private void ConfigureDebugProperties()
+	// {
+	// 	// If debug type is set we need to take some action depending on the value. If debugtype is not set
+	// 	// We don't need to modify the EmitDebugInformation switch as its value will be used as is.
+	// 	if (_store[nameof(DebugType)] != null)
+	// 	{
+	// 		// If debugtype is none then only show debug- else use the debug type and the debugsymbols as is.
+	// 		if (string.Compare((string?)_store[nameof(DebugType)], "none", StringComparison.OrdinalIgnoreCase) == 0)
+	// 		{
+	// 			_store[nameof(DebugType)] = null
+	// 			_store[nameof(EmitDebugInformation)] = false
+	// 		}
+	// 	}
+	// }
 }

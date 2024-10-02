@@ -25,8 +25,12 @@ class LinkTarget {
 class ManagedCompileOptions {
 	construct new() {
 		_noConfig = true
+		_addModules = []
+		_codePage = null
 		_emitDebugInformation = true
 		_debugType = "portable"
+		_delaySign = null
+		_reportIVTs = false
 		_fileAlignment = 512
 		_optimize = false
 		_outputAssembly = null
@@ -36,6 +40,7 @@ class ManagedCompileOptions {
 		_utf8Output = true
 		_deterministic = true
 		_langVersion = "9.0"
+		_analyzers = []
 		_sources = []
 	}
 
@@ -44,6 +49,18 @@ class ManagedCompileOptions {
 	/// </summary>
 	NoConfig { _noConfig }
 	NoConfig=(value) { _noConfig = value }
+
+	/// <summary>
+	/// Gets or sets the add modules
+	/// </summary>
+	AddModules { _addModules }
+	AddModules=(value) { _addModules = value }
+
+	/// <summary>
+	/// Gets or sets the code page
+	/// </summary>
+	CodePage { _codePage }
+	CodePage=(value) { __codePage = value }
 
 	/// <summary>
 	/// Gets or sets a value indicating whether to emit debug information
@@ -56,6 +73,18 @@ class ManagedCompileOptions {
 	/// </summary>
 	DebugType { _debugType }
 	DebugType=(value) { _debugType = value }
+
+	/// <summary>
+	/// Gets or sets a value indicating whether to delay sign
+	/// </summary>
+	DelaySign { _delaySign }
+	DelaySign=(value) { _delaySign = value }
+
+	/// <summary>
+	/// Gets or sets a value indicating whether to report IVTs
+	/// </summary>
+	ReportIVTs { _reportIVTs }
+	ReportIVTs=(value) { _reportIVTs = value }
 
 	/// <summary>
 	/// Gets or sets the file alignment
@@ -112,6 +141,12 @@ class ManagedCompileOptions {
 	LangVersion=(value) { _langVersion = value }
 
 	/// <summary>
+	/// Gets or sets the list of analyzers
+	/// </summary>
+	Analyzers { _analyzers }
+	Analyzers=(value) { _analyzers = value }
+
+	/// <summary>
 	/// Gets or sets the list of source files
 	/// </summary>
 	Sources { _sources }
@@ -124,8 +159,12 @@ class ManagedCompileOptions {
 
 		// Return true if the fields match.
 		return this.NoConfig == rhs.NoConfig &&
+			ListExtensions.SequenceEqual(this.AddModules, rhs.AddModules) &&
+			this.CodePage == rhs.CodePage &&
 			this.EmitDebugInformation == rhs.EmitDebugInformation &&
 			this.DebugType == rhs.DebugType &&
+			this.DelaySign == rhs.DelaySign &&
+			this.ReportIVTs == rhs.ReportIVTs &&
 			this.FileAlignment == rhs.FileAlignment &&
 			this.Optimize == rhs.Optimize &&
 			this.OutputAssembly == rhs.OutputAssembly &&
@@ -135,10 +174,11 @@ class ManagedCompileOptions {
 			this.Utf8Output == rhs.Utf8Output &&
 			this.Deterministic == rhs.Deterministic &&
 			this.LangVersion == rhs.LangVersion &&
+			ListExtensions.SequenceEqual(this.Analyzers, rhs.Analyzers) &&
 			ListExtensions.SequenceEqual(this.Sources, rhs.Sources)
 	}
 
 	toString {
-		return "NoConfig=\"%(_noConfig)\", EmitDebugInformation=%(_emitDebugInformation), DebugType=%(_debugType), FileAlignment=\"%(_fileAlignment)\", Optimize=\"%(_optimize)\",OutputAssembly=%(_outputAssembly), OutputRefAssembly=%(_outputRefAssembly), TargetType=%(_targetType), TreatWarningsAsErrors=%(_treatWarningsAsErrors), Utf8Output=%(_utf8Output), Deterministic=\"%(_deterministic)\", LangVersion=%(_langVersion), Sources=%(_sources)"
+		return "NoConfig=\"%(_noConfig)\", AddModules=%(_addModules) CodePage=%(_codePage), EmitDebugInformation=%(_emitDebugInformation), DebugType=%(_debugType), DelaySign=%(_delaySign), ReportIVTs=%(_reportIVTs) FileAlignment=\"%(_fileAlignment)\", Optimize=\"%(_optimize)\", OutputAssembly=%(_outputAssembly), OutputRefAssembly=%(_outputRefAssembly), TargetType=%(_targetType), TreatWarningsAsErrors=%(_treatWarningsAsErrors), Utf8Output=%(_utf8Output), Deterministic=\"%(_deterministic)\", LangVersion=%(_langVersion), Analyzers=%(_analyzers), Sources=%(_sources)"
 	}
 }

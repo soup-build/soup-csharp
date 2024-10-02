@@ -63,6 +63,12 @@ class CommandLineBuilder {
 		}
 	}
 
+	AppendPlusOrMinusSwitchIfNotNull(name, value) {
+		if (!(value is Null)) {
+			this.AppendPlusOrMinusSwitch(name, value)
+		}
+	}
+
 	AppendSwitchIfNotNull(name, value) {
 		if (!(value is Null)) {
 			this.AppendSwitch(name, value)
