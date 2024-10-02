@@ -60,25 +60,25 @@ class BuildEngine {
 			var targetType
 			if (options.TargetType == BuildTargetType.Library) {
 				targetType = LinkTarget.Library
-				targetFile = options.BinaryDirectory +
+				targetFile = options.TargetRootDirectory + options.BinaryDirectory +
 					Path.new(options.TargetName + "." + _compiler.DynamicLibraryFileExtension)
-				referenceTargetFile = referenceDirectory +
+				referenceTargetFile = options.TargetRootDirectory + referenceDirectory +
 					Path.new(options.TargetName + "." + _compiler.DynamicLibraryFileExtension)
 
 				// Add the DLL as a runtime dependency
-				result.RuntimeDependencies.add(options.TargetRootDirectory + targetFile)
+				result.RuntimeDependencies.add(targetFile)
 
 				// Link against the reference target
-				result.LinkDependencies.add(options.TargetRootDirectory + referenceTargetFile)
+				result.LinkDependencies.add(referenceTargetFile)
 			} else if (options.TargetType == BuildTargetType.Executable) {
 				targetType = LinkTarget.Executable
-				targetFile = options.BinaryDirectory +
+				targetFile = options.TargetRootDirectory + options.BinaryDirectory +
 					Path.new(options.TargetName + "." + _compiler.DynamicLibraryFileExtension)
-				referenceTargetFile = referenceDirectory +
+				referenceTargetFile = options.TargetRootDirectory + referenceDirectory +
 					Path.new(options.TargetName + "." + _compiler.DynamicLibraryFileExtension)
 
 				// Add the Executable as a runtime dependency
-				result.RuntimeDependencies.add(options.TargetRootDirectory + targetFile)
+				result.RuntimeDependencies.add(targetFile)
 
 				// All link dependencies stop here.
 			} else {
@@ -105,7 +105,6 @@ class BuildEngine {
 			compileOptions.OutputRefAssembly = referenceTargetFile
 			compileOptions.TargetType = targetType
 			compileOptions.SourceRootDirectory = options.SourceRootDirectory
-			compileOptions.Sources = options.SourceFiles
 			compileOptions.DefineConstants = options.DefineConstants
 			compileOptions.GenerateSourceDebugInfo = options.GenerateSourceDebugInfo
 			compileOptions.TreatWarningsAsErrors = options.TreatWarningsAsErrors
@@ -113,7 +112,11 @@ class BuildEngine {
 			compileOptions.EnabledWarnings = options.EnabledWarnings
 			compileOptions.NullableState = nullableState
 			compileOptions.CustomProperties = options.CustomProperties
-			compileOptions.ReferenceLibraries = options.LinkDependencies
+			compileOptions.References = options.LinkDependencies
+
+			for (sourceFile in options.SourceFiles) {
+				compileOptions.Sources.add(options.SourceRootDirectory + sourceFile)
+			}
 
 			// Compile all source files as a single call
 			var compileOperations = _compiler.CreateCompileOperations(
@@ -122,7 +125,7 @@ class BuildEngine {
 				result.BuildOperations.add(operation)
 			}
 
-			result.TargetFile = options.TargetRootDirectory + targetFile
+			result.TargetFile = targetFile
 		}
 	}
 

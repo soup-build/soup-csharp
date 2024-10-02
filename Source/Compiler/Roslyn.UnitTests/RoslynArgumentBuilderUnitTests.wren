@@ -64,7 +64,7 @@ class RoslynArgumentBuilderUnitTests {
 			"/warnaserror-",
 			"/utf8output",
 			"/deterministic+",
-			"/langversion:9.0",
+			"/langversion:12.0",
 		]
 
 		Assert.ListEqual(expectedArguments, responseFileBuilder.CommandArguments)
@@ -102,7 +102,7 @@ class RoslynArgumentBuilderUnitTests {
 			"/warnaserror-",
 			"/utf8output",
 			"/deterministic+",
-			"/langversion:9.0",
+			"/langversion:12.0",
 		]
 
 		Assert.ListEqual(expectedArguments, responseFileBuilder.CommandArguments)
@@ -141,7 +141,7 @@ class RoslynArgumentBuilderUnitTests {
 			"/warnaserror+",
 			"/utf8output",
 			"/deterministic+",
-			"/langversion:9.0",
+			"/langversion:12.0",
 		]
 
 		Assert.ListEqual(expectedArguments, responseFileBuilder.CommandArguments)
@@ -180,7 +180,7 @@ class RoslynArgumentBuilderUnitTests {
 			"/warnaserror-",
 			"/utf8output",
 			"/deterministic+",
-			"/langversion:9.0",
+			"/langversion:12.0",
 		]
 
 		Assert.ListEqual(expectedArguments, responseFileBuilder.CommandArguments)
@@ -223,7 +223,7 @@ class RoslynArgumentBuilderUnitTests {
 			"/warnaserror-",
 			"/utf8output",
 			"/deterministic+",
-			"/langversion:9.0",
+			"/langversion:12.0",
 		]
 
 		Assert.ListEqual(expectedArguments, responseFileBuilder.CommandArguments)
@@ -265,7 +265,7 @@ class RoslynArgumentBuilderUnitTests {
 			"/warnaserror-",
 			"/utf8output",
 			"/deterministic+",
-			"/langversion:9.0",
+			"/langversion:12.0",
 			"/analyzer:C:/analyzers/Test1.RoslynAnalyzer.dll",
 			"/analyzer:C:/analyzers/Test2.RoslynAnalyzer.dll",
 		]
@@ -309,7 +309,7 @@ class RoslynArgumentBuilderUnitTests {
 			"/warnaserror-",
 			"/utf8output",
 			"/deterministic+",
-			"/langversion:9.0",
+			"/langversion:12.0",
 			"\"File1.cs\"",
 			"\"File2.cs\"",
 		]

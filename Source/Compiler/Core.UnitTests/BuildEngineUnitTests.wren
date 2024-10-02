@@ -79,14 +79,14 @@ class BuildEngineUnitTests {
 			SoupTest.logs)
 
 		var expectedCompileOptions = CompileOptions.new()
-		expectedCompileOptions.OutputAssembly = Path.new("./bin/Program.mock.dll")
-		expectedCompileOptions.OutputRefAssembly = Path.new("./bin/ref/Program.mock.dll")
+		expectedCompileOptions.OutputAssembly = Path.new("C:/target/bin/Program.mock.dll")
+		expectedCompileOptions.OutputRefAssembly = Path.new("C:/target/bin/ref/Program.mock.dll")
 		expectedCompileOptions.TargetType = LinkTarget.Executable
 		expectedCompileOptions.SourceRootDirectory = Path.new("C:/source/")
 		expectedCompileOptions.Sources = [
-			Path.new("TestFile.cs"),
+			Path.new("C:/source/TestFile.cs"),
 		]
-		expectedCompileOptions.ReferenceLibraries = [
+		expectedCompileOptions.References = [
 			Path.new("../Other/bin/OtherModule1.mock.a"),
 			Path.new("../OtherModule2.mock.a"),
 		]
@@ -221,16 +221,16 @@ class BuildEngineUnitTests {
 
 		// Setup the shared arguments
 		var expectedCompileOptions = CompileOptions.new()
-		expectedCompileOptions.OutputAssembly = Path.new("./bin/Library.mock.dll")
-		expectedCompileOptions.OutputRefAssembly = Path.new("./bin/ref/Library.mock.dll")
+		expectedCompileOptions.OutputAssembly = Path.new("C:/target//bin/Library.mock.dll")
+		expectedCompileOptions.OutputRefAssembly = Path.new("C:/target//bin/ref/Library.mock.dll")
 		expectedCompileOptions.TargetType = LinkTarget.Library
 		expectedCompileOptions.SourceRootDirectory = Path.new("C:/source/")
 		expectedCompileOptions.Sources = [
-			Path.new("TestFile1.cs"),
-			Path.new("TestFile2.cs"),
-			Path.new("TestFile3.cs"),
+			Path.new("C:/source/TestFile1.cs"),
+			Path.new("C:/source/TestFile2.cs"),
+			Path.new("C:/source/TestFile3.cs"),
 		]
-		expectedCompileOptions.ReferenceLibraries = [
+		expectedCompileOptions.References = [
 			Path.new("../Other/bin/OtherModule1.mock.a"),
 			Path.new("../OtherModule2.mock.a"),
 		]

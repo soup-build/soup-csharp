@@ -38,7 +38,7 @@ class CompileOptions is ManagedCompileOptions {
 		super()
 		_sourceRootDirectory = null
 		_defineConstants = []
-		_referenceLibraries = []
+		_references = []
 		_enableOptimizations = false
 		_generateSourceDebugInfo = false
 		_target = null
@@ -72,10 +72,10 @@ class CompileOptions is ManagedCompileOptions {
 	DefineConstants=(value) { _defineConstants = value }
 
 	/// <summary>
-	/// Gets or sets the list of reference libraries
+	/// Gets or sets the list of references
 	/// </summary>
-	ReferenceLibraries { _referenceLibraries }
-	ReferenceLibraries=(value) { _referenceLibraries = value }
+	References { _references }
+	References=(value) { _references = value }
 
 	/// <summary>
 	/// Gets or sets a value indicating whether to enable optimizations
@@ -182,7 +182,7 @@ class CompileOptions is ManagedCompileOptions {
 		return super.Equals(rhs) &&
 			this.SourceRootDirectory == rhs.SourceRootDirectory &&
 			ListExtensions.SequenceEqual(this.DefineConstants, rhs.DefineConstants) &&
-			ListExtensions.SequenceEqual(this.ReferenceLibraries, rhs.ReferenceLibraries) &&
+			ListExtensions.SequenceEqual(this.References, rhs.References) &&
 			this.EnableOptimizations == rhs.EnableOptimizations &&
 			this.GenerateSourceDebugInfo == rhs.GenerateSourceDebugInfo &&
 			this.AllowUnsafeBlocks == rhs.AllowUnsafeBlocks &&
@@ -202,6 +202,6 @@ class CompileOptions is ManagedCompileOptions {
 	}
 
 	toString {
-		return "CompileOptions { %(super.toString), SourceRootDirectory=\"%(_sourceRootDirectory)\", DefineConstants=%(_defineConstants), ReferenceLibraries=%(_referenceLibraries), EnableOptimizations=\"%(_enableOptimizations)\", GenerateSourceDebugInfo=\"%(_generateSourceDebugInfo)\", TargetType=%(_targetType), Target=%(_target), ReferenceTarget=%(_referenceTarget), DisabledWarnings=%(_disabledWarnings), EnabledWarnings=%(_enabledWarnings), NullableState=\"%(_nullableState)\" CustomProperties=%(_customProperties) }"
+		return "CompileOptions { %(super.toString), SourceRootDirectory=\"%(_sourceRootDirectory)\", DefineConstants=%(_defineConstants), References=%(_references), EnableOptimizations=\"%(_enableOptimizations)\", GenerateSourceDebugInfo=\"%(_generateSourceDebugInfo)\", TargetType=%(_targetType), Target=%(_target), ReferenceTarget=%(_referenceTarget), DisabledWarnings=%(_disabledWarnings), EnabledWarnings=%(_enabledWarnings), NullableState=\"%(_nullableState)\" CustomProperties=%(_customProperties) }"
 	}
 }

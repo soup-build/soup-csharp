@@ -59,7 +59,7 @@ class RoslynCompilerUnitTests {
 				Path.new("./writefile.exe"),
 				[
 					"./ObjectDir/CompileArguments.rsp",
-					"/unsafe- /checked- /fullpaths /nostdlib+ /errorreport:prompt /warn:8 /highentropyva+ /nullable:enable /debug+ /debug:portable /filealign:512 /optimize- /out:\"C:/target/bin/Target.dll\" /refout:\"C:/target/ref/Target.dll\" /target:library /warnaserror- /utf8output /deterministic+ /langversion:9.0 \"./File.cs\"",
+					"/unsafe- /checked- /fullpaths /nostdlib+ /errorreport:prompt /warn:8 /highentropyva+ /nullable:enable /debug+ /debug:portable /filealign:512 /optimize- /out:\"C:/target/bin/Target.dll\" /refout:\"C:/target/ref/Target.dll\" /target:library /warnaserror- /utf8output /deterministic+ /langversion:12.0 \"./File.cs\"",
 				],
 				[],
 				[

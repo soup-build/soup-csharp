@@ -77,12 +77,12 @@ class BuildTaskUnitTests {
 			SoupTest.logs)
 
 		var expectedCompileOptions = CompileOptions.new()
-		expectedCompileOptions.OutputAssembly = Path.new("./bin/Program.mock.dll")
-		expectedCompileOptions.OutputRefAssembly = Path.new("./bin/ref/Program.mock.dll")
+		expectedCompileOptions.OutputAssembly = Path.new("C:/target/bin/Program.mock.dll")
+		expectedCompileOptions.OutputRefAssembly = Path.new("C:/target/bin/ref/Program.mock.dll")
 		expectedCompileOptions.TargetType = LinkTarget.Executable
 		expectedCompileOptions.SourceRootDirectory = Path.new("C:/source/")
 		expectedCompileOptions.Sources = [
-			Path.new("TestFile.cs")
+			Path.new("C:/source/TestFile.cs")
 		]
 		expectedCompileOptions.NullableState = NullableState.Enabled
 
@@ -238,14 +238,14 @@ class BuildTaskUnitTests {
 
 		// Setup the shared arguments
 		var expectedCompileOptions = CompileOptions.new()
-		expectedCompileOptions.OutputAssembly = Path.new("./bin/Library.mock.dll")
-		expectedCompileOptions.OutputRefAssembly = Path.new("./bin/ref/Library.mock.dll")
+		expectedCompileOptions.OutputAssembly = Path.new("C:/target/bin/Library.mock.dll")
+		expectedCompileOptions.OutputRefAssembly = Path.new("C:/target/bin/ref/Library.mock.dll")
 		expectedCompileOptions.TargetType = LinkTarget.Library
 		expectedCompileOptions.SourceRootDirectory = Path.new("C:/source/")
 		expectedCompileOptions.Sources = [
-			Path.new("TestFile1.cpp"),
-			Path.new("TestFile2.cpp"),
-			Path.new("TestFile3.cpp"),
+			Path.new("C:/source/TestFile1.cpp"),
+			Path.new("C:/source/TestFile2.cpp"),
+			Path.new("C:/source/TestFile3.cpp"),
 		]
 		expectedCompileOptions.NullableState = NullableState.Enabled
 

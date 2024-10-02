@@ -68,7 +68,7 @@ class RoslynCompiler is ICompiler {
 		inputFiles.add(_compilerLibrary)
 		inputFiles.add(targetResponseFile)
 		inputFiles = inputFiles + options.Sources
-		inputFiles = inputFiles + options.ReferenceLibraries
+		inputFiles = inputFiles + options.References
 		var outputFiles = [
 			options.OutputAssembly,
 			symbolFile,

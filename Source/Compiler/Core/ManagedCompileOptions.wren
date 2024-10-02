@@ -39,7 +39,7 @@ class ManagedCompileOptions {
 		_treatWarningsAsErrors = false
 		_utf8Output = true
 		_deterministic = true
-		_langVersion = "9.0"
+		_langVersion = "12.0"
 		_analyzers = []
 		_sources = []
 	}
