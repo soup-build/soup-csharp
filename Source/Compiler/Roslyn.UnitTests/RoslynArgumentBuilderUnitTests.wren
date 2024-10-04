@@ -266,8 +266,8 @@ class RoslynArgumentBuilderUnitTests {
 			"/utf8output",
 			"/deterministic+",
 			"/langversion:12.0",
-			"/analyzer:C:/analyzers/Test1.RoslynAnalyzer.dll",
-			"/analyzer:C:/analyzers/Test2.RoslynAnalyzer.dll",
+			"/analyzer:\"C:/analyzers/Test1.RoslynAnalyzer.dll\"",
+			"/analyzer:\"C:/analyzers/Test2.RoslynAnalyzer.dll\"",
 		]
 
 		Assert.ListEqual(expectedArguments, responseFileBuilder.CommandArguments)

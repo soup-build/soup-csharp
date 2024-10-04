@@ -76,6 +76,7 @@ class BuildOptions {
 		_binaryDirectory = null
 		_sourceFiles = []
 		_linkDependencies = []
+		_analyzers = []
 		_libraryPaths = []
 		_defineConstants = []
 		_runtimeDependencies = []
@@ -141,6 +142,12 @@ class BuildOptions {
 	/// </summary>
 	LinkDependencies { _linkDependencies }
 	LinkDependencies=(value) { _linkDependencies = value }
+
+	/// <summary>
+	/// Gets or sets the list of analyzers
+	/// </summary>
+	Analyzers { _analyzers }
+	Analyzers=(value) { _analyzers = value }
 
 	/// <summary>
 	/// Gets or sets the list of library paths

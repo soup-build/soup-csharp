@@ -49,9 +49,36 @@ class InitializeDefaultsTask is SoupTask {
 			flavor = parameters["Flavor"]
 		}
 
+		var defineConstants = []
+		defineConstants.add("SOUP_BUILD")
+		defineConstants.add("TRACE")
+
+		// Set the correct optimization level for the requested flavor
+		var optimizationLevel = BuildOptimizationLevel.None
+		var generateSourceDebugInfo = false
+		if (flavor == "Debug") {
+			defineConstants.add("DEBUG")
+			generateSourceDebugInfo = true
+		} else if (flavor == "DebugRelease") {
+			defineConstants.add("RELEASE")
+			generateSourceDebugInfo = true
+			optimizationLevel = BuildOptimizationLevel.Speed
+		} else if (flavor == "Release") {
+			defineConstants.add("RELEASE")
+			optimizationLevel = BuildOptimizationLevel.Speed
+		} else {
+			Fiber.abort("Unknown build flavor: %(flavor)")
+		}
+
 		// Save the internal parameters
 		build["Architecture"] = architecture
 		build["Compiler"] = compiler
 		build["Flavor"] = flavor
+		build["OptimizationLevel"] = optimizationLevel
+		build["GenerateSourceDebugInfo"] = generateSourceDebugInfo
+
+		ListExtensions.Append(
+			MapExtensions.EnsureList(build, "DefineConstants"),
+			defineConstants)
 	}
 }

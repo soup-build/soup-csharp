@@ -59,6 +59,7 @@ class ResolveToolsTask is SoupTask {
 		var targetingPackVersion = targetingPack["Version"]
 		var targetingPackValue = targetingPack["Value"]
 		var targetingPackVersionPath = targetingPackValue["Path"]
+		var targetingPackAnalyzers = targetingPackValue["Analyzer"]
 		var targetingPackReferences = targetingPackValue["Managed"]
 
 		// Reference the dotnet executable
@@ -83,18 +84,37 @@ class ResolveToolsTask is SoupTask {
 			linkDependencies = ListExtensions.ConvertToPathList(build["LinkDependencies"])
 		}
 
-		linkDependencies = linkDependencies + ResolveToolsTask.GetPlatformLibraries(
-			targetingPackVersionPath, targetingPackReferences)
-		build["LinkDependencies"] = ListExtensions.ConvertFromPathList(linkDependencies)
-	}
-
-	static GetPlatformLibraries(targetingPackVersionPath, targetingPackReferences) {
-		var result = []
 		for (value in targetingPackReferences) {
-			result.add(targetingPackVersionPath + value)
+			linkDependencies.add(targetingPackVersionPath + value)
 		}
+		build["LinkDependencies"] = ListExtensions.ConvertFromPathList(linkDependencies)
 
-		return result
+		var analyzers = []
+		for (value in targetingPackAnalyzers) {
+			analyzers.add(targetingPackVersionPath + value)
+		}
+		build["Analyzers"] = ListExtensions.ConvertFromPathList(analyzers)
+
+		// TODO: Target Framework specific
+		var defineConstants = []
+		defineConstants.add("NET")
+		defineConstants.add("NET8_0")
+		defineConstants.add("NETCOREAPP")
+		defineConstants.add("NET5_0_OR_GREATER")
+		defineConstants.add("NET6_0_OR_GREATER")
+		defineConstants.add("NET7_0_OR_GREATER")
+		defineConstants.add("NET8_0_OR_GREATER")
+		defineConstants.add("NETCOREAPP1_0_OR_GREATER")
+		defineConstants.add("NETCOREAPP1_1_OR_GREATER")
+		defineConstants.add("NETCOREAPP2_0_OR_GREATER")
+		defineConstants.add("NETCOREAPP2_1_OR_GREATER")
+		defineConstants.add("NETCOREAPP2_2_OR_GREATER")
+		defineConstants.add("NETCOREAPP3_0_OR_GREATER")
+		defineConstants.add("NETCOREAPP3_1_OR_GREATER")
+
+		ListExtensions.Append(
+			MapExtensions.EnsureList(build, "DefineConstants"),
+			defineConstants)
 	}
 
 	static GetSDKProperties(name, globalState) {

@@ -113,6 +113,7 @@ class BuildEngine {
 			compileOptions.NullableState = nullableState
 			compileOptions.CustomProperties = options.CustomProperties
 			compileOptions.References = options.LinkDependencies
+			compileOptions.Analyzers = options.Analyzers
 
 			for (sourceFile in options.SourceFiles) {
 				compileOptions.Sources.add(options.SourceRootDirectory + sourceFile)

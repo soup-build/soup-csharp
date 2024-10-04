@@ -6,7 +6,7 @@ import "soup" for Soup, SoupTask
 import "mwasplund|Soup.Build.Utils:./Path" for Path
 import "mwasplund|Soup.Build.Utils:./ListExtensions" for ListExtensions
 import "mwasplund|Soup.Build.Utils:./MapExtensions" for MapExtensions
-import "mwasplund|Soup.CSharp.Compiler:./BuildOptions" for BuildNullableState, BuildOptimizationLevel, BuildTargetType
+import "mwasplund|Soup.CSharp.Compiler:./BuildOptions" for BuildNullableState, BuildTargetType
 
 /// <summary>
 /// The recipe build task that knows how to build a single recipe
@@ -41,7 +41,6 @@ class RecipeBuildTask is SoupTask {
 
 		// Load the input properties
 		var packageRoot = Path.new(context["PackageDirectory"])
-		var flavor = build["Flavor"]
 
 		// Load Recipe properties
 		var name = recipe["Name"]
@@ -87,8 +86,6 @@ class RecipeBuildTask is SoupTask {
 			defineConstants = recipe["Defines"]
 		}
 
-		defineConstants.add("SOUP_BUILD")
-
 		// Build up arguments to build this individual recipe
 		var targetDirectory = Path.new(context["TargetDirectory"])
 		var binaryDirectory = Path.new("bin/")
@@ -112,30 +109,11 @@ class RecipeBuildTask is SoupTask {
 			nullableState = RecipeBuildTask.ParseNullable(recipe["Nullable"])
 		}
 
-		// Set the correct optimization level for the requested flavor
-		var optimizationLevel = BuildOptimizationLevel.None
-		var generateSourceDebugInfo = false
-		if (flavor == "Debug") {
-			// defineConstants.add("DEBUG")
-			generateSourceDebugInfo = true
-		} else if (flavor == "DebugRelease") {
-			defineConstants.add("RELEASE")
-			generateSourceDebugInfo = true
-			optimizationLevel = BuildOptimizationLevel.Speed
-		} else if (flavor == "Release") {
-			defineConstants.add("RELEASE")
-			optimizationLevel = BuildOptimizationLevel.Speed
-		} else {
-			Fiber.abort("Unknown build flavor: %(flavor)")
-		}
-
 		build["TargetName"] = name
 		build["SourceRootDirectory"] = packageRoot.toString
 		build["TargetRootDirectory"] = targetDirectory.toString
 		build["ObjectDirectory"] = objectDirectory.toString
 		build["BinaryDirectory"] = binaryDirectory.toString
-		build["OptimizationLevel"] = optimizationLevel
-		build["GenerateSourceDebugInfo"] = generateSourceDebugInfo
 
 		ListExtensions.Append(
 			MapExtensions.EnsureList(build, "LinkLibraries"),

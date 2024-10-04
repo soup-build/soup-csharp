@@ -95,6 +95,13 @@ class BuildTask is SoupTask {
 				ListExtensions.ConvertToPathList(buildTable["LinkDependencies"]))
 		}
 
+		// Load the analyzers
+		if (buildTable.containsKey("Analyzers")) {
+			options.Analyzers = BuildTask.CombineUnique(
+				options.Analyzers,
+				ListExtensions.ConvertToPathList(buildTable["Analyzers"]))
+		}
+
 		// Load the list of disabled warnings
 		if (buildTable.containsKey("TreatWarningsAsErrors")) {
 			options.TreatWarningsAsErrors = buildTable["TreatWarningsAsErrors"]

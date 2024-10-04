@@ -64,7 +64,7 @@ class ManagedArgumentBuilder  {
 	// 	AddAnalyzerConfigFilesToCommandLine(commandLine)
 
 		for (analyzer in options.Analyzers) {
-			builder.AppendSwitch("analyzer", analyzer)
+			builder.AppendSwitchWithQuotes("analyzer", analyzer)
 		}
 
 		// AddAdditionalFilesToCommandLine(commandLine)
