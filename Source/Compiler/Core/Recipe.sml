@@ -1,6 +1,6 @@
 Name: 'Soup.CSharp.Compiler'
 Language: 'Wren|0'
-Version: '0.11.0'
+Version: '0.12.0'
 Source: [
 	'BuildEngine.wren'
 	'BuildOptions.wren'

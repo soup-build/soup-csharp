@@ -1,6 +1,6 @@
 Name: 'Soup.CSharp.Compiler.Roslyn'
 Language: 'Wren|0'
-Version: '0.12.1'
+Version: '0.13.0'
 Source: [
 	'CommandLineBuilder.wren'
 	'ManagedArgumentBuilder.wren'
