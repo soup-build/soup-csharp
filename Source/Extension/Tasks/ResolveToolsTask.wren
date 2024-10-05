@@ -24,6 +24,7 @@ class ResolveToolsTask is SoupTask {
 	/// </summary>
 	static runAfter { [
 		"InitializeDefaultsTask",
+		"RecipeBuildTask",
 	] }
 
 	/// <summary>
@@ -39,6 +40,7 @@ class ResolveToolsTask is SoupTask {
 	static LoadDotNet(globalState, activeState) {
 		var build = activeState["Build"]
 		var architecture = build["Architecture"]
+		var targetFramework = build["TargetFramework"]
 
 		// Check if skip platform includes was specified
 		var skipPlatform = false
@@ -49,13 +51,29 @@ class ResolveToolsTask is SoupTask {
 		// Get the DotNet SDK
 		var dotnetSDKProperties = ResolveToolsTask.GetSDKProperties("DotNet", globalState)
 
-		// Get the latest .net 6 sdk
+		// Get the latest .net sdk
 		var sdk = ResolveToolsTask.GetLatestSDK(dotnetSDKProperties)
 		var sdkVersion = sdk["Version"]
 		var sdkPath = sdk["Path"]
 
-		// Get the latest .net 6 targeting pack
-		var targetingPack = ResolveToolsTask.GetLatestTargetingPack(dotnetSDKProperties, 8, "Microsoft.NETCore.App.Ref")
+		var targetDotNetVersion = null
+		if (targetFramework == "net9.0") {
+			targetDotNetVersion = 9
+		} else if (targetFramework == "net8.0") {
+			targetDotNetVersion = 8
+		} else if (targetFramework == "net7.0") {
+			targetDotNetVersion = 7
+		} else if (targetFramework == "net6.0") {
+			targetDotNetVersion = 6
+		} else if (targetFramework == "net5.0") {
+			targetDotNetVersion = 5
+		} else {
+			Fiber.abort("Unknown target framework value %(targetFramework).")
+		}
+
+		// Get the latest .net targeting pack
+		var targetingPack = ResolveToolsTask.GetLatestTargetingPack(
+			dotnetSDKProperties, targetDotNetVersion, "Microsoft.NETCore.App.Ref")
 		var targetingPackVersion = targetingPack["Version"]
 		var targetingPackValue = targetingPack["Value"]
 		var targetingPackVersionPath = targetingPackValue["Path"]
@@ -95,26 +113,47 @@ class ResolveToolsTask is SoupTask {
 		}
 		build["Analyzers"] = ListExtensions.ConvertFromPathList(analyzers)
 
-		// TODO: Target Framework specific
-		var defineConstants = []
-		defineConstants.add("NET")
-		defineConstants.add("NET8_0")
-		defineConstants.add("NETCOREAPP")
-		defineConstants.add("NET5_0_OR_GREATER")
-		defineConstants.add("NET6_0_OR_GREATER")
-		defineConstants.add("NET7_0_OR_GREATER")
-		defineConstants.add("NET8_0_OR_GREATER")
-		defineConstants.add("NETCOREAPP1_0_OR_GREATER")
-		defineConstants.add("NETCOREAPP1_1_OR_GREATER")
-		defineConstants.add("NETCOREAPP2_0_OR_GREATER")
-		defineConstants.add("NETCOREAPP2_1_OR_GREATER")
-		defineConstants.add("NETCOREAPP2_2_OR_GREATER")
-		defineConstants.add("NETCOREAPP3_0_OR_GREATER")
-		defineConstants.add("NETCOREAPP3_1_OR_GREATER")
-
+		var defineConstants = ResolveToolsTask.BuildDefineConstants(targetDotNetVersion)
+		
 		ListExtensions.Append(
 			MapExtensions.EnsureList(build, "DefineConstants"),
 			defineConstants)
+	}
+
+	static BuildDefineConstants(targetDotNetVersion) {
+		var defineConstants = []
+		defineConstants.add("NET")
+
+		// Add the exact target version
+		defineConstants.add("NET%(targetDotNetVersion)_0")
+
+		defineConstants.add("NETCOREAPP")
+
+		for (i in [5, 6, 7, 8, 9]) {
+			if (targetDotNetVersion >= i) {
+				defineConstants.add("NET5_%(i)_OR_GREATER")
+			}
+		}
+
+		for (i in [0, 1]) {
+			if (targetDotNetVersion >= i) {
+				defineConstants.add("NETCOREAPP1_%(i)_OR_GREATER")
+			}
+		}
+
+		for (i in [0, 1, 2]) {
+			if (targetDotNetVersion >= i) {
+				defineConstants.add("NETCOREAPP2_%(i)_OR_GREATER")
+			}
+		}
+
+		for (i in [0, 1]) {
+			if (targetDotNetVersion >= i) {
+				defineConstants.add("NETCOREAPP3_%(i)_OR_GREATER")
+			}
+		}
+
+		return defineConstants
 	}
 
 	static GetSDKProperties(name, globalState) {

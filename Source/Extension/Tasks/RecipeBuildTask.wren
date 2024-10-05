@@ -23,8 +23,6 @@ class RecipeBuildTask is SoupTask {
 	/// Get the run after list
 	/// </summary>
 	static runAfter { [
-		"InitializeDefaultsTask",
-		"ResolveToolsTask",
 	] }
 
 	/// <summary>
@@ -140,6 +138,15 @@ class RecipeBuildTask is SoupTask {
 		}
 
 		build["TargetType"] = targetType
+
+		var targetFramework = null
+		if (recipe.containsKey("TargetFramework")) {
+			targetFramework = recipe["TargetFramework"]
+		} else {
+			Fiber.abort("Missing required Target Framework")
+		}
+
+		build["TargetFramework"] = targetFramework
 	}
 
 	static ParseType(value) {

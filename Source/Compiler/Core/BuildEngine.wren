@@ -134,10 +134,8 @@ class BuildEngine {
 	/// Copy runtime dependencies
 	/// </summary>
 	CopyRuntimeDependencies(options, result) {
-		if (options.TargetType == BuildTargetType.Executable ||
-			options.TargetType == BuildTargetType.Library) {
-			// TODO: Allow build libraries to copy dependencies with a flag
-			// for now we always copy the dlls so the folder is ready to load dependencies
+		if (options.TargetType == BuildTargetType.Executable) {
+			// Copy the runtime dependencies for an executable
 			for (source in options.RuntimeDependencies) {
 				var target = options.BinaryDirectory + Path.new(source.GetFileName())
 				var operation = SharedOperations.CreateCopyFileOperation(
@@ -146,12 +144,15 @@ class BuildEngine {
 					target)
 				result.BuildOperations.add(operation)
 			}
-		}
-
-		if (options.TargetType != BuildTargetType.Executable) {
+		} else {
 			// Pass along all runtime dependencies in their original location
 			for (source in options.RuntimeDependencies) {
 				result.RuntimeDependencies.add(source)
+			}
+			
+			// Pass along all link dependencies in their original location
+			for (source in options.LinkDependencies) {
+				result.LinkDependencies.add(source)
 			}
 		}
 	}
@@ -164,16 +165,16 @@ class BuildEngine {
 			// Generate the runtime configuration files
 			var runtimeConfigFile = options.BinaryDirectory + Path.new("%(options.TargetName).runtimeconfig.json")
 			var content = "{
-	\"runtimeOptions\": {
-		\"tfm\": \"net6.0\",
-		\"framework\": {
-			\"name\": \"Microsoft.NETCore.App\",
-			\"version\": \"6.0.0\"
-		},
-		\"configProperties\": {
-			\"System.Reflection.Metadata.MetadataUpdater.IsSupported\": false
-		}
-	}
+  \"runtimeOptions\": {
+    \"tfm\": \"net8.0\",
+    \"framework\": {
+      \"name\": \"Microsoft.NETCore.App\",
+      \"version\": \"8.0.0\"
+    },
+    \"configProperties\": {
+      \"System.Runtime.Serialization.EnableUnsafeBinaryFormatterSerialization\": false
+    }
+  }
 }"
 			var writeRuntimeConfigFile = SharedOperations.CreateWriteFileOperation(
 				options.TargetRootDirectory,
