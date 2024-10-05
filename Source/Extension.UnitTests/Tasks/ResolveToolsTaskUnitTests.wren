@@ -93,6 +93,7 @@ class ResolveToolsTaskUnitTests {
 		// Setup build table
 		var buildTable = {}
 		activeState["Build"] = buildTable
+		buildTable["TargetFramework"] = "net8.0"
 
 		ResolveToolsTask.evaluate()
 
