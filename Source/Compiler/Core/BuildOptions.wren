@@ -1,4 +1,4 @@
-﻿// <copyright file="BuildArguments.wren" company="Soup">
+﻿// <copyright file="BuildOptions.wren" company="Soup">
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
@@ -63,9 +63,9 @@ class BuildNullableState {
 }
 
 /// <summary>
-/// The set of build arguments
+/// The set of build options
 /// </summary>
-class BuildArguments {
+class BuildOptions {
 	construct new() {
 		_targetName = null
 		_targetArchitecture = null
@@ -76,12 +76,13 @@ class BuildArguments {
 		_binaryDirectory = null
 		_sourceFiles = []
 		_linkDependencies = []
+		_analyzers = []
 		_libraryPaths = []
-		_preprocessorDefinitions = []
+		_defineConstants = []
 		_runtimeDependencies = []
 		_optimizationLevel = null
 		_generateSourceDebugInfo = false
-		_enableWarningsAsErrors = false
+		_treatWarningsAsErrors = false
 		_nullableState = null
 		_disabledWarnings = []
 		_enabledWarnings = []
@@ -143,6 +144,12 @@ class BuildArguments {
 	LinkDependencies=(value) { _linkDependencies = value }
 
 	/// <summary>
+	/// Gets or sets the list of analyzers
+	/// </summary>
+	Analyzers { _analyzers }
+	Analyzers=(value) { _analyzers = value }
+
+	/// <summary>
 	/// Gets or sets the list of library paths
 	/// </summary>
 	LibraryPaths { _libraryPaths }
@@ -151,8 +158,8 @@ class BuildArguments {
 	/// <summary>
 	/// Gets or sets the list of preprocessor definitions
 	/// </summary>
-	PreprocessorDefinitions { _preprocessorDefinitions }
-	PreprocessorDefinitions=(value) { _preprocessorDefinitions = value }
+	DefineConstants { _defineConstants }
+	DefineConstants=(value) { _defineConstants = value }
 
 	/// <summary>
 	/// Gets or sets the list of runtime dependencies
@@ -175,8 +182,8 @@ class BuildArguments {
 	/// <summary>
 	/// Gets or sets a value indicating whether to enable warnings as errors
 	/// </summary>
-	EnableWarningsAsErrors { _enableWarningsAsErrors }
-	EnableWarningsAsErrors=(value) { _enableWarningsAsErrors = value }
+	TreatWarningsAsErrors { _treatWarningsAsErrors }
+	TreatWarningsAsErrors=(value) { _treatWarningsAsErrors = value }
 
 	/// <summary>
 	/// Gets or sets a the nullable state

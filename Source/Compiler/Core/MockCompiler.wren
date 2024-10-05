@@ -50,8 +50,8 @@ class MockCompiler is ICompiler {
 	/// <summary>
 	/// Compile
 	/// </summary>
-	CreateCompileOperations(arguments) {
-		_compileRequests.add(arguments)
+	CreateCompileOperations(options, objectDirectory, targetRootDirectory) {
+		_compileRequests.add(options)
 
 		var result = []
 		result.add(

@@ -2,6 +2,7 @@
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
+import "./CommandLineBuilder" for CommandLineBuilder
 import "./RoslynArgumentBuilder" for RoslynArgumentBuilder
 import "mwasplund|Soup.CSharp.Compiler:./ICompiler" for ICompiler
 import "mwasplund|Soup.Build.Utils:./BuildOperation" for BuildOperation
@@ -42,40 +43,48 @@ class RoslynCompiler is ICompiler {
 	/// <summary>
 	/// Compile
 	/// </summary>
-	CreateCompileOperations(arguments) {
+	CreateCompileOperations(options, objectDirectory, targetRootDirectory) {
 		var operations = []
 
 		// Write the shared arguments to the response file
-		var responseFile = arguments.ObjectDirectory + Path.new("CompileArguments.rsp")
-		var sharedCommandArguments = RoslynArgumentBuilder.BuildSharedCompilerArguments(arguments)
+		var responseFile = objectDirectory + Path.new("CompileArguments.rsp")
+		var responseFileBuilder = CommandLineBuilder.new()
+		var agumentBuilder = RoslynArgumentBuilder.new()
+		agumentBuilder.BuildResponseFileArguments(options, responseFileBuilder)
+
 		var writeSharedArgumentsOperation = SharedOperations.CreateWriteFileOperation(
-			arguments.TargetRootDirectory,
+			targetRootDirectory,
 			responseFile,
-			sharedCommandArguments.join(" "))
+			responseFileBuilder.toString)
 		operations.add(writeSharedArgumentsOperation)
 
-		var symbolFile = Path.new(arguments.Target.toString)
+		var symbolFile = Path.new(options.OutputAssembly.toString)
 		symbolFile.SetFileExtension("pdb")
 
-		var targetResponseFile = arguments.TargetRootDirectory + responseFile
+		var targetResponseFile = targetRootDirectory + responseFile
 
 		// Build up the input/output sets
 		var inputFiles = []
 		inputFiles.add(_compilerLibrary)
 		inputFiles.add(targetResponseFile)
-		inputFiles = inputFiles + arguments.SourceFiles
-		inputFiles = inputFiles + arguments.ReferenceLibraries
+		inputFiles = inputFiles + options.Sources
+		inputFiles = inputFiles + options.References
 		var outputFiles = [
-			arguments.TargetRootDirectory + arguments.Target,
-			arguments.TargetRootDirectory + symbolFile,
+			options.OutputAssembly,
+			symbolFile,
 		]
 
+		var commandLineBuilder = CommandLineBuilder.new()
+		commandLineBuilder.Append("exec")
+		commandLineBuilder.Append("%(_compilerLibrary)")
+		commandLineBuilder.Append("@%(targetResponseFile)")
+		agumentBuilder.BuildCommandLineArguments(options, commandLineBuilder)
+
 		// Generate the compile build operation
-		var commandArguments = RoslynArgumentBuilder.BuildUniqueCompilerArguments()
-		commandArguments = ["exec", "%(_compilerLibrary)", "@%(targetResponseFile)"] + commandArguments
+		var commandArguments = commandLineBuilder.CommandArguments
 		var buildOperation = BuildOperation.new(
-			"Compile - %(arguments.Target)",
-			arguments.SourceRootDirectory,
+			"Compile - %(options.OutputAssembly)",
+			options.SourceRootDirectory,
 			_dotnetExecutable,
 			commandArguments,
 			inputFiles,
@@ -84,4 +93,43 @@ class RoslynCompiler is ICompiler {
 
 		return operations
 	}
+
+	/// <summary>
+	/// Configure the debug switches which will be placed on the compiler command-line.
+	/// The matrix of debug type and symbol inputs and the desired results is as follows:
+	///
+	/// Debug Symbols              DebugType   Desired Results
+	///          True               Full        /debug+ /debug:full
+	///          True               PdbOnly     /debug+ /debug:PdbOnly
+	///          True               None        /debug-
+	///          True               Blank       /debug+
+	///          False              Full        /debug- /debug:full
+	///          False              PdbOnly     /debug- /debug:PdbOnly
+	///          False              None        /debug-
+	///          False              Blank       /debug-
+	///          Blank              Full                /debug:full
+	///          Blank              PdbOnly             /debug:PdbOnly
+	///          Blank              None        /debug-
+	/// Debug:   Blank              Blank       /debug+ //Microsoft.common.targets will set this
+	/// Release: Blank              Blank       "Nothing for either switch"
+	///
+	/// The logic is as follows:
+	/// If debugtype is none  set debugtype to empty and debugSymbols to false
+	/// If debugType is blank  use the debugsymbols "as is"
+	/// If debug type is set, use its value and the debugsymbols value "as is"
+	/// </summary>
+	// private void ConfigureDebugProperties()
+	// {
+	// 	// If debug type is set we need to take some action depending on the value. If debugtype is not set
+	// 	// We don't need to modify the EmitDebugInformation switch as its value will be used as is.
+	// 	if (_store[nameof(DebugType)] != null)
+	// 	{
+	// 		// If debugtype is none then only show debug- else use the debug type and the debugsymbols as is.
+	// 		if (string.Compare((string?)_store[nameof(DebugType)], "none", StringComparison.OrdinalIgnoreCase) == 0)
+	// 		{
+	// 			_store[nameof(DebugType)] = null
+	// 			_store[nameof(EmitDebugInformation)] = false
+	// 		}
+	// 	}
+	// }
 }

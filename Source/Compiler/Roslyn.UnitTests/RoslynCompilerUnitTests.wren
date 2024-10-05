@@ -2,7 +2,8 @@
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
-import "mwasplund|Soup.CSharp.Compiler:./CompileArguments" for CompileArguments, LinkTarget, NullableState
+import "mwasplund|Soup.CSharp.Compiler:./CompileOptions" for CompileOptions, NullableState
+import "mwasplund|Soup.CSharp.Compiler:./ManagedCompileOptions" for LinkTarget
 import "mwasplund|Soup.CSharp.Compiler.Roslyn:./RoslynCompiler" for RoslynCompiler
 import "mwasplund|Soup.Build.Utils:./BuildOperation" for BuildOperation
 import "mwasplund|Soup.Build.Utils:./Path" for Path
@@ -36,19 +37,19 @@ class RoslynCompilerUnitTests {
 			Path.new("C:/bin/mock.dotnet.exe"),
 			Path.new("C:/lib/mock.csc.dll"))
 
-		var arguments = CompileArguments.new()
-		arguments.Target = Path.new("bin/Target.dll")
-		arguments.TargetType = LinkTarget.Library
-		arguments.ReferenceTarget = Path.new("ref/Target.dll")
-		arguments.SourceRootDirectory = Path.new("C:/source/")
-		arguments.TargetRootDirectory = Path.new("C:/target/")
-		arguments.ObjectDirectory = Path.new("ObjectDir/")
-		arguments.SourceFiles = [
+		var options = CompileOptions.new()
+		options.OutputAssembly = Path.new("C:/target/bin/Target.dll")
+		options.OutputRefAssembly = Path.new("C:/target/ref/Target.dll")
+		options.TargetType = LinkTarget.Library
+		options.SourceRootDirectory = Path.new("C:/source/")
+		options.Sources = [
 			Path.new("File.cs"),
 		]
-		arguments.NullableState =  NullableState.Enabled
+		options.NullableState =  NullableState.Enabled
 
-		var result = uut.CreateCompileOperations(arguments)
+		var objectDirectory = Path.new("ObjectDir/")
+		var targetRootDirectory = Path.new("C:/target/")
+		var result = uut.CreateCompileOperations(options, objectDirectory, targetRootDirectory)
 
 		// Verify result
 		var expected = [
@@ -58,14 +59,14 @@ class RoslynCompilerUnitTests {
 				Path.new("./writefile.exe"),
 				[
 					"./ObjectDir/CompileArguments.rsp",
-					"/unsafe- /checked- /fullpaths /nostdlib+ /errorreport:prompt /warn:5 /errorendlocation /preferreduilang:en-US /highentropyva+ /nullable:enable /debug+ /debug:portable /filealign:512 /optimize- /out:\"C:/target/bin/Target.dll\" /refout:\"C:/target/ref/Target.dll\" /target:library /warnaserror- /utf8output /deterministic+ /langversion:9.0 \"./File.cs\"",
+					"/unsafe- /checked- /fullpaths /nostdlib+ /errorreport:prompt /warn:8 /highentropyva+ /nullable:enable /debug+ /debug:portable /filealign:512 /optimize- /out:\"C:/target/bin/Target.dll\" /refout:\"C:/target/ref/Target.dll\" /target:library /warnaserror- /utf8output /deterministic+ /langversion:12.0 \"./File.cs\"",
 				],
 				[],
 				[
 					Path.new("./ObjectDir/CompileArguments.rsp"),
 				]),
 			BuildOperation.new(
-				"Compile - ./bin/Target.dll",
+				"Compile - C:/target/bin/Target.dll",
 				Path.new("C:/source/"),
 				Path.new("C:/bin/mock.dotnet.exe"),
 				[

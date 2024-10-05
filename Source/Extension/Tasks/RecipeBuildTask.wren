@@ -6,7 +6,7 @@ import "soup" for Soup, SoupTask
 import "mwasplund|Soup.Build.Utils:./Path" for Path
 import "mwasplund|Soup.Build.Utils:./ListExtensions" for ListExtensions
 import "mwasplund|Soup.Build.Utils:./MapExtensions" for MapExtensions
-import "mwasplund|Soup.CSharp.Compiler:./BuildArguments" for BuildNullableState, BuildOptimizationLevel, BuildTargetType
+import "mwasplund|Soup.CSharp.Compiler:./BuildOptions" for BuildNullableState, BuildTargetType
 
 /// <summary>
 /// The recipe build task that knows how to build a single recipe
@@ -23,8 +23,6 @@ class RecipeBuildTask is SoupTask {
 	/// Get the run after list
 	/// </summary>
 	static runAfter { [
-		"InitializeDefaultsTask",
-		"ResolveToolsTask",
 	] }
 
 	/// <summary>
@@ -41,7 +39,6 @@ class RecipeBuildTask is SoupTask {
 
 		// Load the input properties
 		var packageRoot = Path.new(context["PackageDirectory"])
-		var flavor = build["Flavor"]
 
 		// Load Recipe properties
 		var name = recipe["Name"]
@@ -82,12 +79,10 @@ class RecipeBuildTask is SoupTask {
 		var libraryPaths = []
 
 		// Combine the defines with the default set and the platform
-		var preprocessorDefinitions = []
+		var defineConstants = []
 		if (recipe.containsKey("Defines")) {
-			preprocessorDefinitions = recipe["Defines"]
+			defineConstants = recipe["Defines"]
 		}
-
-		preprocessorDefinitions.add("SOUP_BUILD")
 
 		// Build up arguments to build this individual recipe
 		var targetDirectory = Path.new(context["TargetDirectory"])
@@ -101,9 +96,9 @@ class RecipeBuildTask is SoupTask {
 		}
 
 		// Check for warning settings
-		var enableWarningsAsErrors = true
-		if (recipe.containsKey("EnableWarningsAsErrors")) {
-			enableWarningsAsErrors = recipe["EnableWarningsAsErrors"]
+		var treatWarningsAsErrors = true
+		if (recipe.containsKey("TreatWarningsAsErrors")) {
+			treatWarningsAsErrors = recipe["TreatWarningsAsErrors"]
 		}
 
 		// Check for nullable settings, default to enabled
@@ -112,37 +107,18 @@ class RecipeBuildTask is SoupTask {
 			nullableState = RecipeBuildTask.ParseNullable(recipe["Nullable"])
 		}
 
-		// Set the correct optimization level for the requested flavor
-		var optimizationLevel = BuildOptimizationLevel.None
-		var generateSourceDebugInfo = false
-		if (flavor == "Debug") {
-			// preprocessorDefinitions.add("DEBUG")
-			generateSourceDebugInfo = true
-		} else if (flavor == "DebugRelease") {
-			preprocessorDefinitions.add("RELEASE")
-			generateSourceDebugInfo = true
-			optimizationLevel = BuildOptimizationLevel.Speed
-		} else if (flavor == "Release") {
-			preprocessorDefinitions.add("RELEASE")
-			optimizationLevel = BuildOptimizationLevel.Speed
-		} else {
-			Fiber.abort("Unknown build flavor: %(flavor)")
-		}
-
 		build["TargetName"] = name
 		build["SourceRootDirectory"] = packageRoot.toString
 		build["TargetRootDirectory"] = targetDirectory.toString
 		build["ObjectDirectory"] = objectDirectory.toString
 		build["BinaryDirectory"] = binaryDirectory.toString
-		build["OptimizationLevel"] = optimizationLevel
-		build["GenerateSourceDebugInfo"] = generateSourceDebugInfo
 
 		ListExtensions.Append(
 			MapExtensions.EnsureList(build, "LinkLibraries"),
 			ListExtensions.ConvertFromPathList(linkLibraries))
 		ListExtensions.Append(
-			MapExtensions.EnsureList(build, "PreprocessorDefinitions"),
-			preprocessorDefinitions)
+			MapExtensions.EnsureList(build, "DefineConstants"),
+			defineConstants)
 		ListExtensions.Append(
 			MapExtensions.EnsureList(build, "LibraryPaths"),
 			ListExtensions.ConvertFromPathList(libraryPaths))
@@ -152,7 +128,7 @@ class RecipeBuildTask is SoupTask {
 				sourceFiles)
 		}
 
-		build["EnableWarningsAsErrors"] = enableWarningsAsErrors
+		build["TreatWarningsAsErrors"] = treatWarningsAsErrors
 		build["NullableState"] = nullableState
 
 		// Convert the recipe type to the required build type
@@ -162,6 +138,15 @@ class RecipeBuildTask is SoupTask {
 		}
 
 		build["TargetType"] = targetType
+
+		var targetFramework = null
+		if (recipe.containsKey("TargetFramework")) {
+			targetFramework = recipe["TargetFramework"]
+		} else {
+			Fiber.abort("Missing required Target Framework")
+		}
+
+		build["TargetFramework"] = targetFramework
 	}
 
 	static ParseType(value) {

@@ -40,6 +40,7 @@ class RecipeBuildTaskUnitTests {
 		var recipeTable = {}
 		globalState["Recipe"] = recipeTable
 		recipeTable["Name"] = "Program"
+		recipeTable["TargetFramework"] = "net8.0"
 
 		RecipeBuildTask.evaluate()
 
