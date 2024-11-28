@@ -11,7 +11,7 @@ Closures: {
 	}
 	Build0: {
 		Wren: {
-			'mwasplund|Soup.Wren': { Version: 0.4.1 }
+			'Soup|Wren': { Version: 0.4.1 }
 		}
 	}
 	Tool0: {

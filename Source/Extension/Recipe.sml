@@ -1,6 +1,6 @@
 Name: 'CSharp'
 Language: 'Wren|0'
-Version: '0.15.0'
+Version: '0.15.1'
 Source: [
 	'Tasks/BuildTask.wren'
 	'Tasks/ExpandSourceTask.wren'

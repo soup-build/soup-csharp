@@ -1,6 +1,6 @@
 Name: 'CSharp.Compiler.Roslyn'
 Language: 'Wren|0'
-Version: '0.13.0'
+Version: '0.13.1'
 Source: [
 	'CommandLineBuilder.wren'
 	'ManagedArgumentBuilder.wren'
