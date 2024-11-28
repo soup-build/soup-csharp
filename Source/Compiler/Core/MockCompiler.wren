@@ -3,8 +3,8 @@
 // </copyright>
 
 import "./ICompiler" for ICompiler
-import "mwasplund|Soup.Build.Utils:./BuildOperation" for BuildOperation
-import "mwasplund|Soup.Build.Utils:./Path" for Path
+import "Soup|Build.Utils:./BuildOperation" for BuildOperation
+import "Soup|Build.Utils:./Path" for Path
 
 /// <summary>
 /// A mock compiler interface implementation

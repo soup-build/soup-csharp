@@ -2,11 +2,11 @@
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
-import "mwasplund|Soup.CSharp.Compiler:./CompileOptions" for CompileOptions, NullableState
-import "mwasplund|Soup.CSharp.Compiler:./ManagedCompileOptions" for LinkTarget
-import "mwasplund|Soup.CSharp.Compiler.Roslyn:./RoslynCompiler" for RoslynCompiler
-import "mwasplund|Soup.Build.Utils:./BuildOperation" for BuildOperation
-import "mwasplund|Soup.Build.Utils:./Path" for Path
+import "Soup|CSharp.Compiler:./CompileOptions" for CompileOptions, NullableState
+import "Soup|CSharp.Compiler:./ManagedCompileOptions" for LinkTarget
+import "Soup|CSharp.Compiler.Roslyn:./RoslynCompiler" for RoslynCompiler
+import "Soup|Build.Utils:./BuildOperation" for BuildOperation
+import "Soup|Build.Utils:./Path" for Path
 import "../../Test/Assert" for Assert
 
 class RoslynCompilerUnitTests {

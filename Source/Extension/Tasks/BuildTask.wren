@@ -3,13 +3,13 @@
 // </copyright>
 
 import "soup" for Soup, SoupTask
-import "mwasplund|Soup.Build.Utils:./Path" for Path
-import "mwasplund|Soup.Build.Utils:./Set" for Set
-import "mwasplund|Soup.Build.Utils:./ListExtensions" for ListExtensions
-import "mwasplund|Soup.Build.Utils:./MapExtensions" for MapExtensions
-import "mwasplund|Soup.CSharp.Compiler:./BuildOptions" for BuildOptions, BuildOptimizationLevel, BuildNullableState
-import "mwasplund|Soup.CSharp.Compiler:./BuildEngine" for BuildEngine
-import "mwasplund|Soup.CSharp.Compiler.Roslyn:./RoslynCompiler" for RoslynCompiler
+import "Soup|Build.Utils:./Path" for Path
+import "Soup|Build.Utils:./Set" for Set
+import "Soup|Build.Utils:./ListExtensions" for ListExtensions
+import "Soup|Build.Utils:./MapExtensions" for MapExtensions
+import "Soup|CSharp.Compiler:./BuildOptions" for BuildOptions, BuildOptimizationLevel, BuildNullableState
+import "Soup|CSharp.Compiler:./BuildEngine" for BuildEngine
+import "Soup|CSharp.Compiler.Roslyn:./RoslynCompiler" for RoslynCompiler
 
 class BuildTask is SoupTask {
 	/// <summary>
