@@ -55,7 +55,8 @@ class RecipeNugetPackagesTask is SoupTask {
 
 						var name = package["Name"]
 						var version = package["Version"]
-						var packageVersionFolder = nugetPackagesDirectory + Path.new("%(name)/%(version)/")
+						var lowerName = RecipeNugetPackagesTask.ToLower(name)
+						var packageVersionFolder = nugetPackagesDirectory + Path.new("%(lowerName)/%(version)/")
 
 						var targetFrameworks = packageProperties["TargetFrameworks"]
 						var currentTargetFramework = RecipeNugetPackagesTask.GetBestFramework(targetFrameworks)
@@ -131,5 +132,17 @@ class RecipeNugetPackagesTask is SoupTask {
 		}
 
 		Fiber.abort("Missing SDK %(name)")
+	}
+
+	static ToLower(value) {
+		var output = ""
+		for (c in value) {
+			if ((c >= 65 && c <= 90) || (c >= 192 && c <= 214) || (c >= 216 && c <= 222)) {
+				c = c + 32
+			}
+
+			output = output + String.fromCodePoint(c)
+		}
+		return output
 	}
 }
