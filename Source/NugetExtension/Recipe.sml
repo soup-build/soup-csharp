@@ -1,11 +1,11 @@
-Name: 'Soup.CSharp.Nuget'
+Name: 'CSharp.Nuget'
 Language: 'Wren|0'
-Version: '0.5.0'
+Version: '0.5.1'
 Source: [
 	'Tasks/RecipeNugetPackagesTask.wren'
 ]
 Dependencies: {
 	Runtime: [
-		'mwasplund|Soup.Build.Utils@0'
+		'Soup|Build.Utils@0'
 	]
 }

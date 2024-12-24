@@ -4,10 +4,10 @@
 
 import "./CommandLineBuilder" for CommandLineBuilder
 import "./RoslynArgumentBuilder" for RoslynArgumentBuilder
-import "mwasplund|Soup.CSharp.Compiler:./ICompiler" for ICompiler
-import "mwasplund|Soup.Build.Utils:./BuildOperation" for BuildOperation
-import "mwasplund|Soup.Build.Utils:./SharedOperations" for SharedOperations
-import "mwasplund|Soup.Build.Utils:./Path" for Path
+import "Soup|CSharp.Compiler:./ICompiler" for ICompiler
+import "Soup|Build.Utils:./BuildOperation" for BuildOperation
+import "Soup|Build.Utils:./SharedOperations" for SharedOperations
+import "Soup|Build.Utils:./Path" for Path
 
 /// <summary>
 /// The Clang compiler implementation

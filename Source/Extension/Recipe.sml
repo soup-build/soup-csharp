@@ -1,6 +1,6 @@
-Name: 'Soup.CSharp'
+Name: 'CSharp'
 Language: 'Wren|0'
-Version: '0.15.0'
+Version: '0.15.1'
 Source: [
 	'Tasks/BuildTask.wren'
 	'Tasks/ExpandSourceTask.wren'
@@ -11,9 +11,9 @@ Source: [
 ]
 Dependencies: {
 	Runtime: [
-		'mwasplund|Soup.Build.Utils@0'
-		'mwasplund|Soup.CSharp.Compiler@0'
-		'mwasplund|Soup.CSharp.Compiler.Roslyn@0'
+		'Soup|Build.Utils@0'
+		'Soup|CSharp.Compiler@0'
+		'Soup|CSharp.Compiler.Roslyn@0'
 	]
 	Tool: [
 		'[C++]mwasplund|copy@1'

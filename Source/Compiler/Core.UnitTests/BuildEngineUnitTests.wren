@@ -3,13 +3,13 @@
 // </copyright>
 
 import "soup-test" for SoupTest
-import "mwasplund|Soup.CSharp.Compiler:./BuildOptions" for BuildOptions, BuildNullableState, BuildOptimizationLevel, BuildTargetType
-import "mwasplund|Soup.CSharp.Compiler:./CompileOptions" for CompileOptions, NullableState
-import "mwasplund|Soup.CSharp.Compiler:./ManagedCompileOptions" for LinkTarget
-import "mwasplund|Soup.CSharp.Compiler:./BuildEngine" for BuildEngine
-import "mwasplund|Soup.CSharp.Compiler:./MockCompiler" for MockCompiler
-import "mwasplund|Soup.Build.Utils:./BuildOperation" for BuildOperation
-import "mwasplund|Soup.Build.Utils:./Path" for Path
+import "Soup|CSharp.Compiler:./BuildOptions" for BuildOptions, BuildNullableState, BuildOptimizationLevel, BuildTargetType
+import "Soup|CSharp.Compiler:./CompileOptions" for CompileOptions, NullableState
+import "Soup|CSharp.Compiler:./ManagedCompileOptions" for LinkTarget
+import "Soup|CSharp.Compiler:./BuildEngine" for BuildEngine
+import "Soup|CSharp.Compiler:./MockCompiler" for MockCompiler
+import "Soup|Build.Utils:./BuildOperation" for BuildOperation
+import "Soup|Build.Utils:./Path" for Path
 import "../../Test/Assert" for Assert
 
 class BuildEngineUnitTests {

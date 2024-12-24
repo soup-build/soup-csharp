@@ -1,6 +1,6 @@
-Name: 'Soup.CSharp.Compiler.Roslyn'
+Name: 'CSharp.Compiler.Roslyn'
 Language: 'Wren|0'
-Version: '0.13.0'
+Version: '0.13.1'
 Source: [
 	'CommandLineBuilder.wren'
 	'ManagedArgumentBuilder.wren'
@@ -10,7 +10,7 @@ Source: [
 
 Dependencies: {
 	Runtime: [
-		'Soup.Build.Utils@0'
-		'Soup.CSharp.Compiler@0'
+		'Soup|Build.Utils@0'
+		'Soup|CSharp.Compiler@0'
 	]
 }
