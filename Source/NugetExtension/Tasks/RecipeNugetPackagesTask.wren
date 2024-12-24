@@ -136,7 +136,7 @@ class RecipeNugetPackagesTask is SoupTask {
 
 	static ToLower(value) {
 		var output = ""
-		for (c in value) {
+		for (c in value.codePoints) {
 			if ((c >= 65 && c <= 90) || (c >= 192 && c <= 214) || (c >= 216 && c <= 222)) {
 				c = c + 32
 			}
