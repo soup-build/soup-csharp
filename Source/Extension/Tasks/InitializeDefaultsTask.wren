@@ -41,6 +41,7 @@ class InitializeDefaultsTask is SoupTask {
 		var architecture = "AnyCPU"
 		var compiler = "Roslyn"
 		var flavor = "Debug"
+		var preprocessorDefinitions = []
 
 		if (parameters.containsKey("Architecture")) {
 			architecture = parameters["Architecture"]

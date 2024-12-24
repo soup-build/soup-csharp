@@ -172,4 +172,22 @@ class RecipeBuildTask is SoupTask {
 			Fiber.abort("Unknown nullable state value.")
 		}
 	}
+
+	static GetTargetFrameworkPreprocessorDefinitions() {
+		return [
+			"NET",
+			"NET7_0",
+			"NETCOREAPP",
+			"NET5_0_OR_GREATER",
+			"NET6_0_OR_GREATER",
+			"NET7_0_OR_GREATER",
+			"NETCOREAPP1_0_OR_GREATER",
+			"NETCOREAPP1_1_OR_GREATER",
+			"NETCOREAPP2_0_OR_GREATER",
+			"NETCOREAPP2_1_OR_GREATER",
+			"NETCOREAPP2_2_OR_GREATER",
+			"NETCOREAPP3_0_OR_GREATER",
+			"NETCOREAPP3_1_OR_GREATER",
+		]
+	}
 }
