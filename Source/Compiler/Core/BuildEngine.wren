@@ -162,14 +162,29 @@ class BuildEngine {
 	/// </summary>
 	GenerateBuildRuntimeConfigurationFiles(options, result) {
 		if (options.TargetType == BuildTargetType.Executable) {
+			var frameworkVersion = null
+			if (options.TargetFramework == "net9.0") {
+				frameworkVersion = "9.0.0"
+			} else if (options.TargetFramework == "net8.0") {
+				frameworkVersion = "8.0.0"
+			} else if (options.TargetFramework == "net7.0") {
+				frameworkVersion = "7.0.0"
+			} else if (options.TargetFramework == "net6.0") {
+				frameworkVersion = "6.0.0"
+			} else if (options.TargetFramework == "net5.0") {
+				frameworkVersion = "5.0.0"
+			} else {
+				Fiber.abort("Unknown target framework value %(options.TargetFramework).")
+			}
+
 			// Generate the runtime configuration files
 			var runtimeConfigFile = options.BinaryDirectory + Path.new("%(options.TargetName).runtimeconfig.json")
 			var content = "{
   \"runtimeOptions\": {
-    \"tfm\": \"net8.0\",
+    \"tfm\": \"%(options.TargetFramework)\",
     \"framework\": {
       \"name\": \"Microsoft.NETCore.App\",
-      \"version\": \"8.0.0\"
+      \"version\": \"%(frameworkVersion)\"
     },
     \"configProperties\": {
       \"System.Runtime.Serialization.EnableUnsafeBinaryFormatterSerialization\": false

@@ -41,6 +41,7 @@ class BuildTask is SoupTask {
 
 		var options = BuildOptions.new()
 		options.TargetArchitecture = buildTable["Architecture"]
+		options.TargetFramework = buildTable["TargetFramework"]
 		options.TargetName = buildTable["TargetName"]
 		options.TargetType = buildTable["TargetType"]
 		options.SourceRootDirectory = Path.new(buildTable["SourceRootDirectory"])
