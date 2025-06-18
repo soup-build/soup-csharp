@@ -69,6 +69,7 @@ class BuildOptions {
 	construct new() {
 		_targetName = null
 		_targetArchitecture = null
+		_targetFramework = null
 		_targetType = null
 		_sourceRootDirectory = null
 		_targetRootDirectory = null
@@ -100,6 +101,12 @@ class BuildOptions {
 	/// </summary>
 	TargetArchitecture { _targetArchitecture }
 	TargetArchitecture=(value) { _targetArchitecture = value }
+
+	/// <summary>
+	/// Gets or sets the target framework
+	/// </summary>
+	TargetFramework { _targetFramework }
+	TargetFramework=(value) { _targetFramework = value }
 
 	/// <summary>
 	/// Gets or sets the target type
