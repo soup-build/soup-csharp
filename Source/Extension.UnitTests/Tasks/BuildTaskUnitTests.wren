@@ -48,6 +48,7 @@ class BuildTaskUnitTests {
 		buildTable["Architecture"] = "x64"
 		buildTable["Compiler"] = "MOCK"
 		buildTable["TargetName"] = "Program"
+		buildTable["TargetFramework"] = "net8.0"
 		buildTable["TargetType"] = BuildTargetType.Executable
 		buildTable["SourceRootDirectory"] = "C:/source/"
 		buildTable["TargetRootDirectory"] = "C:/target/"

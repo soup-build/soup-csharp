@@ -3,7 +3,7 @@ Closures: {
 	Root: {
 		Wren: {
 			'CSharp.Nuget': { Version: './', Build: 'Build0', Tool: 'Tool0' }
-			'Soup|Build.Utils': { Version: 0.7.0, Build: 'Build0', Tool: 'Tool0' }
+			'Soup|Build.Utils': { Version: 0.8.0, Build: 'Build0', Tool: 'Tool0' }
 			'Soup|CSharp.Nuget': { Version: './', Build: 'Build0', Tool: 'Tool0' }
 		}
 	}
