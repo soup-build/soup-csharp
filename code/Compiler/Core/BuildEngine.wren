@@ -107,6 +107,7 @@ class BuildEngine {
 			compileOptions.SourceRootDirectory = options.SourceRootDirectory
 			compileOptions.DefineConstants = options.DefineConstants
 			compileOptions.GenerateSourceDebugInfo = options.GenerateSourceDebugInfo
+			compileOptions.AllowUnsafeBlocks = options.AllowUnsafeBlocks
 			compileOptions.TreatWarningsAsErrors = options.TreatWarningsAsErrors
 			compileOptions.DisabledWarnings = options.DisabledWarnings
 			compileOptions.EnabledWarnings = options.EnabledWarnings
