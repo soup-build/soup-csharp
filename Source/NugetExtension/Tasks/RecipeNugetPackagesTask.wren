@@ -71,6 +71,11 @@ class RecipeNugetPackagesTask is SoupTask {
 			ListExtensions.Append(
 				MapExtensions.EnsureList(build, "LinkLibraries"),
 				ListExtensions.ConvertFromPathList(linkLibraries))
+
+			// Ensure they are also copied as runtime dependencies
+			ListExtensions.Append(
+				MapExtensions.EnsureList(build, "RuntimeDependencies"),
+				ListExtensions.ConvertFromPathList(linkLibraries))
 		}
 	}
 
@@ -84,7 +89,13 @@ class RecipeNugetPackagesTask is SoupTask {
 	}
 
 	static GetBestFramework(targetFrameworks) {
-		if (targetFrameworks.containsKey("net6.0")) {
+		if (targetFrameworks.containsKey("net9.0")) {
+			return targetFrameworks["net9.0"]
+		} else if (targetFrameworks.containsKey("net8.0")) {
+			return targetFrameworks["net8.0"]
+		} else if (targetFrameworks.containsKey("net7.0")) {
+			return targetFrameworks["net7.0"]
+		} else if (targetFrameworks.containsKey("net6.0")) {
 			return targetFrameworks["net6.0"]
 		} else if (targetFrameworks.containsKey("net5.0")) {
 			return targetFrameworks["net5.0"]

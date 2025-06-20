@@ -55,6 +55,7 @@ class BuildEngineUnitTests {
 		// Setup the build options
 		var options = BuildOptions.new()
 		options.TargetName = "Program"
+		options.TargetFramework = "net8.0"
 		options.TargetType = BuildTargetType.Executable
 		options.SourceRootDirectory = Path.new("C:/source/")
 		options.TargetRootDirectory = Path.new("C:/target/")
