@@ -83,6 +83,7 @@ class BuildOptions {
 		_runtimeDependencies = []
 		_optimizationLevel = null
 		_generateSourceDebugInfo = false
+		_allowUnsafeBlocks = false
 		_treatWarningsAsErrors = false
 		_nullableState = null
 		_disabledWarnings = []
@@ -185,6 +186,12 @@ class BuildOptions {
 	/// </summary>
 	GenerateSourceDebugInfo { _generateSourceDebugInfo }
 	GenerateSourceDebugInfo=(value) { _generateSourceDebugInfo = value }
+
+	/// <summary>
+	/// Gets or sets a value indicating whether to allow unsafe blocks
+	/// </summary>
+	AllowUnsafeBlocks { _allowUnsafeBlocks }
+	AllowUnsafeBlocks=(value) { _allowUnsafeBlocks = value }
 
 	/// <summary>
 	/// Gets or sets a value indicating whether to enable warnings as errors

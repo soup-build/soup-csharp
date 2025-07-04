@@ -104,10 +104,17 @@ class BuildTask is SoupTask {
 		}
 
 		// Load the list of disabled warnings
+		if (buildTable.containsKey("AllowUnsafeBlocks")) {
+			options.AllowUnsafeBlocks = buildTable["AllowUnsafeBlocks"]
+		} else {
+			options.AllowUnsafeBlocks = false
+		}
+
+		// Load the list of disabled warnings
 		if (buildTable.containsKey("TreatWarningsAsErrors")) {
 			options.TreatWarningsAsErrors = buildTable["TreatWarningsAsErrors"]
 		} else {
-			options.GenerateSourceDebugInfo = false
+			options.TreatWarningsAsErrors = false
 		}
 
 		// Load the list of disabled warnings

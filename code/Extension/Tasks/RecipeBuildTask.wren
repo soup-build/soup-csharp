@@ -95,6 +95,12 @@ class RecipeBuildTask is SoupTask {
 			sourceFiles = recipe["Source"]
 		}
 
+		// Check for unsafe settings
+		var allowUnsafeBlocks = false
+		if (recipe.containsKey("AllowUnsafeBlocks")) {
+			allowUnsafeBlocks = recipe["AllowUnsafeBlocks"]
+		}
+
 		// Check for warning settings
 		var treatWarningsAsErrors = true
 		if (recipe.containsKey("TreatWarningsAsErrors")) {
@@ -128,6 +134,7 @@ class RecipeBuildTask is SoupTask {
 				sourceFiles)
 		}
 
+		build["AllowUnsafeBlocks"] = allowUnsafeBlocks
 		build["TreatWarningsAsErrors"] = treatWarningsAsErrors
 		build["NullableState"] = nullableState
 
