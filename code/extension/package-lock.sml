@@ -3,10 +3,10 @@ Closures: {
 	Root: {
 		Wren: {
 			CSharp: { Version: './', Build: 'Build0', Tool: 'Tool0' }
-			'Soup|Build.Utils': { Version: 0.8.0, Build: 'Build0', Tool: 'Tool0' }
+			'Soup|Build.Utils': { Version: 0.9.0, Build: 'Build0', Tool: 'Tool0' }
 			'Soup|CSharp': { Version: './', Build: 'Build0', Tool: 'Tool0' }
-			'Soup|CSharp.Compiler': { Version: '../Compiler/Core/', Build: 'Build0', Tool: 'Tool0' }
-			'Soup|CSharp.Compiler.Roslyn': { Version: '../Compiler/Roslyn/', Build: 'Build0', Tool: 'Tool0' }
+			'Soup|CSharp.Compiler': { Version: '../compiler/core/', Build: 'Build0', Tool: 'Tool0' }
+			'Soup|CSharp.Compiler.Roslyn': { Version: '../compiler/roslyn/', Build: 'Build0', Tool: 'Tool0' }
 		}
 	}
 	Build0: {

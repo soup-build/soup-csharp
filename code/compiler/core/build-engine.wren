@@ -2,9 +2,9 @@
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
-import "Soup|Build.Utils:./shared-perations" for SharedOperations
+import "Soup|Build.Utils:./shared-operations" for SharedOperations
 import "Soup|Build.Utils:./path" for Path
-import "./bild-result" for BuildResult
+import "./build-result" for BuildResult
 import "./build-options" for BuildTargetType, BuildNullableState
 import "./compile-options" for CompileOptions, NullableState
 import "./managed-compile-options" for LinkTarget
