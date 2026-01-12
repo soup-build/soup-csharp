@@ -164,7 +164,9 @@ class BuildEngine {
 	GenerateBuildRuntimeConfigurationFiles(options, result) {
 		if (options.TargetType == BuildTargetType.Executable) {
 			var frameworkVersion = null
-			if (options.TargetFramework == "net9.0") {
+			if (options.TargetFramework == "net10.0") {
+				frameworkVersion = "10.0.0"
+			} else if (options.TargetFramework == "net9.0") {
 				frameworkVersion = "9.0.0"
 			} else if (options.TargetFramework == "net8.0") {
 				frameworkVersion = "8.0.0"

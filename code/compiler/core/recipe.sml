@@ -1,6 +1,6 @@
 Name: 'CSharp.Compiler'
 Language: 'Wren|0'
-Version: 0.13.0
+Version: 0.14.0
 Source: [
 	'build-engine.wren'
 	'build-options.wren'
