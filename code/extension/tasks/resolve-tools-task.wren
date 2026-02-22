@@ -57,7 +57,9 @@ class ResolveToolsTask is SoupTask {
 		var sdkPath = sdk["Path"]
 
 		var targetDotNetVersion = null
-		if (targetFramework == "net9.0") {
+		if (targetFramework == "net10.0") {
+			targetDotNetVersion = 10
+		} else if (targetFramework == "net9.0") {
 			targetDotNetVersion = 9
 		} else if (targetFramework == "net8.0") {
 			targetDotNetVersion = 8
