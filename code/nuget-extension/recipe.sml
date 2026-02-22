@@ -1,6 +1,6 @@
 Name: 'CSharp.Nuget'
 Language: 'Wren|0'
-Version: 0.6.0
+Version: 0.7.0
 Source: [
 	'tasks/recipe-nuget-packages-task.wren'
 ]
