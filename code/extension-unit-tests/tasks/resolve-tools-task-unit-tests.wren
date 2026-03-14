@@ -3,7 +3,7 @@
 // </copyright>
 
 import "soup-test" for SoupTest
-import "Soup|Build.Utils:./path" for Path
+import "soup|build-utils:./path" for Path
 import "../../extension/tasks/resolve-tools-task" for ResolveToolsTask
 import "../../test/assert" for Assert
 

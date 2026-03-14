@@ -1,4 +1,4 @@
-Name: 'CSharp.Compiler'
+Name: 'csharp-compiler'
 Language: 'Wren|0'
 Version: 0.14.0
 Source: [
@@ -12,6 +12,6 @@ Source: [
 ]
 Dependencies: {
 	Runtime: [
-		'Soup|Build.Utils@0'
+		'soup|build-utils@0'
 	]
 }

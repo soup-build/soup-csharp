@@ -3,7 +3,7 @@
 // </copyright>
 
 import "soup-test" for SoupTest
-import "Soup|Build.Utils:./path" for Path
+import "soup|build-utils:./path" for Path
 import "../../extension/tasks/recipe-build-task" for RecipeBuildTask
 import "../../test/assert" for Assert
 

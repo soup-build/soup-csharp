@@ -3,7 +3,7 @@
 // </copyright>
 
 import "soup-test" for SoupTest
-import "Soup|Build.Utils:./path" for Path
+import "soup|build-utils:./path" for Path
 import "../../nuget-extension/tasks/recipe-nuget-packages-task" for RecipeNugetPackagesTask
 import "../../test/assert" for Assert
 

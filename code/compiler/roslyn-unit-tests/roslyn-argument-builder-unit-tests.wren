@@ -2,11 +2,11 @@
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
-import "Soup|CSharp.Compiler.Roslyn:./command-line-builder" for CommandLineBuilder
-import "Soup|CSharp.Compiler.Roslyn:./roslyn-argument-builder" for RoslynArgumentBuilder
-import "Soup|CSharp.Compiler:./compile-options" for CompileOptions, NullableState
-import "Soup|CSharp.Compiler:./managed-compile-options" for LinkTarget
-import "Soup|Build.Utils:./path" for Path
+import "soup|csharp-compiler-roslyn:./command-line-builder" for CommandLineBuilder
+import "soup|csharp-compiler-roslyn:./roslyn-argument-builder" for RoslynArgumentBuilder
+import "soup|csharp-compiler:./compile-options" for CompileOptions, NullableState
+import "soup|csharp-compiler:./managed-compile-options" for LinkTarget
+import "soup|build-utils:./path" for Path
 import "../../test/assert" for Assert
 
 class RoslynArgumentBuilderUnitTests {

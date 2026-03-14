@@ -3,11 +3,11 @@
 // </copyright>
 
 import "soup-test" for SoupTest, SoupTestOperation
-import "Soup|CSharp.Compiler:./mock-compiler" for MockCompiler
-import "Soup|CSharp.Compiler:./build-options" for BuildOptimizationLevel, BuildTargetType
-import "Soup|CSharp.Compiler:./compile-options" for CompileOptions, NullableState
-import "Soup|CSharp.Compiler:./managed-compile-options" for LinkTarget
-import "Soup|Build.Utils:./path" for Path
+import "soup|csharp-compiler:./mock-compiler" for MockCompiler
+import "soup|csharp-compiler:./build-options" for BuildOptimizationLevel, BuildTargetType
+import "soup|csharp-compiler:./compile-options" for CompileOptions, NullableState
+import "soup|csharp-compiler:./managed-compile-options" for LinkTarget
+import "soup|build-utils:./path" for Path
 import "../../extension/tasks/build-task" for BuildTask
 import "../../test/assert" for Assert
 

@@ -3,10 +3,10 @@
 // </copyright>
 
 import "soup" for Soup, SoupTask
-import "Soup|Build.Utils:./path" for Path
-import "Soup|Build.Utils:./list-extensions" for ListExtensions
-import "Soup|Build.Utils:./map-extensions" for MapExtensions
-import "Soup|CSharp.Compiler:./build-options" for BuildOptimizationLevel
+import "soup|build-utils:./path" for Path
+import "soup|build-utils:./list-extensions" for ListExtensions
+import "soup|build-utils:./map-extensions" for MapExtensions
+import "soup|csharp-compiler:./build-options" for BuildOptimizationLevel
 
 /// <summary>
 /// The initialize defaults task that knows how to initialize default values for a given host environment

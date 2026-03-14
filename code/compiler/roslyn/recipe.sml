@@ -1,4 +1,4 @@
-Name: 'CSharp.Compiler.Roslyn'
+Name: 'csharp-compiler-roslyn'
 Language: 'Wren|0'
 Version: 0.14.0
 Source: [
@@ -9,7 +9,7 @@ Source: [
 ]
 Dependencies: {
 	Runtime: [
-		'Soup|Build.Utils@0'
-		'Soup|CSharp.Compiler@0'
+		'soup|build-utils@0'
+		'soup|csharp-compiler@0'
 	]
 }
