@@ -2,7 +2,7 @@ Version: 6
 Closure: {
 	Wren: {
 		'CSharp.Nuget': { Version: './', Build: '0', Tool: '0' }
-		'Soup|Build.Utils': { Version: 0.9.2, Digest: 'sha256:0b70e1c4392ee591b06e64b00fc3b267fad1f32ced90e7b2d61c01c2780e4096', Build: '0', Tool: '0' }
+		'soup|build-utils': { Version: 0.9.2, Digest: 'sha256:0b70e1c4392ee591b06e64b00fc3b267fad1f32ced90e7b2d61c01c2780e4096', Build: '0', Tool: '0' }
 	}
 }
 Builds: {

@@ -2,7 +2,7 @@
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
-import "Soup|Build.Utils:./list-extensions" for ListExtensions
+import "soup|build-utils:./list-extensions" for ListExtensions
 import "./managed-compile-options" for ManagedCompileOptions
 
 /// <summary>

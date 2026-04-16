@@ -1,22 +1,22 @@
 Version: 6
 Closure: {
 	Wren: {
-		CSharp: { Version: './', Build: '0', Tool: '0' }
-		'Soup|CSharp': { Version: './', Build: '0', Tool: '0' }
-		'Soup|Build.Utils': { Version: 0.9.2, Digest: 'sha256:0b70e1c4392ee591b06e64b00fc3b267fad1f32ced90e7b2d61c01c2780e4096', Build: '0', Tool: '0' }
-		'Soup|CSharp.Compiler': { Version: 0.14.0, Digest: 'sha256:64b6f64975c2b47b03eb8835e683143caf73fcfa53ac5bdb3455d4e919b5dbc4', Build: '0', Tool: '0' }
-		'Soup|CSharp.Compiler.Roslyn': { Version: 0.14.0, Digest: 'sha256:535b834335892387973194c6f47dfdc05db2acfbd7a4ca9ce0cd12123d62d1f6', Build: '0', Tool: '0' }
+		csharp: { Version: './', Build: '0', Tool: '0' }
+		'soup|build-utils': { Version: 0.9.2, Digest: 'sha256:5350668c3d273aeeb1718ac1520ad24c24b0c8640785286bbca788e7efa7da3c', Build: '0', Tool: '0' }
+		'soup|csharp': { Version: './', Build: '0', Tool: '0' }
+		'soup|csharp-compiler': { Version: 0.14.0, Digest: 'sha256:e232a74d2ce1581ff61f152d40379f3c86c16195781fc8f39b9cb19d4a0602ac', Build: '0', Tool: '0' }
+		'soup|csharp-compiler-roslyn': { Version: 0.14.0, Digest: 'sha256:d5f41ea3aa7a0945bf7108d947b6ba9fb7f380d0d806ccaf653d070a68c73745', Build: '0', Tool: '0' }
 	}
 }
 Builds: {
 	'0': {
 		Wren: {
-			'Soup|Wren': {
-				Version: 0.5.4
-				Digest: 'sha256:11c795361ffddfb5f954cf747e69c7036d3f52fdd86e0869a40a55c03fa9bac3'
+			'soup|wren': {
+				Version: 0.6.0
+				Digest: 'sha256:b9e3a6552b51220582684f69bb2cb89fdcf364e4fe6ea4b86ab00f51a45f0d7e'
 				Artifacts: {
-					Linux: 'sha256:61028ebdd655b14bf293febc483d04c5312c3546b7890dfa104e0e1cf6121112'
-					Windows: 'sha256:a63c6fa40955a46b0e3b95a13cfceaba1e067229b9ef518b957fa7cabb6c195a'
+					Linux: 'sha256:e7f6a90708f8b3196a316546ddb7ef3c9b9b0e0c85bb933ae6a90811daf15629'
+					Windows: 'sha256:1356ba73d8ecfc5d3f0dd05130b0aa4f94110dd3a8ab48a827b877620dbe7a0e'
 				}
 			}
 		}

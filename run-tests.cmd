@@ -2,8 +2,13 @@
 SETLOCAL
 SET RootDir=%~dp0
 
-soup run ..\soup\code\generate-test\ -args %RootDir%\code\run-tests.wren %RootDir%\out\Wren\Local\CSharp\0.15.2\J_HqSstV55vlb-x6RWC_hLRFRDU\script\Bundles.sml
+CALL soup build code\extension\
+
+REM - Get the target
+for /f %%i in ('soup target code\extension\') do set ExtensionOutputDirectory=%%i
+
+CALL soup run ..\soup\code\generate-test\ -args %RootDir%\code\run-tests.wren %ExtensionOutputDirectory%\script\bundles.sml
 if %ERRORLEVEL% NEQ  0 exit /B %ERRORLEVEL%
 
-soup run ..\soup\code\generate-test\ -args %RootDir%\code\run-nuget-tests.wren %RootDir%\out\Wren\Local\CSharp\0.15.2\J_HqSstV55vlb-x6RWC_hLRFRDU\script\Bundles.sml
+CALL soup run ..\soup\code\generate-test\ -args %RootDir%\code\run-nuget-tests.wren %ExtensionOutputDirectory%\script\bundles.sml
 if %ERRORLEVEL% NEQ  0 exit /B %ERRORLEVEL%

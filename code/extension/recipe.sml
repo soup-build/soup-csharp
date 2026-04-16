@@ -1,4 +1,4 @@
-Name: 'CSharp'
+Name: 'csharp'
 Language: 'Wren|0'
 Version: 0.17.0
 Source: [
@@ -11,9 +11,9 @@ Source: [
 ]
 Dependencies: {
 	Runtime: [
-		'Soup|Build.Utils@0'
-		'Soup|CSharp.Compiler@0'
-		'Soup|CSharp.Compiler.Roslyn@0'
+		'soup|build-utils@0'
+		'soup|csharp-compiler@0'
+		'soup|csharp-compiler-roslyn@0'
 	]
 	Tool: [
 		'[C++]mwasplund|copy@1'

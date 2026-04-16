@@ -2,8 +2,8 @@
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
-import "Soup|CSharp.Compiler:./compile-options" for NullableState
-import "Soup|CSharp.Compiler:./managed-compile-options" for LinkTarget
+import "soup|csharp-compiler:./compile-options" for NullableState
+import "soup|csharp-compiler:./managed-compile-options" for LinkTarget
 import "./managed-argument-builder" for ManagedArgumentBuilder
 
 /// <summary>
