@@ -46,7 +46,7 @@ class CompileOptions is ManagedCompileOptions {
 		_allowUnsafeBlocks = false
 		_checkForOverflowUnderflow = false
 		_errorReport = "prompt"
-		_warningLevel = 8
+		_warningLevel = 4
 		_errorEndLocation = false
 		_preferredUILang = null
 		_highEntropyVA = true

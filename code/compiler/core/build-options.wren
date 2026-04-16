@@ -68,13 +68,17 @@ class BuildNullableState {
 class BuildOptions {
 	construct new() {
 		_targetName = null
+		_targetVersion = null
 		_targetArchitecture = null
 		_targetFramework = null
+		_languageVersion = null
 		_targetType = null
 		_sourceRootDirectory = null
 		_targetRootDirectory = null
 		_objectDirectory = null
 		_binaryDirectory = null
+		_generateDirectory = null
+		_flavor = null
 		_sourceFiles = []
 		_linkDependencies = []
 		_analyzers = []
@@ -85,6 +89,7 @@ class BuildOptions {
 		_generateSourceDebugInfo = false
 		_allowUnsafeBlocks = false
 		_treatWarningsAsErrors = false
+		_warningLevel = 4
 		_nullableState = null
 		_disabledWarnings = []
 		_enabledWarnings = []
@@ -98,6 +103,12 @@ class BuildOptions {
 	TargetName=(value) { _targetName = value }
 
 	/// <summary>
+	/// Gets or sets the target version
+	/// </summary>
+	TargetVersion { _targetVersion }
+	TargetVersion=(value) { _targetVersion = value }
+
+	/// <summary>
 	/// Gets or sets the target architecture
 	/// </summary>
 	TargetArchitecture { _targetArchitecture }
@@ -108,6 +119,12 @@ class BuildOptions {
 	/// </summary>
 	TargetFramework { _targetFramework }
 	TargetFramework=(value) { _targetFramework = value }
+
+	/// <summary>
+	/// Gets or sets the language version
+	/// </summary>
+	LanguageVersion { _languageVersion }
+	LanguageVersion=(value) { _languageVersion = value }
 
 	/// <summary>
 	/// Gets or sets the target type
@@ -138,6 +155,18 @@ class BuildOptions {
 	/// </summary>
 	BinaryDirectory { _binaryDirectory }
 	BinaryDirectory=(value) { _binaryDirectory = value }
+
+	/// <summary>
+	/// Gets or sets the output generate directory
+	/// </summary>
+	GenerateDirectory { _generateDirectory }
+	GenerateDirectory=(value) { _generateDirectory = value }
+
+	/// <summary>
+	/// Gets or sets the build flavor
+	/// </summary>
+	Flavor { _flavor }
+	Flavor=(value) { _flavor = value }
 
 	/// <summary>
 	/// Gets or sets the list of source files
@@ -198,6 +227,12 @@ class BuildOptions {
 	/// </summary>
 	TreatWarningsAsErrors { _treatWarningsAsErrors }
 	TreatWarningsAsErrors=(value) { _treatWarningsAsErrors = value }
+
+	/// <summary>
+	/// Gets or sets the warning level
+	/// </summary>
+	WarningLevel { _warningLevel }
+	WarningLevel=(value) { _warningLevel = value }
 
 	/// <summary>
 	/// Gets or sets a the nullable state

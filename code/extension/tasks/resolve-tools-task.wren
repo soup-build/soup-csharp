@@ -57,21 +57,42 @@ class ResolveToolsTask is SoupTask {
 		var sdkPath = sdk["Path"]
 
 		var targetDotNetVersion = null
-		if (targetFramework == "net10.0") {
+		var languageVersion = null
+		var warningLevel = 4
+		if (targetFramework == "net11.0") {
+			targetDotNetVersion = 11
+			languageVersion =  15
+			warningLevel = 11
+		} else if (targetFramework == "net10.0") {
 			targetDotNetVersion = 10
+			languageVersion =  14
+			warningLevel = 10
 		} else if (targetFramework == "net9.0") {
 			targetDotNetVersion = 9
+			languageVersion =  13
+			warningLevel = 9
 		} else if (targetFramework == "net8.0") {
 			targetDotNetVersion = 8
+			languageVersion =  12
+			warningLevel = 8
 		} else if (targetFramework == "net7.0") {
 			targetDotNetVersion = 7
+			languageVersion =  11
+			warningLevel = 7
 		} else if (targetFramework == "net6.0") {
 			targetDotNetVersion = 6
+			languageVersion =  10
+			warningLevel = 6
 		} else if (targetFramework == "net5.0") {
 			targetDotNetVersion = 5
+			languageVersion =  9.0
+			warningLevel = 5
 		} else {
 			Fiber.abort("Unknown target framework value %(targetFramework).")
 		}
+
+		build["LanguageVersion"] = languageVersion
+		build["WarningLevel"] = warningLevel
 
 		// Get the latest .net targeting pack
 		var targetingPack = ResolveToolsTask.GetLatestTargetingPack(

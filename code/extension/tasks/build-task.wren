@@ -42,12 +42,17 @@ class BuildTask is SoupTask {
 		var options = BuildOptions.new()
 		options.TargetArchitecture = buildTable["Architecture"]
 		options.TargetFramework = buildTable["TargetFramework"]
+		options.LanguageVersion = buildTable["LanguageVersion"]
+		options.WarningLevel = buildTable["WarningLevel"]
 		options.TargetName = buildTable["TargetName"]
+		options.TargetVersion = buildTable["TargetVersion"]
 		options.TargetType = buildTable["TargetType"]
 		options.SourceRootDirectory = Path.new(buildTable["SourceRootDirectory"])
 		options.TargetRootDirectory = Path.new(buildTable["TargetRootDirectory"])
 		options.ObjectDirectory = Path.new(buildTable["ObjectDirectory"])
 		options.BinaryDirectory = Path.new(buildTable["BinaryDirectory"])
+		options.GenerateDirectory = Path.new(buildTable["GenerateDirectory"])
+		options.Flavor = buildTable["Flavor"]
 
 		if (buildTable.containsKey("Source")) {
 			options.SourceFiles = ListExtensions.ConvertToPathList(buildTable["Source"])
@@ -108,6 +113,13 @@ class BuildTask is SoupTask {
 			options.AllowUnsafeBlocks = buildTable["AllowUnsafeBlocks"]
 		} else {
 			options.AllowUnsafeBlocks = false
+		}
+
+		// Load the list of disabled warnings
+		if (buildTable.containsKey("WarningLevel")) {
+			options.WarningLevel = buildTable["WarningLevel"]
+		} else {
+			options.WarningLevel = 4
 		}
 
 		// Load the list of disabled warnings

@@ -10,4 +10,10 @@ soup build code/extension/
 TARGET_DIR=$(soup target code/extension/ 2>&1)
 
 soup run ../soup/code/generate-test/ -args $ROOT_DIR/code/run-tests.wren $TARGET_DIR/script/bundles.sml
+
+
+soup build code/nuget-extension/
+
+TARGET_DIR=$(soup target code/nuget-extension/ 2>&1)
+
 soup run ../soup/code/generate-test/ -args $ROOT_DIR/code/run-nuget-tests.wren $TARGET_DIR/script/bundles.sml
