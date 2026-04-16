@@ -89,6 +89,8 @@ class BuildEngineUnitTests {
 		expectedCompileOptions.SourceRootDirectory = Path.new("C:/source/")
 		expectedCompileOptions.Sources = [
 			Path.new("C:/source/TestFile.cs"),
+			Path.new("./gen/.NETCoreApp,Version=v8.0.AssemblyAttributes.cs"),
+			Path.new("./gen/my-program.AssemblyInfo.cs"),
 		]
 		expectedCompileOptions.References = [
 			Path.new("../Other/bin/OtherModule1.mock.a"),
@@ -136,19 +138,6 @@ class BuildEngineUnitTests {
 				[],
 				[
 					Path.new("./bin/ref/"),
-				]),
-			BuildOperation.new(
-				"MockCompile: 1",
-				Path.new("MockWorkingDirectory"),
-				Path.new("MockCompiler.exe"),
-				[
-					"Arguments",
-				],
-				[
-					Path.new("./InputFile.in"),
-				],
-				[
-					Path.new("./OutputFile.out"),
 				]),
 			BuildOperation.new(
 				"WriteFile [./bin/my-program.runtimeconfig.json]",
@@ -223,7 +212,20 @@ using System.Reflection;
 				[],
 				[
 					Path.new("./gen/my-program.AssemblyInfo.cs"),
-				])
+				]),
+			BuildOperation.new(
+				"MockCompile: 1",
+				Path.new("MockWorkingDirectory"),
+				Path.new("MockCompiler.exe"),
+				[
+					"Arguments",
+				],
+				[
+					Path.new("./InputFile.in"),
+				],
+				[
+					Path.new("./OutputFile.out"),
+				]),
 		]
 
 		Assert.ListEqual(
@@ -288,6 +290,8 @@ using System.Reflection;
 			Path.new("C:/source/TestFile1.cs"),
 			Path.new("C:/source/TestFile2.cs"),
 			Path.new("C:/source/TestFile3.cs"),
+			Path.new("./gen/.NETCoreApp,Version=v8.0.AssemblyAttributes.cs"),
+			Path.new("./gen/my-library.AssemblyInfo.cs"),
 		]
 		expectedCompileOptions.References = [
 			Path.new("../Other/bin/OtherModule1.mock.a"),
@@ -336,19 +340,6 @@ using System.Reflection;
 				[],
 				[
 					Path.new("./bin/ref/"),
-				]),
-			BuildOperation.new(
-				"MockCompile: 1",
-				Path.new("MockWorkingDirectory"),
-				Path.new("MockCompiler.exe"),
-				[
-					"Arguments",
-				],
-				[
-					Path.new("InputFile.in"),
-				],
-				[
-					Path.new("OutputFile.out"),
 				]),
 			BuildOperation.new(
 				"WriteFile [./gen/.NETCoreApp,Version=v8.0.AssemblyAttributes.cs]",
@@ -400,7 +391,20 @@ using System.Reflection;
 				[],
 				[
 					Path.new("./gen/my-library.AssemblyInfo.cs"),
-				])
+				]),
+			BuildOperation.new(
+				"MockCompile: 1",
+				Path.new("MockWorkingDirectory"),
+				Path.new("MockCompiler.exe"),
+				[
+					"Arguments",
+				],
+				[
+					Path.new("InputFile.in"),
+				],
+				[
+					Path.new("OutputFile.out"),
+				]),
 		]
 
 		Assert.ListEqual(

@@ -86,7 +86,9 @@ class BuildTaskUnitTests {
 		expectedCompileOptions.TargetType = LinkTarget.Executable
 		expectedCompileOptions.SourceRootDirectory = Path.new("C:/source/")
 		expectedCompileOptions.Sources = [
-			Path.new("C:/source/TestFile.cs")
+			Path.new("C:/source/TestFile.cs"),
+			Path.new("./gen/.NETCoreApp,Version=v8.0.AssemblyAttributes.cs"),
+			Path.new("./gen/my-program.AssemblyInfo.cs"),
 		]
 		expectedCompileOptions.NullableState = NullableState.Enabled
 
@@ -131,19 +133,6 @@ class BuildTaskUnitTests {
 				[],
 				[
 					Path.new("./bin/ref/"),
-				]),
-			SoupTestOperation.new(
-				"MockCompile: 1",
-				Path.new("MockCompiler.exe"),
-				[
-					"Arguments",
-				],
-				Path.new("MockWorkingDirectory"),
-				[
-					Path.new("./InputFile.in"),
-				],
-				[
-					Path.new("./OutputFile.out"),
 				]),
 			SoupTestOperation.new(
 				"WriteFile [./bin/my-program.runtimeconfig.json]",
@@ -218,7 +207,20 @@ using System.Reflection;
 				[],
 				[
 					Path.new("./gen/my-program.AssemblyInfo.cs"),
-				])
+				]),
+			SoupTestOperation.new(
+				"MockCompile: 1",
+				Path.new("MockCompiler.exe"),
+				[
+					"Arguments",
+				],
+				Path.new("MockWorkingDirectory"),
+				[
+					Path.new("./InputFile.in"),
+				],
+				[
+					Path.new("./OutputFile.out"),
+				]),
 		]
 
 		Assert.ListEqual(
@@ -305,6 +307,8 @@ using System.Reflection;
 			Path.new("C:/source/TestFile1.cpp"),
 			Path.new("C:/source/TestFile2.cpp"),
 			Path.new("C:/source/TestFile3.cpp"),
+			Path.new("./gen/.NETCoreApp,Version=v8.0.AssemblyAttributes.cs"),
+			Path.new("./gen/my-library.AssemblyInfo.cs"),
 		]
 		expectedCompileOptions.NullableState = NullableState.Enabled
 
@@ -349,19 +353,6 @@ using System.Reflection;
 				[],
 				[
 					Path.new("./bin/ref/"),
-				]),
-			SoupTestOperation.new(
-				"MockCompile: 1",
-				Path.new("MockCompiler.exe"),
-				[
-					"Arguments",
-				],
-				Path.new("MockWorkingDirectory"),
-				[
-					Path.new("./InputFile.in"),
-				],
-				[
-					Path.new("./OutputFile.out"),
 				]),
 			SoupTestOperation.new(
 				"WriteFile [./gen/.NETCoreApp,Version=v8.0.AssemblyAttributes.cs]",
@@ -413,7 +404,20 @@ using System.Reflection;
 				[],
 				[
 					Path.new("./gen/my-library.AssemblyInfo.cs"),
-				])
+				]),
+			SoupTestOperation.new(
+				"MockCompile: 1",
+				Path.new("MockCompiler.exe"),
+				[
+					"Arguments",
+				],
+				Path.new("MockWorkingDirectory"),
+				[
+					Path.new("./InputFile.in"),
+				],
+				[
+					Path.new("./OutputFile.out"),
+				]),
 		]
 
 		Assert.ListEqual(
