@@ -87,8 +87,8 @@ class BuildTaskUnitTests {
 		expectedCompileOptions.SourceRootDirectory = Path.new("C:/source/")
 		expectedCompileOptions.Sources = [
 			Path.new("C:/source/TestFile.cs"),
-			Path.new("./gen/.NETCoreApp,Version=v8.0.AssemblyAttributes.cs"),
-			Path.new("./gen/my-program.AssemblyInfo.cs"),
+			Path.new("C:/target/gen/.NETCoreApp,Version=v8.0.AssemblyAttributes.cs"),
+			Path.new("C:/target/gen/my-program.AssemblyInfo.cs"),
 		]
 		expectedCompileOptions.NullableState = NullableState.Enabled
 
@@ -122,6 +122,17 @@ class BuildTaskUnitTests {
 				[],
 				[
 					Path.new("./bin/"),
+				]),
+			SoupTestOperation.new(
+				"MakeDir [./gen/]",
+				Path.new("/TARGET/mkdir.exe"),
+				[
+					"./gen/",
+				],
+				Path.new("C:/target/"),
+				[],
+				[
+					Path.new("./gen/"),
 				]),
 			SoupTestOperation.new(
 				"MakeDir [./bin/ref/]",
@@ -307,8 +318,8 @@ using System.Reflection;
 			Path.new("C:/source/TestFile1.cpp"),
 			Path.new("C:/source/TestFile2.cpp"),
 			Path.new("C:/source/TestFile3.cpp"),
-			Path.new("./gen/.NETCoreApp,Version=v8.0.AssemblyAttributes.cs"),
-			Path.new("./gen/my-library.AssemblyInfo.cs"),
+			Path.new("C:/target/gen/.NETCoreApp,Version=v8.0.AssemblyAttributes.cs"),
+			Path.new("C:/target/gen/my-library.AssemblyInfo.cs"),
 		]
 		expectedCompileOptions.NullableState = NullableState.Enabled
 
@@ -342,6 +353,17 @@ using System.Reflection;
 				[],
 				[
 					Path.new("./bin/"),
+				]),
+			SoupTestOperation.new(
+				"MakeDir [./gen/]",
+				Path.new("/TARGET/mkdir.exe"),
+				[
+					"./gen/",
+				],
+				Path.new("C:/target/"),
+				[],
+				[
+					Path.new("./gen/"),
 				]),
 			SoupTestOperation.new(
 				"MakeDir [./bin/ref/]",

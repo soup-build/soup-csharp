@@ -36,6 +36,10 @@ class BuildEngine {
 		result.BuildOperations.add(
 			SharedOperations.CreateCreateDirectoryOperation(
 				options.TargetRootDirectory,
+				options.GenerateDirectory))
+		result.BuildOperations.add(
+			SharedOperations.CreateCreateDirectoryOperation(
+				options.TargetRootDirectory,
 				referenceDirectory))
 
 		var generatedSourceFiles = this.GenerateBuildRuntimeConfigurationFiles(options, result)
@@ -121,7 +125,7 @@ class BuildEngine {
 			}
 
 			for (sourceFile in generatedSourceFiles) {
-				compileOptions.Sources.add(options.SourceRootDirectory + sourceFile)
+				compileOptions.Sources.add(sourceFile)
 			}
 
 			// Compile all source files as a single call

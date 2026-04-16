@@ -89,8 +89,8 @@ class BuildEngineUnitTests {
 		expectedCompileOptions.SourceRootDirectory = Path.new("C:/source/")
 		expectedCompileOptions.Sources = [
 			Path.new("C:/source/TestFile.cs"),
-			Path.new("./gen/.NETCoreApp,Version=v8.0.AssemblyAttributes.cs"),
-			Path.new("./gen/my-program.AssemblyInfo.cs"),
+			Path.new("C:/target/gen/.NETCoreApp,Version=v8.0.AssemblyAttributes.cs"),
+			Path.new("C:/target/gen/my-program.AssemblyInfo.cs"),
 		]
 		expectedCompileOptions.References = [
 			Path.new("../Other/bin/OtherModule1.mock.a"),
@@ -127,6 +127,17 @@ class BuildEngineUnitTests {
 				[],
 				[
 					Path.new("./bin/"),
+				]),
+			BuildOperation.new(
+				"MakeDir [./gen/]",
+				Path.new("C:/target/"),
+				Path.new("/TARGET/mkdir.exe"),
+				[
+					"./gen/",
+				],
+				[],
+				[
+					Path.new("./gen/"),
 				]),
 			BuildOperation.new(
 				"MakeDir [./bin/ref/]",
@@ -290,8 +301,8 @@ using System.Reflection;
 			Path.new("C:/source/TestFile1.cs"),
 			Path.new("C:/source/TestFile2.cs"),
 			Path.new("C:/source/TestFile3.cs"),
-			Path.new("./gen/.NETCoreApp,Version=v8.0.AssemblyAttributes.cs"),
-			Path.new("./gen/my-library.AssemblyInfo.cs"),
+			Path.new("C:/target/gen/.NETCoreApp,Version=v8.0.AssemblyAttributes.cs"),
+			Path.new("C:/target/gen/my-library.AssemblyInfo.cs"),
 		]
 		expectedCompileOptions.References = [
 			Path.new("../Other/bin/OtherModule1.mock.a"),
@@ -329,6 +340,17 @@ using System.Reflection;
 				[],
 				[
 					Path.new("./bin/"),
+				]),
+			BuildOperation.new(
+				"MakeDir [./gen/]",
+				Path.new("C:/target/"),
+				Path.new("/TARGET/mkdir.exe"),
+				[
+					"./gen/",
+				],
+				[],
+				[
+					Path.new("./gen/"),
 				]),
 			BuildOperation.new(
 				"MakeDir [./bin/ref/]",
