@@ -1,4 +1,4 @@
-﻿// <copyright file="resolve-tools-task.wren" company="Soup">
+﻿// <copyright file="resolve-dependencies-task.wren" company="Soup">
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
@@ -67,6 +67,12 @@ class ResolveDependenciesTask is SoupTask {
 		if (language == "C#") {
 			ResolveDependenciesTask.resolveCSharpRuntimeDependency(
 				dependencyName, version, dependencySharedState, runtimeDependencies, linkDependencies)
+		} else if (language == "C++") {
+			ResolveDependenciesTask.resolveCPPRuntimeDependency(
+				dependencyName, version, dependencySharedState, runtimeDependencies)
+		} else if (language == "C") {
+			ResolveDependenciesTask.resolveCRuntimeDependency(
+				dependencyName, version, dependencySharedState, runtimeDependencies)
 		} else {
 			Fiber.abort("Unknown language %(language) for dependency %(dependencyName)")
 		}
@@ -97,6 +103,50 @@ class ResolveDependenciesTask is SoupTask {
 			ListExtensions.Append(
 				linkDependencies,
 				dependencyLinkDependencies)
+		}
+	}
+
+	static resolveCPPRuntimeDependency(
+		dependencyName, version, dependencySharedState, runtimeDependencies) {
+		if (!(dependencySharedState.containsKey("Build"))) {
+			Fiber.abort("C++ dependency missing Build table %(dependencyName)")
+		}
+
+		var requiredLanguageVersion = SemanticVersion.new(1, 0, 0)
+		if (!(SemanticVersion.IsUpCompatible(version, requiredLanguageVersion))) {
+			Fiber.abort("Incompatible C++ version %(version)")
+		}
+
+		var dependencyBuildTable = dependencySharedState["Build"]
+
+		// C++ Interop only copies runtime Dlls
+		if (dependencyBuildTable.containsKey("RuntimeDependencies")) {
+			var dependencyRuntimeDependencies = dependencyBuildTable["RuntimeDependencies"]
+			ListExtensions.Append(
+				runtimeDependencies,
+				dependencyRuntimeDependencies)
+		}
+	}
+
+	static resolveCRuntimeDependency(
+		dependencyName, version, dependencySharedState, runtimeDependencies) {
+		if (!(dependencySharedState.containsKey("Build"))) {
+			Fiber.abort("C dependency missing Build table %(dependencyName)")
+		}
+
+		var requiredLanguageVersion = SemanticVersion.new(1, 0, 0)
+		if (!(SemanticVersion.IsUpCompatible(version, requiredLanguageVersion))) {
+			Fiber.abort("Incompatible C version %(version)")
+		}
+
+		var dependencyBuildTable = dependencySharedState["Build"]
+
+		// C Interop only copies runtime Dlls
+		if (dependencyBuildTable.containsKey("RuntimeDependencies")) {
+			var dependencyRuntimeDependencies = dependencyBuildTable["RuntimeDependencies"]
+			ListExtensions.Append(
+				runtimeDependencies,
+				dependencyRuntimeDependencies)
 		}
 	}
 }

@@ -2,7 +2,7 @@ Version: 6
 Closure: {
 	Wren: {
 		csharp: { Version: './', Build: '0', Tool: '0' }
-		'soup|build-utils': { Version: 0.9.2, Digest: 'sha256:5350668c3d273aeeb1718ac1520ad24c24b0c8640785286bbca788e7efa7da3c', Build: '0', Tool: '0' }
+		'soup|build-utils': { Version: 0.9.3, Digest: 'sha256:640456fb5c985c2ff460c9b00197811c273d6f093f1fb6695baa3a7bea78d521', Build: '0', Tool: '0' }
 		'soup|csharp': { Version: './', Build: '0', Tool: '0' }
 		'soup|csharp-compiler': { Version: '../compiler/core/', Build: '0', Tool: '0' }
 		'soup|csharp-compiler-roslyn': { Version:'../compiler/roslyn/', Build: '0', Tool: '0' }
