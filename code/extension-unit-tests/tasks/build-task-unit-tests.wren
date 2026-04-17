@@ -237,6 +237,25 @@ using System.Reflection;
 		Assert.ListEqual(
 			expectedBuildOperations,
 			SoupTest.operations)
+
+		var expectedSharedState = {
+			"Language": "C#",
+			"Version": "1.0",
+			"Build": {
+				"RunArguments": [
+					"C:/target/bin/my-program.mock.dll"
+				],
+				"LinkDependencies": [],
+				"RuntimeDependencies": [
+					"C:/target/bin/my-program.mock.dll"
+				],
+				"RunExecutable": "C:/bin/mock.dotnet.exe",
+				"TargetFile": "C:/target/bin/my-program.mock.dll",
+			}
+		}
+		Assert.MapEqual(
+			expectedSharedState,
+			SoupTest.sharedState)
 	}
 
 	// [Fact]
@@ -445,5 +464,26 @@ using System.Reflection;
 		Assert.ListEqual(
 			expectedBuildOperations,
 			SoupTest.operations)
+
+		var expectedSharedState = {
+			"Language": "C#",
+			"Version": "1.0",
+			"Build": {
+				"RunArguments": [
+					"C:/target/bin/my-library.mock.dll"
+				],
+				"LinkDependencies": [
+					"C:/target/bin/ref/my-library.mock.dll"
+				],
+				"RuntimeDependencies": [
+					"C:/target/bin/my-library.mock.dll"
+				],
+				"RunExecutable": "C:/bin/mock.dotnet.exe",
+				"TargetFile": "C:/target/bin/my-library.mock.dll",
+			}
+		}
+		Assert.MapEqual(
+			expectedSharedState,
+			SoupTest.sharedState)
 	}
 }
