@@ -35,6 +35,10 @@ class BuildTask is SoupTask {
 		var activeState = Soup.activeState
 		var sharedState = Soup.sharedState
 
+		// Set the language and version so consumers can process this shared state
+		sharedState["Language"] = "C#"
+		sharedState["Version"] = SemanticVersion.new(1, 0).toString
+
 		var buildTable = activeState["Build"]
 
 		var dotnet = activeState["DotNet"]
@@ -154,10 +158,6 @@ class BuildTask is SoupTask {
 
 		// Pass along internal state for other stages to gain access
 		buildTable["InternalLinkDependencies"] = ListExtensions.ConvertFromPathList(buildResult.InternalLinkDependencies)
-
-		// Set the language and version so consumers can process this shared state
-		sharedState["Language"] = "C#"
-		sharedState["Version"] = SemanticVersion.new(1, 0).toString
 
 		// Always pass along required input to shared build tasks
 		var sharedBuildTable = MapExtensions.EnsureTable(sharedState, "Build")
