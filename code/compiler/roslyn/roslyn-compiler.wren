@@ -49,8 +49,8 @@ class RoslynCompiler is ICompiler {
 		// Write the shared arguments to the response file
 		var responseFile = objectDirectory + Path.new("CompileArguments.rsp")
 		var responseFileBuilder = CommandLineBuilder.new()
-		var agumentBuilder = RoslynArgumentBuilder.new()
-		agumentBuilder.BuildResponseFileArguments(options, responseFileBuilder)
+		var argumentBuilder = RoslynArgumentBuilder.new()
+		argumentBuilder.BuildResponseFileArguments(options, responseFileBuilder)
 
 		var writeSharedArgumentsOperation = SharedOperations.CreateWriteFileOperation(
 			targetRootDirectory,
@@ -78,7 +78,7 @@ class RoslynCompiler is ICompiler {
 		commandLineBuilder.Append("exec")
 		commandLineBuilder.Append("%(_compilerLibrary)")
 		commandLineBuilder.Append("@%(targetResponseFile)")
-		agumentBuilder.BuildCommandLineArguments(options, commandLineBuilder)
+		argumentBuilder.BuildCommandLineArguments(options, commandLineBuilder)
 
 		// Generate the compile build operation
 		var commandArguments = commandLineBuilder.CommandArguments

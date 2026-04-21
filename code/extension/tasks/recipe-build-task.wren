@@ -42,6 +42,7 @@ class RecipeBuildTask is SoupTask {
 
 		// Load Recipe properties
 		var name = recipe["Name"]
+		var version = recipe["Version"]
 
 		// Add the dependency static library closure to link if targeting an executable or dynamic library
 		var linkLibraries = []
@@ -87,6 +88,7 @@ class RecipeBuildTask is SoupTask {
 		// Build up arguments to build this individual recipe
 		var targetDirectory = Path.new(context["TargetDirectory"])
 		var binaryDirectory = Path.new("bin/")
+		var generateDirectory = Path.new("gen/")
 		var objectDirectory = Path.new("obj/")
 
 		// Load the source files if present
@@ -114,10 +116,12 @@ class RecipeBuildTask is SoupTask {
 		}
 
 		build["TargetName"] = name
+		build["TargetVersion"] = version
 		build["SourceRootDirectory"] = packageRoot.toString
 		build["TargetRootDirectory"] = targetDirectory.toString
 		build["ObjectDirectory"] = objectDirectory.toString
 		build["BinaryDirectory"] = binaryDirectory.toString
+		build["GenerateDirectory"] = generateDirectory.toString
 
 		ListExtensions.Append(
 			MapExtensions.EnsureList(build, "LinkLibraries"),

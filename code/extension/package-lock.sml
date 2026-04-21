@@ -2,10 +2,10 @@ Version: 6
 Closure: {
 	Wren: {
 		csharp: { Version: './', Build: '0', Tool: '0' }
-		'soup|build-utils': { Version: 0.9.2, Digest: 'sha256:5350668c3d273aeeb1718ac1520ad24c24b0c8640785286bbca788e7efa7da3c', Build: '0', Tool: '0' }
+		'soup|build-utils': { Version: 0.9.3, Digest: 'sha256:640456fb5c985c2ff460c9b00197811c273d6f093f1fb6695baa3a7bea78d521', Build: '0', Tool: '0' }
 		'soup|csharp': { Version: './', Build: '0', Tool: '0' }
-		'soup|csharp-compiler': { Version: 0.14.0, Digest: 'sha256:e232a74d2ce1581ff61f152d40379f3c86c16195781fc8f39b9cb19d4a0602ac', Build: '0', Tool: '0' }
-		'soup|csharp-compiler-roslyn': { Version: 0.14.0, Digest: 'sha256:d5f41ea3aa7a0945bf7108d947b6ba9fb7f380d0d806ccaf653d070a68c73745', Build: '0', Tool: '0' }
+		'soup|csharp-compiler': { Version: '../compiler/core/', Build: '0', Tool: '0' }
+		'soup|csharp-compiler-roslyn': { Version:'../compiler/roslyn/', Build: '0', Tool: '0' }
 	}
 }
 Builds: {

@@ -1,10 +1,11 @@
-﻿// <copyright file="resolve-tools-task.wren" company="Soup">
+﻿// <copyright file="resolve-dependencies-task.wren" company="Soup">
 // Copyright (c) Soup. All rights reserved.
 // </copyright>
 
 import "soup" for Soup, SoupTask
 import "soup|build-utils:./list-extensions" for ListExtensions
 import "soup|build-utils:./map-extensions" for MapExtensions
+import "soup|build-utils:./semantic-version" for SemanticVersion
 
 /// <summary>
 /// The resolve dependencies build task that knows how to combine all previous state
@@ -35,6 +36,8 @@ class ResolveDependenciesTask is SoupTask {
 			if (dependenciesTable.containsKey("Runtime")) {
 				var runtimeDependenciesTable = dependenciesTable["Runtime"]
 				var buildTable = MapExtensions.EnsureTable(activeState, "Build")
+				var runtimeDependencies = MapExtensions.EnsureList(buildTable, "RuntimeDependencies")
+				var linkDependencies = MapExtensions.EnsureList(buildTable, "LinkDependencies")
 
 				for (dependencyName in runtimeDependenciesTable.keys) {
 					// Combine the core dependency build inputs for the core build task
@@ -42,49 +45,111 @@ class ResolveDependenciesTask is SoupTask {
 					var dependencyTable = runtimeDependenciesTable[dependencyName]
 					var dependencySharedStateTable = dependencyTable["SharedState"]
 
-					if (dependencySharedStateTable.containsKey("Build")) {
-						var dependencyBuildTable = dependencySharedStateTable["Build"]
-
-						if (dependencyBuildTable.containsKey("RuntimeDependencies")) {
-							var runtimeDependencies = dependencyBuildTable["RuntimeDependencies"]
-							ListExtensions.Append(
-								MapExtensions.EnsureList(buildTable, "RuntimeDependencies"),
-								runtimeDependencies)
-						}
-
-						if (dependencyBuildTable.containsKey("LinkDependencies")) {
-							var linkDependencies = dependencyBuildTable["LinkDependencies"]
-							ListExtensions.Append(
-								MapExtensions.EnsureList(buildTable, "LinkDependencies"),
-								linkDependencies)
-						}
-					}
+					ResolveDependenciesTask.resolveRuntimeDependency(
+						dependencyName, dependencySharedStateTable, runtimeDependencies, linkDependencies)
 				}
 			}
+		}
+	}
 
-			if (dependenciesTable.containsKey("RuntimeReference")) {
-				var runtimeDependenciesTable = dependenciesTable["RuntimeReference"]
-				var buildTable = MapExtensions.EnsureTable(activeState, "Build")
+	static resolveRuntimeDependency(dependencyName, dependencySharedState, runtimeDependencies, linkDependencies) {
+		if (!(dependencySharedState.containsKey("Language"))) {
+			Fiber.abort("Missing required shared state Language, we do not know how to process %(dependencyName)")
+		}
 
-				for (dependencyName in runtimeDependenciesTable.keys) {
-					// Combine the core dependency build inputs for the core build task
-					Soup.info("Combine Runtime Reference Dependency: %(dependencyName)")
-					var dependencyTable = runtimeDependenciesTable[dependencyName]
-					var dependencySharedStateTable = dependencyTable["SharedState"]
+		if (!(dependencySharedState.containsKey("Version"))) {
+			Fiber.abort("Missing required shared state Version, we do not know how to process: %(dependencyName)")
+		}
 
-					if (dependencySharedStateTable.containsKey("Build")) {
-						var dependencyBuildTable = dependencySharedStateTable["Build"]
+		var language = dependencySharedState["Language"]
+		var version = SemanticVersion.Parse(dependencySharedState["Version"])
 
-						// Only copy over the runtime deps, do not include the assmeblies in the build
-						if (dependencyBuildTable.containsKey("RuntimeDependencies")) {
-							var runtimeDependencies = dependencyBuildTable["RuntimeDependencies"]
-							ListExtensions.Append(
-								MapExtensions.EnsureList(buildTable, "RuntimeDependencies"),
-								runtimeDependencies)
-						}
-					}
-				}
-			}
+		if (language == "C#") {
+			ResolveDependenciesTask.resolveCSharpRuntimeDependency(
+				dependencyName, version, dependencySharedState, runtimeDependencies, linkDependencies)
+		} else if (language == "C++") {
+			ResolveDependenciesTask.resolveCPPRuntimeDependency(
+				dependencyName, version, dependencySharedState, runtimeDependencies)
+		} else if (language == "C") {
+			ResolveDependenciesTask.resolveCRuntimeDependency(
+				dependencyName, version, dependencySharedState, runtimeDependencies)
+		} else {
+			Fiber.abort("Unknown language %(language) for dependency %(dependencyName)")
+		}
+	}
+
+	static resolveCSharpRuntimeDependency(
+		dependencyName, version, dependencySharedState, runtimeDependencies, linkDependencies) {
+		var requiredLanguageVersion = SemanticVersion.new(1, 0, 0)
+		if (!(SemanticVersion.IsUpCompatible(version, requiredLanguageVersion))) {
+			Fiber.abort("Incompatible C# version %(version)")
+		}
+
+		if (!(dependencySharedState.containsKey("Build"))) {
+			Soup.warning("C# dependency missing Build table %(dependencyName)")
+			return
+		}
+
+		var dependencyBuildTable = dependencySharedState["Build"]
+
+		if (dependencyBuildTable.containsKey("RuntimeDependencies")) {
+			var dependencyRuntimeDependencies = dependencyBuildTable["RuntimeDependencies"]
+			ListExtensions.Append(
+				runtimeDependencies,
+				dependencyRuntimeDependencies)
+		}
+
+		if (dependencyBuildTable.containsKey("LinkDependencies")) {
+			var dependencyLinkDependencies = dependencyBuildTable["LinkDependencies"]
+			ListExtensions.Append(
+				linkDependencies,
+				dependencyLinkDependencies)
+		}
+	}
+
+	static resolveCPPRuntimeDependency(
+		dependencyName, version, dependencySharedState, runtimeDependencies) {
+		var requiredLanguageVersion = SemanticVersion.new(1, 0, 0)
+		if (!(SemanticVersion.IsUpCompatible(version, requiredLanguageVersion))) {
+			Fiber.abort("Incompatible C++ version %(version)")
+		}
+
+		if (!(dependencySharedState.containsKey("Build"))) {
+			Soup.warning("C++ dependency missing Build table %(dependencyName)")
+			return
+		}
+
+		var dependencyBuildTable = dependencySharedState["Build"]
+
+		// C++ Interop only copies runtime Dlls
+		if (dependencyBuildTable.containsKey("RuntimeDependencies")) {
+			var dependencyRuntimeDependencies = dependencyBuildTable["RuntimeDependencies"]
+			ListExtensions.Append(
+				runtimeDependencies,
+				dependencyRuntimeDependencies)
+		}
+	}
+
+	static resolveCRuntimeDependency(
+		dependencyName, version, dependencySharedState, runtimeDependencies) {
+		var requiredLanguageVersion = SemanticVersion.new(1, 0, 0)
+		if (!(SemanticVersion.IsUpCompatible(version, requiredLanguageVersion))) {
+			Fiber.abort("Incompatible C version %(version)")
+		}
+
+		if (!(dependencySharedState.containsKey("Build"))) {
+			Soup.warning("C dependency missing Build table %(dependencyName)")
+			return
+		}
+
+		var dependencyBuildTable = dependencySharedState["Build"]
+
+		// C Interop only copies runtime Dlls
+		if (dependencyBuildTable.containsKey("RuntimeDependencies")) {
+			var dependencyRuntimeDependencies = dependencyBuildTable["RuntimeDependencies"]
+			ListExtensions.Append(
+				runtimeDependencies,
+				dependencyRuntimeDependencies)
 		}
 	}
 }

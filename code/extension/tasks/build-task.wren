@@ -7,6 +7,7 @@ import "soup|build-utils:./path" for Path
 import "soup|build-utils:./set" for Set
 import "soup|build-utils:./list-extensions" for ListExtensions
 import "soup|build-utils:./map-extensions" for MapExtensions
+import "soup|build-utils:./semantic-version" for SemanticVersion
 import "soup|csharp-compiler:./build-options" for BuildOptions, BuildOptimizationLevel, BuildNullableState
 import "soup|csharp-compiler:./build-engine" for BuildEngine
 import "soup|csharp-compiler-roslyn:./roslyn-compiler" for RoslynCompiler
@@ -34,6 +35,10 @@ class BuildTask is SoupTask {
 		var activeState = Soup.activeState
 		var sharedState = Soup.sharedState
 
+		// Set the language and version so consumers can process this shared state
+		sharedState["Language"] = "C#"
+		sharedState["Version"] = SemanticVersion.new(1, 0).toString
+
 		var buildTable = activeState["Build"]
 
 		var dotnet = activeState["DotNet"]
@@ -42,12 +47,17 @@ class BuildTask is SoupTask {
 		var options = BuildOptions.new()
 		options.TargetArchitecture = buildTable["Architecture"]
 		options.TargetFramework = buildTable["TargetFramework"]
+		options.LanguageVersion = buildTable["LanguageVersion"]
+		options.WarningLevel = buildTable["WarningLevel"]
 		options.TargetName = buildTable["TargetName"]
+		options.TargetVersion = buildTable["TargetVersion"]
 		options.TargetType = buildTable["TargetType"]
 		options.SourceRootDirectory = Path.new(buildTable["SourceRootDirectory"])
 		options.TargetRootDirectory = Path.new(buildTable["TargetRootDirectory"])
 		options.ObjectDirectory = Path.new(buildTable["ObjectDirectory"])
 		options.BinaryDirectory = Path.new(buildTable["BinaryDirectory"])
+		options.GenerateDirectory = Path.new(buildTable["GenerateDirectory"])
+		options.Flavor = buildTable["Flavor"]
 
 		if (buildTable.containsKey("Source")) {
 			options.SourceFiles = ListExtensions.ConvertToPathList(buildTable["Source"])
@@ -108,6 +118,13 @@ class BuildTask is SoupTask {
 			options.AllowUnsafeBlocks = buildTable["AllowUnsafeBlocks"]
 		} else {
 			options.AllowUnsafeBlocks = false
+		}
+
+		// Load the list of disabled warnings
+		if (buildTable.containsKey("WarningLevel")) {
+			options.WarningLevel = buildTable["WarningLevel"]
+		} else {
+			options.WarningLevel = 4
 		}
 
 		// Load the list of disabled warnings
